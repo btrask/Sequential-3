@@ -1,0 +1,6 @@
+Sequential 3
+node-static
+
+Node modules `knox` and `node-formidable` are required. They can be installed with `npm`.
+
+secret.json: {"key": "","secret": ""}

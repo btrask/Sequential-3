@@ -1,0 +1,125 @@
+/* Copyright (c) 2012, Ben Trask
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY BEN TRASK ''AS IS'' AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL BEN TRASK BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
+var Geometry = {};
+Geometry.clampMax = function(min, val, max) {
+	if(min > max) return max;
+	if(val < min) return min;
+	if(val > max) return max;
+	return val;
+};
+Geometry.clampMin = function(min, val, max) {
+	if(min > max) return min;
+	if(val < min) return min;
+	if(val > max) return max;
+	return val;
+};
+Geometry.TAU = Math.PI * 2;
+
+function Point(x, y) {
+	this.x = x;
+	this.y = y;
+}
+Point.prototype.toString = function() {
+	return "{"+this.x+", "+this.y+"}";
+};
+Point.prototype.offset = function(size) {
+	return new Point(this.x + size.w, this.y + size.h);
+};
+Point.prototype.clamp = function(rect) {
+	var x = rect.o.x, y = rect.o.y;
+	return new Point(Geometry.clampMax(x, this.x, x + rect.s.w), Geometry.clampMax(y, this.y, y + rect.s.h));
+};
+Point.prototype.distance = function(that) {
+	return new Size(this.x - that.x, this.y - that.y);
+};
+Point.fromEvent = function(event) {
+	return new this(event.clientX, event.clientY);
+};
+
+function Size(w, h) {
+	this.w = w;
+	this.h = h;
+}
+Size.prototype.toString = function() {
+	return "{"+this.w+", "+this.h+"}";
+};
+Size.prototype.sum = function(that) {
+	return new Size(this.w + that.w, this.h + that.h);
+};
+Size.prototype.difference = function(that) {
+	return new Size(this.w - that.w, this.h - that.h);
+};
+Size.prototype.quotient = function(that) {
+	return new Size(this.w / that.w, this.h / that.h);
+};
+Size.prototype.product = function(that) {
+	return new Size(this.w * that.w, this.h * that.h);
+};
+Size.prototype.scale = function(s) {
+	return new Size(this.w * s, this.h * s);
+};
+Size.prototype.min = function() {
+	return Math.min(this.w, this.h);
+};
+Size.prototype.max = function() {
+	return Math.max(this.w, this.h);
+};
+Size.prototype.round = function() {
+	return new Size(Math.round(this.w), Math.round(this.h));
+};
+Size.prototype.vector = function() {
+	return new Vector(Math.atan2(this.h, this.w) / Geometry.TAU, Math.sqrt(this.w * this.w + this.h * this.h));
+};
+Size.prototype.pointFromOrigin = function() {
+	return new Point(this.w, this.h);
+};
+Size.fromElement = function(element) {
+	return new this(element.offsetWidth, element.offsetHeight);
+};
+Size.zero = new Size(0, 0);
+
+function Rect(o, s) {
+	if(!(o instanceof Point)) throw "Invalid origin";
+	if(!(s instanceof Size)) throw "Invalid size";
+	this.o = o;
+	this.s = s;
+}
+Rect.prototype.toString = function() {
+	return "{"+this.o+", "+this.s+"}";
+};
+Rect.prototype.inset = function(size) {
+	return new Rect(this.o.offset(size), this.s.difference(size));
+};
+Rect.make = function(x, y, w, h) {
+	return new this(new Point(x, y), new Size(w, h));
+};
+
+function Vector(dir, mag) {
+	this.dir = dir;
+	this.mag = mag;
+}
+Vector.prototype.toString = function() {
+	return "{"+this.dir+", "+this.mag+"}";
+};
+Vector.prototype.size = function() {
+	return new Size(Math.cos(Geometry.TAU * this.dir) * this.mag, Math.sin(Geometry.TAU * this.dir) * this.mag);
+};

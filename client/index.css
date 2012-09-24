@@ -1,0 +1,382 @@
+/* Copyright (c) 2012, Ben Trask
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY BEN TRASK ''AS IS'' AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL BEN TRASK BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
+* {
+	padding: 0;
+	margin: 0;
+
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.absolute { position: absolute; }
+.relative { position: relative; }
+.full { left: 0; right: 0; top: 0; bottom: 0; }
+.inlineBlock { display: inline-block; }
+.center { text-align: center; }
+.cursor-pointer { cursor: pointer; }
+.cursor-hidden { cursor: none; }
+.overflow { overflow: hidden; text-overflow: ellipsis; }
+.nowrap { white-space: nowrap; }
+.clear { clear: both; }
+.ontop { z-index: 10; }
+
+.table { display: table; width: 100%; height: 100%; }
+.cell { display: table-cell; vertical-align: middle; }
+
+.left { text-align: left; }
+.right { text-align: right; }
+.small { font-size: small; }
+.light { color: rgba(0, 0, 0, 0.67); }
+ul > li  { list-style: none; }
+ul > li:before { content: "• "; }
+
+.optimize-speed { image-rendering: -moz-crisp-edges; }
+
+body {
+	font-family: "Lucida Grande", sans-serif;
+	font-weight: bold;
+}
+
+.index {
+	/* Common */
+	background: -webkit-gradient(radial,50% 50%,0,50% 50%,800,from(#8d8d8d),to(#0d0d0d)); /* OmniWeb */
+	background: -moz-radial-gradient(50% 50%, circle closest-corner, #8d8d8d, #0d0d0d);
+	background: -webkit-radial-gradient(50% 50%, circle closest-corner, #8d8d8d, #0d0d0d);
+}
+.index > .scrollView > .content {
+/*	-webkit-transition: opacity 0.3s ease-out;
+	-moz-transition: opacity 0.3s ease-out;
+	-ms-transition: opacity 0.3s ease-out;
+	-o-transition: opacity 0.3s ease-out;
+	transition: opacity 0.3s ease-out;*/
+}
+.index > .scrollView.inactive > .content {
+	opacity: 0.2;
+}
+.content.empty {
+	padding: 3px 8px;
+
+	/* Common */
+	background: rgba(0, 0, 0, 0.5);
+	border-radius: 6px;
+	color: white;
+
+	/* Common */
+	font-size: 13px;
+	text-shadow: 0 1px 2px black;
+}
+.content.page {
+	padding: 16px;
+}
+.scrollView.ltr > .page.content > .header {
+	float: left;
+}
+.scrollView.rtl > .page.content > .header {
+	float: right;
+}
+.scrollView.ltr > .page.content > .header + .header {
+	margin-left: 5px;
+}
+.scrollView.rtl > .page.content > .header + .header {
+	margin-right: 5px;
+}
+.page.content > .header {
+	padding: 3px 8px;
+	margin: 0 0 5px 0;
+	white-space: nowrap;
+
+	/* Common */
+	background: rgba(0, 0, 0, 0.5);
+	border-radius: 6px;
+	color: white;
+
+	/* Common */
+	font-size: 13px;
+	text-shadow: 0 1px 2px black;
+}
+.page.content > .header.clickable:hover {
+	color: rgba(255, 255, 255, 0.67);
+}
+.page.content > .header.clickable.disabled {
+	color: rgba(255, 255, 255, 0.5);
+}
+.page.content > .area > .image.document {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	border-radius: 3px;
+
+	-webkit-box-shadow: 0 0 48px #000;
+	-moz-box-shadow: 0 0 48px #000;
+	-ms-box-shadow: 0 0 48px #000;
+	-o-box-shadow: 0 0 48px #000;
+	box-shadow: 0 0 48px #000;
+}
+
+.thumbnailFolder > .title {
+	padding: 12px;
+	margin: 32px 24px 16px 24px;
+
+	max-width: 100%;
+	word-wrap: break-word; /* Experimental, might not work. */
+
+	/* Common */
+	background: rgba(0, 0, 0, 0.5);
+	border-radius: 6px;
+	color: white;
+
+	/* Common */
+	font-size: 13px;
+	text-shadow: 0 1px 2px black;
+}
+.thumbnailFolder > .thumbnails > .thumbnailItem {
+	width: 144px;
+	height: 144px;
+	margin: 8px;
+}
+.thumbnailFolder > .thumbnails > .thumbnailItem.selected {
+	background: rgba(79, 98, 253, .6);
+	-webkit-box-shadow: 0 0 8px rgb(79, 98, 253);
+	-moz-box-shadow: 0 0 8px rgb(79, 98, 253);
+	-ms-box-shadow: 0 0 8px rgb(79, 98, 253);
+	-o-box-shadow: 0 0 8px rgb(79, 98, 253);
+	box-shadow: 0 0 8px rgb(79, 98, 253);
+	border-radius: 6px;
+}
+.thumbnailFolder > .thumbnails > .thumbnailItem > .image.table > .cell {
+	line-height: 0;
+}
+.thumbnailFolder > .thumbnails > .thumbnailItem.preview > .image.table > .cell > .image {
+	-webkit-box-shadow: 0 1px 3px black;
+	-moz-box-shadow: 0 1px 3px black;
+	-ms-box-shadow: 0 1px 3px black;
+	-o-box-shadow: 0 1px 3px black;
+	box-shadow: 0 1px 3px black;
+}
+.thumbnailFolder > .thumbnails > .thumbnailItem > .title.table > .cell > .title {
+	padding: 3px 8px;
+	margin: 8px;
+
+	max-height: 112px;
+	max-width: 112px;
+	word-wrap: break-word;
+
+	/* Common */
+	background: rgba(0, 0, 0, 0.5);
+	border-radius: 6px;
+	color: white;
+
+	/* Common */
+	font-size: 13px;
+	text-shadow: 0 1px 2px black;
+}
+.thumbnailFolder > .thumbnails > .thumbnailItem.preview > .title.table {
+	display: none;
+}
+
+.menu {
+	padding: 16px;	
+}
+.menu > .submenu {
+	vertical-align: top;
+	margin: 6px;
+	width: 12em;
+}
+.menu > .submenu > .title {
+	margin-bottom: 12px;
+	padding: 12px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	/* Common */
+	background: rgba(0, 0, 0, 0.5);
+	border-radius: 6px;
+	color: white;
+
+	/* Common */
+	font-size: 13px;
+	text-shadow: 0 1px 2px black;
+}
+.menu > .submenu > .items {
+	border-radius: 6px;
+	overflow: hidden;
+}
+.menu > .submenu > .items > .item {
+	padding: 6px 12px;
+	white-space: nowrap;
+
+	/* Common */
+	background: rgba(0, 0, 0, 0.5);
+	color: white;
+
+	/* Common */
+	font-size: 13px;
+	text-shadow: 0 1px 2px black;
+}
+.menu > .submenu > .items > .item > .shortcut {
+	color: rgba(255, 255, 255, 0.67);
+}
+.menu > .submenu > .items > .item.selected {
+	background: rgba(79, 98, 253, .8);
+}
+
+.menu > .submenu.navigation {
+	width: 24em;
+}
+.menu > .submenu.navigation > .items {
+	white-space: normal;
+}
+.menu > .submenu.navigation > .items > .item {
+	width: 50%;
+}
+
+.menu > .submenu > .items > .item:hover > .title {
+	color: rgba(255, 255, 255, 0.67);
+}
+.menu > .submenu > .items > .item:hover > .shortcut {
+	color: rgba(255, 255, 255, 0.33);
+}
+
+.index > .loading {
+	background: rgba(0, 0, 0, 0.5);
+	left: 50%;
+	top: 66%;
+	margin-left: -50px;
+	margin-top: -50px;
+	width: 100px;
+	height: 100px;
+	border-radius: 25px;
+}
+
+.uploader {
+	/* Common */
+	background: -webkit-gradient(radial,50% 50%,0,50% 50%,800,from(#8d8d8d),to(#0d0d0d)); /* OmniWeb */
+	background: -moz-radial-gradient(50% 50%, circle closest-corner, #8d8d8d, #0d0d0d);
+	background: -webkit-radial-gradient(50% 50%, circle closest-corner, #8d8d8d, #0d0d0d);
+
+	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+.uploader > .droppable {
+	margin: 5%; /* TV-safe area :V */
+	overflow: hidden;
+	border-radius: 6px;
+	border: 5px dashed rgba(0, 0, 0, 0.25);
+}
+.uploader > .droppable.dragging {
+	border-style: solid;
+	border-color: rgba(79, 98, 253, 0.6);
+}
+.uploader > .droppable > .table > .cell > .title > .dark {
+	color: rgba(0, 0, 0, 0.9);
+}
+.uploader > .droppable > .table > .cell > .title > .light {
+	color: rgba(0, 0, 0, 0.67);
+}
+.uploader > .droppable > .table > .cell > .ready {
+	margin: 60px 0;
+	padding: 12px;
+	display: inline-block;
+
+	/* Common */
+	background: rgba(0, 0, 0, 0.5);
+	border-radius: 6px;
+	color: white;
+
+	/* Common */
+	font-size: 13px;
+	text-shadow: 0 1px 2px black;
+}
+.uploader > .droppable > .table > .cell > .active {
+	margin: 60px auto;
+	display: none;
+	width: 300px;
+	height: 90px;
+
+	/* Common */
+	background: rgba(0, 0, 0, 0.5);
+	border-radius: 6px;
+	color: white;
+
+	/* Common */
+	font-size: 13px;
+	text-shadow: 0 1px 2px black;
+}
+.uploader > .droppable > .table > .cell > .active > .progressBar {
+	left: 20px;
+	right: 20px;
+	top: 20px;
+	height: 30px;
+	border: 1px solid black;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+	-moz-box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+	-ms-box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+	-o-box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+	box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+
+	background: -webkit-gradient(linear,from(rgba(0, 0, 0, 0.8)),to(rgba(0, 0, 0, 0.2))); /* OmniWeb */
+	background: -moz-linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2));
+	background: -webkit-linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2));
+}
+.uploader > .droppable > .table > .cell > .active > .progressBar > .progress {
+	height: 30px;
+	margin: -1px;
+	border: 1px solid black;
+	border-radius: 4px;
+
+	background: -webkit-gradient(linear,from(rgb(90,119,179)),to(rgb(69,85,117))); /* OmniWeb */
+	background: -moz-linear-gradient(rgb(90,119,179), rgb(69,85,117));
+	background: -webkit-linear-gradient(rgb(90,119,179), rgb(69,85,117));
+}
+.uploader > .droppable > .table > .cell > .active > .status {
+	bottom: 13px;
+	height: 17px;
+}
+.uploader > .droppable > .table > .cell > .active > .speed {
+	left: 20px;
+	width: 70px;
+}
+.uploader > .droppable > .table > .cell > .active > .time {
+	left: 90px;
+	right: 90px;
+}
+.uploader > .droppable > .table > .cell > .active > .total {
+	right: 20px;
+	width: 70px;
+}
+.uploader.uploading > .droppable > .table > .cell > .ready {
+	display: none;
+}
+.uploader.uploading > .droppable > .table > .cell > .active {
+	display: block;
+}
+.uploader.uploading > .droppable {
+	border-style: solid;
+}

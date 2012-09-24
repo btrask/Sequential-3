@@ -1,0 +1,121 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>SequentialWeb</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<style type="text/css">.invisible{display:none!important}</style>
+<link rel="stylesheet" href="/index.css" type="text/css">
+
+<div class="storage invisible">
+	<div id="uploader" class="uploader absolute full">
+		<div data-id="droppable" class="droppable absolute full">
+			<div class="table">
+				<div class="cell center">
+					<h1 class="title"><span class="dark">Sequential</span><span class="light">Web</span></h1>
+					<div class="light">Better Image Galleries</div>
+					<div class="ready center">
+						drag<br>
+						images or archives<br>
+						here
+					</div>
+					<div class="active center relative">
+						<div data-id="progressBar" class="progressBar absolute overflow"><div data-id="progress" class="progress"></div></div>
+						<div data-id="speed" class="speed status absolute overflow left nowrap"></div>
+						<div data-id="time" class="time status absolute overflow center nowrap"></div>
+						<div data-id="total" class="total status absolute overflow right nowrap"></div>
+					</div>
+					<input data-id="input" type="file" multiple="" class="file input relative ontop overflow invisible">
+					<br>
+					<div class="light small left inlineBlock">
+						<ul>
+							<li>Images: JPG, PNG &amp; GIF
+							<li>Archives: ZIP, RAR, etc.
+							<li>Up to 200MB at once
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div data-id="target" class="target absolute full"></div>
+	</div>
+
+	<div id="index" class="index absolute full"></div>
+	<div id="loading" class="loading absolute"></div>
+
+	<div id="scrollView" class="scrollView absolute full overflow cursor-pointer"></div>
+	<div id="image" class="page content relative inlineBlock">
+		<div data-id="title" class="title header relative"></div>
+		<div data-id="options" class="options header clickable relative">Options</div>
+		<div data-id="browse" class="browse header clickable relative disabled">Browse</div>
+		<div data-id="area" class="area clear"><img data-id="image" class="image document"></div>
+	</div>
+	<div id="empty" class="empty content relative inlineBlock">(no images)</div>
+
+	<div id="thumbnailBrowser" class="thumbnailBrowser content relative inlineBlock"></div>
+	<div id="thumbnailFolder" class="thumbnailFolder">
+		<div data-id="title" class="title center"></div>
+		<div data-id="thumbnails" class="thumbnails center"></div>
+	</div>
+	<div id="thumbnailItem" class="thumbnailItem inlineBlock relative preview overflow">
+		<div class="image table">
+			<div class="cell center"><img data-id="image" class="image"></div>
+		</div>
+		<div class="title table absolute full">
+			<div class="cell center"><div data-id="title" class="title overflow inlineBlock"></div></div>
+		</div>
+	</div>
+
+	<div id="menu" class="menu content relative inlineBlock center nowrap"></div>
+	<div id="submenu" class="submenu center relative inlineBlock"><div data-id="title" class="title"></div><div data-id="items" class="items"></div></div>
+	<div id="menuItem" class="item"><div data-id="title" class="title"></div><div data-id="shortcut" class="shortcut"></div></div>
+	<div id="navigationSubmenu" class="navigation submenu center relative inlineBlock">
+		<div class="title">Navigation</div>
+		<div class="items">
+			<div data-id="previous" class="item inlineBlock">
+				<div class="title">Previous</div>
+				<div class="shortcut">[</div>
+			</div><!--
+			--><div data-id="next" class="item inlineBlock">
+				<div class="title">Next</div>
+				<div class="shortcut">]</div>
+			</div><!--
+			--><div data-id="first" class="item inlineBlock">
+				<div class="title">First</div>
+				<div class="shortcut">Shift-[</div>
+			</div><!--
+			--><div data-id="last" class="item inlineBlock">
+				<div class="title">Last</div>
+				<div class="shortcut">Shift-]</div>
+			</div><!--
+			--><div data-id="jumpPrevious" class="item inlineBlock">
+				<div class="title">First of Previous Folder</div>
+				<div class="shortcut">Shift-J</div>
+			</div><!--
+			--><div data-id="jumpNext" class="item inlineBlock">
+				<div class="title">First of Next Folder</div>
+				<div class="shortcut">J</div>
+			</div><!--
+			--><div data-id="skipBefore" class="item inlineBlock">
+				<div class="title">Skip Before Folder</div>
+				<div class="shortcut">Shift-K</div>
+			</div><!--
+			--><div data-id="skipAfter" class="item inlineBlock">
+				<div class="title">Skip After Folder</div>
+				<div class="shortcut">K</div>
+			</div><!--
+			--><div data-id="folderFirst" class="item inlineBlock">
+				<div class="title">First of Folder</div>
+				<div class="shortcut">Shift-L</div>
+			</div><!--
+			--><div data-id="folderLast" class="item inlineBlock">
+				<div class="title">Last of Folder</div>
+				<div class="shortcut">L</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+<script src="/config.js"></script>
+<script src="/index.js"></script>
