@@ -24,7 +24,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #include <openssl/bio.h>
 #include <openssl/evp.h>
 
-#import "SLBase64.h"
+#import "SLAdditions.h"
 
 static NSString *SLExtensionForFileType(NSBitmapImageFileType const t)
 {
