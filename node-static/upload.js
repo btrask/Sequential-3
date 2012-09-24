@@ -49,17 +49,17 @@ var bucket = {};
 bucket.image = knox.createClient({
 	"key": secret.key,
 	"secret": secret.secret,
-	"bucket": "image.sequentialweb.com",
+	"bucket": config.imageDomain,
 });
 bucket.thumb = knox.createClient({
 	"key": secret.key,
 	"secret": secret.secret,
-	"bucket": "thumb.sequentialweb.com",
+	"bucket": config.thumbDomain,
 });
 bucket.data = knox.createClient({
 	"key": secret.key,
 	"secret": secret.secret,
-	"bucket": "data.sequentialweb.com",
+	"bucket": config.dataDomain,
 });
 
 var IMAGE_EXTS = {
@@ -125,7 +125,7 @@ function treeInfo(path, callback/* (info) */) {
 }
 function dirInfo(path, callback/* (info) */) {
 	var info = {};
-	info.thumbURL = "//static.sequentialweb.com/folder.png";
+	info.thumbURL = "//"+config.staticDomain+"/folder.png";
 	info.items = [];
 	fs.readdir(path, function(err, files) {
 		if(err) return callback(null);
@@ -146,8 +146,8 @@ function imageInfo(path, callback/* (info) */) {
 		if(err) return callback(null);
 		var ext = pathModule.extname(path);
 		var key = urlModule.parse(encodeURI("/"+hash+ext)).pathname;
-		info.imageURL = "//image.sequentialweb.com/"+hash+ext;
-		info.thumbURL = "//thumb.sequentialweb.com/"+hash+".jpg";
+		info.imageURL = "//"+config.imageDomain+"/"+hash+ext;
+		info.thumbURL = "//"+config.thumbDomain+"/"+hash+".jpg";
 		bucket.image.putFile(path, key, function(err, res) {
 			if(err) return callback(null);
 			if(200 !== res.statusCode) return callback(null);

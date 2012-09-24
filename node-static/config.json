@@ -1,3 +1,7 @@
 {
-	"maxSize": 209715200
+	"maxSize": 209715200,
+	"imageDomain": "image.sequentialweb.com",
+	"thumbDomain": "thumb.sequentialweb.com",
+	"staticDomain": "static.sequentialweb.com",
+	"dataDomain": "data.sequentialweb.com"
 }
