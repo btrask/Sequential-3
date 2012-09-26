@@ -3,4 +3,6 @@ node-static
 
 Node modules `knox` and `node-formidable` are required. They can be installed with `npm`.
 
-secret.json: {"key": "","secret": ""}
+secret.json: {"key": "", "secret": ""}
+
+Domains will have to be updated in config.json and configClient.js.

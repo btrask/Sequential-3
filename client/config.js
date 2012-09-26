@@ -28,4 +28,5 @@ var config = {
 //	path: function(node) {},
 //	exts: [],
 //	mimes: [],
+//	thumbErrorURL: "",
 };

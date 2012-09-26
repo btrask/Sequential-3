@@ -1,0 +1,6 @@
+#!/bin/sh
+cd ../client
+export CLIENT_BUILD_DIR="${OLDPWD}/build"
+export INSTALL_DIR="${OLDPWD}/install"
+export CONFIG_PATH="${OLDPWD}/clientConfig.js"
+make

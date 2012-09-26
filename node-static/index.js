@@ -25,21 +25,21 @@ var http = require("http");
 var urlModule = require("url");
 
 var upload = require("./upload");
+var config = require("./config");
 
-var CLIENT = __dirname+"/../mac/build/Debug/Sequential.app/Contents/Resources/client"; // TODO: We should have separate builds that get located in each directory (mac/build, node/client, etc).
+var CLIENT = __dirname+"/build";
+var INDEX = CLIENT+"/index.html";
 
 http.createServer(function(req, res) {
 	var path = urlModule.parse(req.url).pathname || "/";
-	if("/config.js" === path) return res.sendFile(__dirname+"/clientConfig.js");
 	if("/upload" === path) return upload(req, res);
-
-	if(/\.\./.test(path)) return res.sendMessage(400, "Bad Request");
-	fs.stat(CLIENT+path, function(err, stats) { // TODO: Pre-load files, generate ETags and Last-Modified dates, handle conditional headers.
-		if(err) {
-			if("ENOENT" !== err.code) return res.sendError(err);
-			return res.sendFile(CLIENT+"/index.html");
-		}
-		res.sendFile(stats.isDirectory() ? CLIENT+path+"/index.html" : CLIENT+path);
+	if("/robots.txt" === path) return res.sendFile(CLIENT+path); // TODO: Enforce caching.
+	if("/favicon.ico" === path) return res.sendFile(CLIENT+path);
+	if("/" === path || "/id/" === path.slice(0, 4)) return res.sendFile(INDEX);
+	res.writeHead(301, "Moved Permanently", {
+		"Location": "//"+config.staticDomain+path+".gz",
+		// TODO: Enforce caching.
+		// TODO: Detect gzip support.
 	});
-
+	res.end();
 }).listen(9003);

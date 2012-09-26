@@ -63,12 +63,15 @@ body {
 	font-weight: bold;
 }
 
-.index {
-	/* Common */
-	background: -webkit-gradient(radial,50% 50%,0,50% 50%,800,from(#8d8d8d),to(#0d0d0d)); /* OmniWeb */
-	background: -moz-radial-gradient(50% 50%, circle closest-corner, #8d8d8d, #0d0d0d);
-	background: -webkit-radial-gradient(50% 50%, circle closest-corner, #8d8d8d, #0d0d0d);
+.background {
+/*	background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 800, from(#8d8d8d), to(#0d0d0d)), url("/background.png"); /|* OmniWeb *|/
+	background: -moz-radial-gradient(50% 50%, circle closest-corner, #8d8d8d, #0d0d0d), url("/background.png");
+	background: -webkit-radial-gradient(50% 50%, circle closest-corner, #8d8d8d, #0d0d0d), url("/background.png");*/
+	background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 800, from(rgba(0, 0, 0, 0.0)), to(rgba(0, 0, 0, 0.8))), url("/background.png"); /* OmniWeb */
+	background: -moz-radial-gradient(50% 50%, circle closest-corner, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.8)), url("/background.png");
+	background: -webkit-radial-gradient(50% 50%, circle closest-corner, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.8)), url("/background.png");
 }
+		
 .index > .scrollView > .content {
 /*	-webkit-transition: opacity 0.3s ease-out;
 	-moz-transition: opacity 0.3s ease-out;
@@ -276,11 +279,6 @@ body {
 }
 
 .uploader {
-	/* Common */
-	background: -webkit-gradient(radial,50% 50%,0,50% 50%,800,from(#8d8d8d),to(#0d0d0d)); /* OmniWeb */
-	background: -moz-radial-gradient(50% 50%, circle closest-corner, #8d8d8d, #0d0d0d);
-	background: -webkit-radial-gradient(50% 50%, circle closest-corner, #8d8d8d, #0d0d0d);
-
 	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 .uploader > .droppable {

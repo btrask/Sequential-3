@@ -33,9 +33,8 @@ var fs = require("../node/fs+");
 var http = require("../node/http+");
 var mime = require("../node/mime");
 
-var config = require("./config");
 var secret = require("./secret");
-var clientConfig = require("./clientConfig");
+var config = require("./config");
 
 var TMP = (
 	process.env.TMP ||

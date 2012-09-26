@@ -68,5 +68,6 @@ if(!config.path) config.path = function(node) {
 };
 if(!config.exts) config.exts = [];
 if(!config.mimes) config.mimes = [];
+if(!config.thumbErrorURL) config.thumbErrorURL = "/error.png";
 
 config.init();

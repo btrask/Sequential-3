@@ -50,7 +50,7 @@ function ThumbnailItem(browser, node) {
 		DOM.classify(item.element, "preview", false);
 		item.image.onload = null;
 		item.image.onerror = null; // TODO: Make sure this is okay.
-		item.image.src = "/error.png"; // TODO: More customizable URL?
+		item.image.src = config.thumbErrorURL;
 		if(item.onload) item.onload();
 	};
 	item.image.src = item.node.thumbURL;
