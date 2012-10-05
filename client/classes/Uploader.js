@@ -24,23 +24,23 @@ function Uploader(exts, mimes) {
 	var uploading = false;
 	uploader.element = DOM.clone("uploader", uploader);
 
-	uploader.input.setAttribute("accept", mimes.join(","));
+	uploader["input"].setAttribute("accept", mimes.join(","));
 
-	DOM.addListener(uploader.target, "dragenter", function(event) {
-		if(!uploading) DOM.classify(uploader.droppable, "dragging", true);
+	DOM.addListener(uploader["target"], "dragenter", function(event) {
+		if(!uploading) DOM.classify(uploader["droppable"], "dragging", true);
 	});
-	DOM.addListener(uploader.target, "dragleave", function(event) {
-		DOM.classify(uploader.droppable, "dragging", false);
+	DOM.addListener(uploader["target"], "dragleave", function(event) {
+		DOM.classify(uploader["droppable"], "dragging", false);
 	});
-	DOM.addListener(uploader.target, "dragover", function(event) {
+	DOM.addListener(uploader["target"], "dragover", function(event) {
 		event.dataTransfer.dropEffect = uploading ? "none" : "copy";
 		event.preventDefault();
 		return false;
 	});
-	DOM.addListener(uploader.target, "drop", function(event) {
+	DOM.addListener(uploader["target"], "drop", function(event) {
 		function bail(message) {
 			if(message) alert(message); // TODO: Don't use alert().
-			DOM.classify(uploader.droppable, "dragging", false);
+			DOM.classify(uploader["droppable"], "dragging", false);
 			event.preventDefault();
 			return false;
 		}
@@ -82,7 +82,7 @@ function Uploader(exts, mimes) {
 		var form = new FormData();
 		var req = new XMLHttpRequest();
 		for(var i = 0; i < files.length; ++i) form.append("file-"+i, files[i]);
-		uploader.progress.style.width = "0px";
+		uploader["progress"].style.width = "0px";
 		uploading = true;
 
 		var start = +new Date;
@@ -95,9 +95,9 @@ function Uploader(exts, mimes) {
 			if(!total) return;
 			var remaining = total - loaded;
 			if(remaining <= 50) {
-				DOM.fill(uploader.speed);
-				DOM.fill(uploader.time, "Processing…");
-				DOM.fill(uploader.total);
+				DOM.fill(uploader["speed"]);
+				DOM.fill(uploader["time"], "Processing…");
+				DOM.fill(uploader["total"]);
 				clearInterval(interval);
 				return;
 			}
@@ -108,13 +108,13 @@ function Uploader(exts, mimes) {
 			var complete = loaded / total;
 			//var estimate = instantaneous * remaining * complete + average * remaining/* * (1 - complete);
 			var estimate = average * remaining;
-			DOM.fill(uploader.speed, stringFromSizeRemaining(speed * 1000)+"/s");
-			DOM.fill(uploader.time, stringFromTimeRemaining(estimate)+" left");
-			DOM.fill(uploader.total, stringFromSizeRemaining(total));
+			DOM.fill(uploader["speed"], stringFromSizeRemaining(speed * 1000)+"/s");
+			DOM.fill(uploader["time"], stringFromTimeRemaining(estimate)+" left");
+			DOM.fill(uploader["total"], stringFromSizeRemaining(total));
 		}, 1000 / 2);
 		if(req.upload) req.upload.onprogress = function(event) {
 			var complete = event.loaded / event.total;
-			uploader.progress.style.width = Math.round(complete * uploader.progressBar.offsetWidth)+"px";
+			uploader["progress"].style.width = Math.round(complete * uploader["progressBar"].offsetWidth)+"px";
 			lastTime = time;
 			lastLoaded = loaded;
 			total = event.total;
@@ -127,7 +127,7 @@ function Uploader(exts, mimes) {
 			clearInterval(interval);
 			try {
 				var obj = JSON.parse(req.responseText);
-				if(obj.hash) window.location = "/id/"+obj.hash;
+				if(obj["hash"]) window.location = "/id/"+obj["hash"];
 			} catch(e) {
 				// TODO: Upload failed.
 				console.log("failed", e);
@@ -137,7 +137,7 @@ function Uploader(exts, mimes) {
 		};
 		req.open("POST", "/upload");
 		req.send(form);
-		DOM.classify(uploader.droppable, "dragging", false);
+		DOM.classify(uploader["droppable"], "dragging", false);
 		DOM.classify(uploader.element, "uploading", true);
 		event.preventDefault();
 		return false;

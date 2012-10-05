@@ -20,26 +20,27 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 function ReadingDirection(ltr) {
-	this.ltr = Boolean(ltr);
-	this.rtl = !this.ltr;
-	this.previousShortcut = this.ltr ? "[" : "]";
-	this.nextShortcut = this.rtl ? "[" : "]";
-	this.firstShortcut = this.ltr ? "Shift-[" : "Shift-]";
-	this.lastShortcut = this.rtl ? "Shift-[" : "Shift-]";
-	this.forwardKeyCode = this.ltr ? 221 : 219;
-	this.backwardKeyCode = this.rtl ? 221 : 219;
-	this.size = this.ltr ? new Size(1, 1) : new Size(-1, 1);
+	var dir = this;
+	dir.ltr = Boolean(ltr);
+	dir.rtl = !dir.ltr;
+	dir.previousShortcut = dir.ltr ? "[" : "]";
+	dir.nextShortcut = dir.rtl ? "[" : "]";
+	dir.firstShortcut = dir.ltr ? "Shift-[" : "Shift-]";
+	dir.lastShortcut = dir.rtl ? "Shift-[" : "Shift-]";
+	dir.forwardKeyCode = dir.ltr ? 221 : 219;
+	dir.backwardKeyCode = dir.rtl ? 221 : 219;
+	dir.size = dir.ltr ? new Size(1, 1) : new Size(-1, 1);
 }
 ReadingDirection.prototype.classify = function(element) {
 	DOM.classify(element, "ltr", this.ltr);
 	DOM.classify(element, "rtl", this.rtl);
 };
 ReadingDirection.prototype.stringify = function() {
-	return JSON.stringify({ltr: this.ltr});
+	return JSON.stringify({"ltr": this.ltr});
 };
 ReadingDirection.parse = function(json) {
 	try {
-		return new ReadingDirection(JSON.parse(json).ltr);
+		return new ReadingDirection(JSON.parse(json)["ltr"]);
 	} catch(e) {
 		return new ReadingDirection(true);
 	}

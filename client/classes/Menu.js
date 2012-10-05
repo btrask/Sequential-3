@@ -50,24 +50,24 @@ function Menu(index) {
 		window.location = "x-sequential:///reveal"+index.node.encodedPath();
 	});
 
-	menu.navigation.previous._onclick = function(event) {
+	menu.navigation["previous"]._onclick = function(event) {
 		index.next(false);
 	};
-	menu.navigation.next._onclick = function(event) {
+	menu.navigation["next"]._onclick = function(event) {
 		index.next(true);
 	};
-	menu.navigation.first._onclick = function(event) {
+	menu.navigation["first"]._onclick = function(event) {
 		index.first(true);
 	};
-	menu.navigation.last._onclick = function(event) {
+	menu.navigation["last"]._onclick = function(event) {
 		index.first(false);
 	};
-	menu.navigation.jumpPrevious._onclick = function() {};
-	menu.navigation.jumpNext._onclick = function() {};
-	menu.navigation.skipBefore._onclick = function() {};
-	menu.navigation.skipAfter._onclick = function() {};
-	menu.navigation.folderFirst._onclick = function() {};
-	menu.navigation.folderLast._onclick = function() {};
+	menu.navigation["jumpPrevious"]._onclick = function() {};
+	menu.navigation["jumpNext"]._onclick = function() {};
+	menu.navigation["skipBefore"]._onclick = function() {};
+	menu.navigation["skipAfter"]._onclick = function() {};
+	menu.navigation["folderFirst"]._onclick = function() {};
+	menu.navigation["folderLast"]._onclick = function() {};
 
 	function addScalingMode(title, shortcut, scaler) {
 		var item = menu.scalingMode.addItem(title, shortcut, function(event, item) {
@@ -133,20 +133,20 @@ function Submenu(menu, title) {
 	submenu.menu = menu;
 	submenu.selection = null;
 	submenu.element = DOM.clone("submenu", submenu);
-	DOM.fill(submenu.title, title);
+	DOM.fill(submenu["title"], title);
 	menu.content.appendChild(submenu.element);
 }
 Submenu.prototype.addItem = function(title, shortcut, func/* (event, item) */) {
 	var submenu = this;
 	var elems = {};
 	var item = DOM.clone("menuItem", elems);
-	DOM.fill(elems.title, title);
-	DOM.fill(elems.shortcut, shortcut);
+	DOM.fill(elems["title"], title);
+	DOM.fill(elems["shortcut"], shortcut);
 	item._onclick = function(event) {
 		if(submenu.menu.onclose) submenu.menu.onclose(event);
 		func(event, item);
 	};
-	submenu.items.appendChild(item);
+	submenu["items"].appendChild(item);
 	return item;
 };
 Submenu.prototype.selectItem = function(item) {

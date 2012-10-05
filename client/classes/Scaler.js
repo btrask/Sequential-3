@@ -20,8 +20,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 function Scaler(scrollView) {
-	this.scrollView = scrollView;
-	this.lastScale = null;
+	var scaler = this;
+	scaler.scrollView = scrollView;
+	scaler.lastScale = null;
 }
 Scaler.prototype.scaledSize = function(size, border) {
 	var scale = this.computedScale(size, border);
@@ -35,9 +36,9 @@ Scaler.prototype.relativeScaler = function(scale) {
 Scaler.parse = function(json, scrollView) {
 	try {
 		var obj = JSON.parse(json);
-		switch(obj.name) {
-		case "Proportional": return new ProportionalScaler(scrollView, obj.scale);
-		case "Fit": return new FitScaler(scrollView, obj.type);
+		switch(obj["name"]) {
+		case "Proportional": return new ProportionalScaler(scrollView, obj["scale"]);
+		case "Fit": return new FitScaler(scrollView, obj["type"]);
 		case "AlmostFit":
 		}
 	} catch(e) {}
@@ -45,22 +46,24 @@ Scaler.parse = function(json, scrollView) {
 };
 
 function ProportionalScaler(scrollView, scale) {
-	Scaler.call(this, scrollView);
-	this.lastScale = this.scale = scale;
+	var scaler = this;
+	Scaler.call(scaler, scrollView);
+	scaler.lastScale = scaler.scale = scale;
 }
 ProportionalScaler.prototype = new Scaler();
 ProportionalScaler.prototype.computedScale = function(size, border) {
 	return this.scale;
 };
 ProportionalScaler.prototype.stringify = function() {
-	return JSON.stringify({name: "Proportional", scale: this.scale});
+	return JSON.stringify({"name": "Proportional", "scale": this.scale});
 };
 function FitScaler(scrollView, type) {
-	Scaler.call(this, scrollView);
+	var scaler = this;
+	Scaler.call(scaler, scrollView);
 	switch(type) {
 		case "min":
 		case "max":
-			this.type = type; break;
+			scaler.type = type; break;
 		default: throw new Error("Bad FitScaler type");
 	}
 }
@@ -70,10 +73,11 @@ FitScaler.prototype.computedScale = function(size, border) {
 	return bounds.quotient(size)[this.type]();
 };
 FitScaler.prototype.stringify = function() {
-	return JSON.stringify({name: "Fit", type: this.type});
+	return JSON.stringify({"name": "Fit", "type": this.type});
 };
 function AlmostFitScaler(scrollView) {
-	Scaler.call(this, scrollView);
+	var scaler = this;
+	Scaler.call(scaler, scrollView);
 }
 AlmostFitScaler.prototype = new Scaler();
 AlmostFitScaler.prototype.computedScale = function(size, border) {
@@ -88,5 +92,5 @@ AlmostFitScaler.prototype.computedScale = function(size, border) {
 	return Geometry.clampMin(skipScale, almostFitScale, maxOneWayScrollScale);
 };
 AlmostFitScaler.prototype.stringify = function() {
-	return JSON.stringify({name: "AlmostFit"});
+	return JSON.stringify({"name": "AlmostFit"});
 };

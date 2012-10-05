@@ -1,10 +1,10 @@
 ifndef CLIENT_BUILD_DIR
-	abort
-	#CLIENT_BUILD_DIR := build
+	#abort
+	CLIENT_BUILD_DIR := build
 endif
 ifndef INSTALL_DIR
-	abort
-	#INSTALL_DIR := install
+	#abort
+	INSTALL_DIR := install
 endif
 ifndef CONFIG_PATH
 	CONFIG_PATH := config.js
@@ -48,9 +48,9 @@ clean:
 	-rm -rf $(CLIENT_BUILD_DIR)
 	-rm -rf $(INSTALL_DIR)
 
-$(CLIENT_BUILD_DIR)/index.js: $(SCRIPTS)
+$(CLIENT_BUILD_DIR)/index.js: $(SCRIPTS) utilities/externs.js
 	-mkdir -p $(dir $@)
-	java -jar ../deps/compiler-latest/compiler.jar $(addprefix --js=,$+) --js_output_file=$@ --language_in=ECMASCRIPT5 $(CLOSURE_FLAGS)
+	java -jar ../deps/compiler-latest/compiler.jar $(addprefix --js=,$(SCRIPTS)) --js_output_file=$@ --language_in=ECMASCRIPT5 $(CLOSURE_FLAGS) --compilation_level ADVANCED_OPTIMIZATIONS --externs utilities/externs.js
 
 $(CLIENT_BUILD_DIR)/%.css: %.css
 	-mkdir -p $(dir $@)

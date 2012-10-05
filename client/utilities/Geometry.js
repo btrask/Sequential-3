@@ -35,8 +35,9 @@ Geometry.clampMin = function(min, val, max) {
 Geometry.TAU = Math.PI * 2;
 
 function Point(x, y) {
-	this.x = x;
-	this.y = y;
+	var point = this;
+	point.x = x;
+	point.y = y;
 }
 Point.prototype.toString = function() {
 	return "{"+this.x+", "+this.y+"}";
@@ -56,8 +57,9 @@ Point.fromEvent = function(event) {
 };
 
 function Size(w, h) {
-	this.w = w;
-	this.h = h;
+	var size = this;
+	size.w = w;
+	size.h = h;
 }
 Size.prototype.toString = function() {
 	return "{"+this.w+", "+this.h+"}";
@@ -98,10 +100,11 @@ Size.fromElement = function(element) {
 Size.zero = new Size(0, 0);
 
 function Rect(o, s) {
+	var rect = this;
 	if(!(o instanceof Point)) throw "Invalid origin";
 	if(!(s instanceof Size)) throw "Invalid size";
-	this.o = o;
-	this.s = s;
+	rect.o = o;
+	rect.s = s;
 }
 Rect.prototype.toString = function() {
 	return "{"+this.o+", "+this.s+"}";
@@ -110,12 +113,13 @@ Rect.prototype.inset = function(size) {
 	return new Rect(this.o.offset(size), this.s.difference(size));
 };
 Rect.make = function(x, y, w, h) {
-	return new this(new Point(x, y), new Size(w, h));
+	return new Rect(new Point(x, y), new Size(w, h));
 };
 
 function Vector(dir, mag) {
-	this.dir = dir;
-	this.mag = mag;
+	var vect = this;
+	vect.dir = dir;
+	vect.mag = mag;
 }
 Vector.prototype.toString = function() {
 	return "{"+this.dir+", "+this.mag+"}";

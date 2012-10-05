@@ -43,19 +43,19 @@ function ThumbnailItem(browser, node) {
 	item.node = node;
 	item.folder = null;
 	item.onload = null;
-	item.image.onload = function() {
+	item["image"].onload = function() {
 		if(item.onload) item.onload();
 	};
-	item.image.onerror = function() {
+	item["image"].onerror = function() {
 		DOM.classify(item.element, "preview", false);
-		item.image.onload = null;
-		item.image.onerror = null; // TODO: Make sure this is okay.
-		item.image.src = config.thumbErrorURL;
+		item["image"].onload = null;
+		item["image"].onerror = null; // TODO: Make sure this is okay.
+		item["image"].src = config.thumbErrorURL;
 		if(item.onload) item.onload();
 	};
-	item.image.src = item.node.thumbURL;
+	item["image"].src = item.node.thumbURL;
 	if(!item.node.imageURL) DOM.classify(item.element, "preview", false);
-	DOM.fill(item.title, item.node.name);
+	DOM.fill(item["title"], item.node.name);
 }
 function ThumbnailFolder(browser, node) {
 	var folder = this;
@@ -64,7 +64,7 @@ function ThumbnailFolder(browser, node) {
 	folder.node = node;
 	folder.itemByName = {};
 	folder.selectedItem = null;
-	DOM.fill(folder.title, folder.node.displayablePath(" ▸ "));
+	DOM.fill(folder["title"], folder.node.displayablePath(" ▸ "));
 	// TODO: Show loading indicator.
 	folder.node.load(function() {
 		bt.map(folder.node.items, function(child) {
@@ -76,7 +76,7 @@ function ThumbnailFolder(browser, node) {
 					if(folder.browser.onclose) folder.browser.onclose(event);
 				}
 			};
-			folder.thumbnails.appendChild(item.element);
+			folder["thumbnails"].appendChild(item.element);
 		});
 		folder.browser.scrollView.reflow();
 	});

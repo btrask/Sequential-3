@@ -92,11 +92,11 @@ Node.prototype.load = function(callback) {
 };
 Node.prototype._update = function(obj) {
 	var node = this;
-	node.name = obj.name;
-	node.imageURL = obj.imageURL;
-	node.thumbURL = obj.thumbURL;
-	node.indexURL = obj.indexURL;
-	if(obj.items) node._updateItems(obj.items);
+	node.name = obj["name"];
+	node.imageURL = obj["imageURL"];
+	node.thumbURL = obj["thumbURL"];
+	node.indexURL = obj["indexURL"];
+	if(obj["items"]) node._updateItems(obj["items"]);
 };
 Node.prototype._updateItems = function(items) {
 	var node = this;
@@ -105,14 +105,14 @@ Node.prototype._updateItems = function(items) {
 	node.items = [];
 	node.itemByName = {};
 	for(var i = 0; i < items.length; ++i) {
-		if(bt.hasOwnProperty(old, items[i].name)) {
-			item = old[items[i].name];
+		if(bt.hasOwnProperty(old, items[i]["name"])) {
+			item = old[items[i]["name"]];
 		} else {
 			item = new Node(node.index, node);
 		}
 		item._update(items[i]);
 		node.items.push(item);
-		node.itemByName[item.name] = item;
+		node.itemByName[item["name"]] = item;
 	}
 	node.items.sort(Node.compare);
 };
@@ -129,29 +129,29 @@ Node.prototype.show = function(callback/* (err, element, rescale(scaler)) */) {
 	if(!node.viewable()) return callback({});
 	var elems = {};
 	var element = DOM.clone("image", elems);
-	elems.image.onload = function() {
-		var originalSize = new Size(elems.image.width, elems.image.height);
+	elems["image"].onload = function() {
+		var originalSize = new Size(elems["image"].width, elems["image"].height);
 		if(callback) callback(null, element, function rescale(scaler) {
-			var size = scaler.scaledSize(originalSize, Size.fromElement(element).difference(Size.fromElement(elems.area)));
-			elems.image.width = size.w;
-			elems.image.height = size.h;
+			var size = scaler.scaledSize(originalSize, Size.fromElement(element).difference(Size.fromElement(elems["area"])));
+			elems["image"].width = size.w;
+			elems["image"].height = size.h;
 		});
 	};
-	elems.image.onerror = function() {
+	elems["image"].onerror = function() {
 		// TODO: Do something.
 	};
-	elems.image.src = node.imageURL;
-	elems.options._onclick = function(event) {
+	elems["image"].src = node.imageURL;
+	elems["options"]._onclick = function(event) {
 		node.index.showOptions();
 	};
-	elems.browse._onclick = function(event) {
+	elems["browse"]._onclick = function(event) {
 		node.index.showThumbnailBrowser();
 	};
-	DOM.fill(elems.title, node.name);
-	DOM.fill(elems.options, "Options");
-	DOM.fill(elems.browse, "Browse"); // TODO: Localize.
+	DOM.fill(elems["title"], node.name);
+	DOM.fill(elems["options"], "Options");
+	DOM.fill(elems["browse"], "Browse"); // TODO: Localize.
 	node.index.root.pageCount(1, function(count) {
-		DOM.classify(elems.browse, "disabled", count <= 1);
+		DOM.classify(elems["browse"], "disabled", count <= 1);
 	});
 };
 Node.compare = function(a, b) {
