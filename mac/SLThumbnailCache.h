@@ -61,5 +61,6 @@ typedef struct {
 @interface NSFileManager(SLRequiredForThumbnailCache) // Defined by BTFileManager.
 
 - (NSImage *)iconForPath:(NSString *const)path;
+- (NSData *)contentsAtPath:(NSString *const)path options:(NSDataReadingOptions const)readOptionsMask error:(out NSError **const)outError;
 
 @end

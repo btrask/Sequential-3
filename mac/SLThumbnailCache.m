@@ -39,7 +39,20 @@ static NSString *SLExtensionForFileType(NSBitmapImageFileType const t)
 	return nil;
 }
 
+static NSOperationQueue *SLThumbnailQueue = nil;
+
 @implementation SLThumbnailCache
+
+#pragma mark +SLThumbnailCache
+
++ (void)initialize
+{
+	if(!SLThumbnailQueue) {
+		SLThumbnailQueue = [[NSOperationQueue alloc] init];
+		[SLThumbnailQueue setName:[NSString stringWithFormat:@"%@.SLThumbnailQueue", [[NSBundle mainBundle] bundleIdentifier]];
+		[SLThumbnailQueue setMaxConcurrentOperationCount:[[NSProcessInfo processInfo] processorCount] * 2]; // <http://www.mikeash.com/pyblog/friday-qa-2009-09-25-gcd-practicum.html>
+	}
+}
 
 #pragma mark -SLThumbnailCache
 
@@ -102,17 +115,25 @@ static NSString *SLExtensionForFileType(NSBitmapImageFileType const t)
 }
 - (NSData *)thumbnailDataForPath:(NSString *const)path fileManager:(NSFileManager *const)fileManager
 {
-	NSImage *const image = [self imageForPath:path fileManager:fileManager];
-	if(!image) return nil;
-	NSImageRep *const srcRep = [image bestRepresentationForRect:NSZeroRect context:nil hints:nil];
-	NSSize const src = NSMakeSize([srcRep pixelsWide], [srcRep pixelsHigh]);
-	CGFloat const scale = MIN(1.0, MIN((CGFloat)_thumbnailSize.width / src.width, (CGFloat)_thumbnailSize.height / src.height));
-	NSSize const dst = NSMakeSize(round(src.width * scale), round(src.height * scale));
-	[image setSize:dst];
-	[image lockFocusOnRepresentation:srcRep];
-	NSBitmapImageRep *const dstRep = [[[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0, 0, dst.width, dst.height)] autorelease];
-	[image unlockFocus];
-	return [dstRep representationUsingType:_fileType properties:_properties];
+	__block NSData *result = nil;
+	NSOperation *const op = [NSBlockOperation blockOperationWithBlock:^ {
+		NSAutoreleasePool *const pool = [[NSAutoreleasePool alloc] init];
+		NSImage *const image = [self imageForPath:path fileManager:fileManager];
+		if(!image) return;
+		NSImageRep *const srcRep = [image bestRepresentationForRect:NSZeroRect context:nil hints:nil];
+		NSSize const src = NSMakeSize([srcRep pixelsWide], [srcRep pixelsHigh]);
+		CGFloat const scale = MIN(1.0, MIN((CGFloat)_thumbnailSize.width / src.width, (CGFloat)_thumbnailSize.height / src.height));
+		NSSize const dst = NSMakeSize(round(src.width * scale), round(src.height * scale));
+		[image setSize:dst];
+		[image lockFocusOnRepresentation:srcRep];
+		NSBitmapImageRep *const dstRep = [[[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0, 0, dst.width, dst.height)] autorelease];
+		[image unlockFocus];
+		result = [[dstRep representationUsingType:_fileType properties:_properties] retain];
+		[pool drain];
+	}];
+	[SLThumbnailQueue addOperation:op];
+	[op waitUntilFinished];
+	return [result autorelease];
 }
 
 #pragma mark SLThumbnailCache(SLAbstract)
@@ -140,7 +161,7 @@ static NSString *SLExtensionForFileType(NSBitmapImageFileType const t)
 
 - (NSImage *)imageForPath:(NSString *const)path fileManager:(NSFileManager *const)fileManager
 {
-	return [[[NSImage alloc] initWithData:[fileManager contentsAtPath:path]] autorelease];
+	return [[[NSImage alloc] initWithData:[fileManager contentsAtPath:path options:NSDataReadingUncached error:NULL]] autorelease];
 }
 
 @end

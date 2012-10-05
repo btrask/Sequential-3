@@ -240,19 +240,7 @@ static BOOL BTIsArchivePath(NSString *const path)
 }
 - (NSData *)contentsAtPath:(NSString *)path
 {
-	if(![super fileExistsAtPath:path]) { // Might be faster to just call -contentsOfDirectory… right away, and check if it fails.
-		BTFileNode *const node = [self _nodeForPath:path];
-		BTArchive *const archive = [node archive];
-		[archive lock];
-		CSHandle *const handle = [[archive parser] handleForEntryWithDictionary:[node infoDictionary] wantChecksum:NO error:NULL];
-		NSData *const data = [handle remainingFileContents];
-		[archive unlock];
-		return data;
-//	} else if([self _isArchivePath:path]) {
-//		return nil;
-	} else {
-		return [super contentsAtPath:path];
-	}
+	return [self contentsAtPath:path options:kNilOptions error:NULL];
 }
 - (BOOL)fileExistsAtPath:(NSString *const)path
 {
@@ -300,6 +288,22 @@ static BOOL BTIsArchivePath(NSString *const path)
 		if(!data) return NO;
 		BTErrno(write(socket, [data bytes], [data length]));
 		return YES;
+	}
+}
+- (NSData *)contentsAtPath:(NSString *const)path options:(NSDataReadingOptions const)readOptionsMask error:(out NSError **const)outError
+{
+	if(![super fileExistsAtPath:path]) { // Might be faster to just call -contentsOfDirectory… right away, and check if it fails.
+		BTFileNode *const node = [self _nodeForPath:path];
+		BTArchive *const archive = [node archive];
+		[archive lock];
+		CSHandle *const handle = [[archive parser] handleForEntryWithDictionary:[node infoDictionary] wantChecksum:NO error:NULL];
+		NSData *const data = [handle remainingFileContents];
+		[archive unlock];
+		return data;
+//	} else if([self _isArchivePath:path]) {
+//		return nil;
+	} else {
+		return [super contentsAtPath:path options:readOptionsMask error:outError];
 	}
 }
 
@@ -540,6 +544,10 @@ static BOOL BTIsArchivePath(NSString *const path)
 	BTErrno(sendfile(fd, socket, 0, &len, NULL, 0));
 	(void)close(fd);
 	return YES;
+}
+- (NSData *)contentsAtPath:(NSString *const)path options:(NSDataReadingOptions const)readOptionsMask error:(out NSError **const)outError
+{
+	return [NSData dataWithContentsOfFile:path options:readOptionsMask error:outError];
 }
 
 @end

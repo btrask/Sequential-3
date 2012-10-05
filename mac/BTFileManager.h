@@ -24,6 +24,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 - (BOOL)isVisibleAtPath:(NSString *const)path;
 - (NSImage *)iconForPath:(NSString *const)path;
 - (BOOL)sendFileAtPath:(NSString *const)path toSocket:(int const)socket;
+- (NSData *)contentsAtPath:(NSString *const)path options:(NSDataReadingOptions const)readOptionsMask error:(out NSError **const)outError;
 
 @end
 
