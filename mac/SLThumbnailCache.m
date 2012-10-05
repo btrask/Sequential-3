@@ -49,7 +49,7 @@ static NSOperationQueue *SLThumbnailQueue = nil;
 {
 	if(!SLThumbnailQueue) {
 		SLThumbnailQueue = [[NSOperationQueue alloc] init];
-		[SLThumbnailQueue setName:[NSString stringWithFormat:@"%@.SLThumbnailQueue", [[NSBundle mainBundle] bundleIdentifier]];
+		[SLThumbnailQueue setName:[NSString stringWithFormat:@"%@.SLThumbnailQueue", [[NSBundle mainBundle] bundleIdentifier]]];
 		[SLThumbnailQueue setMaxConcurrentOperationCount:[[NSProcessInfo processInfo] processorCount] * 2]; // <http://www.mikeash.com/pyblog/friday-qa-2009-09-25-gcd-practicum.html>
 	}
 }
