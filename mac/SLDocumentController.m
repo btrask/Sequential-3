@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 NSString *const SLShowOpenPanelOnLaunchKey = @"SLShowOpenPanelOnLaunch";
 NSString *const SLPreferredBrowserBundleIdentifierKey = @"SLPreferredBrowserBundleIdentifier";
+NSString *const SLBlockRemoteConnectionsKey = @"SLBlockRemoteConnections";
 NSString *const SLPortKey = @"SLPort";
 
 static NSString *SLHostName(void)
@@ -41,6 +42,12 @@ static NSString *SLHostName(void)
 	return host;
 }
 
+@interface SLDocumentController(Private)
+
+- (void)_restartServer;
+
+@end
+
 @implementation SLDocumentController
 
 #pragma mark +NSObject
@@ -51,6 +58,7 @@ static NSString *SLHostName(void)
 	NSUserDefaults *const d = [NSUserDefaults standardUserDefaults];
 	[d registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithBool:YES], SLShowOpenPanelOnLaunchKey,
+		[NSNumber numberWithBool:YES], SLBlockRemoteConnectionsKey,
 		[NSNumber numberWithUnsignedShort:9001], SLPortKey,
 		nil]];
 }
@@ -100,10 +108,19 @@ static NSString *SLHostName(void)
 {
 	NSString *const hash = [_dispatcher hashForPath:path persistent:YES];
 	if(!hash) return NO;
-	NSURL *const URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@:%lu/id/%@/", SLHostName(), (unsigned long)[[[NSUserDefaults standardUserDefaults] objectForKey:SLPortKey] unsignedShortValue], hash]];
+	NSURL *const URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:%lu/id/%@/", (unsigned long)[[[NSUserDefaults standardUserDefaults] objectForKey:SLPortKey] unsignedShortValue], hash]];
 	if(!URL) return NO;
 	[self noteNewRecentDocumentURL:[NSURL fileURLWithPath:path]];
 	return [[NSWorkspace sharedWorkspace] openURLs:[NSArray arrayWithObject:URL] withAppBundleIdentifier:[[NSUserDefaults standardUserDefaults] objectForKey:SLPreferredBrowserBundleIdentifierKey] options:NSWorkspaceLaunchDefault additionalEventParamDescriptor:nil launchIdentifiers:NULL];
+}
+
+#pragma mark -SLDocumentController(Private)
+
+- (void)_restartServer
+{
+	NSUserDefaults *const d = [NSUserDefaults standardUserDefaults];
+	[_server close];
+	[_server listenOnPort:[[d objectForKey:SLPortKey] unsignedShortValue] address:[[d objectForKey:SLBlockRemoteConnectionsKey] boolValue] ? INADDR_LOOPBACK : INADDR_ANY];
 }
 
 #pragma mark -NSDocumentController
@@ -132,11 +149,9 @@ static NSString *SLHostName(void)
 	[_server addListener:@"request" block:^(SLHTTPRequest *const req, SLHTTPResponse *const res) {
 		[_dispatcher serveReq:req res:res];
 	}];
-	[_server listenOnPort:[[[NSUserDefaults standardUserDefaults] objectForKey:SLPortKey] unsignedShortValue]];
-	(void)[[NSNotificationCenter defaultCenter] addObserverForName:SLPortKey object:[NSUserDefaults standardUserDefaults] queue:nil usingBlock:^(NSNotification *const notif) {
-		[_server close];
-		[_server listenOnPort:[[[NSUserDefaults standardUserDefaults] objectForKey:SLPortKey] unsignedShortValue]];
-	}];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_restartServer) name:SLPortKey object:[NSUserDefaults standardUserDefaults]];
+	[[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:SLBlockRemoteConnectionsKey options:kNilOptions context:NULL];
+	[self _restartServer];
 
 	[[NSAppleEventManager sharedAppleEventManager] setEventHandler:self andSelector:@selector(handleGetURLEvent:withReplyEvent:) forEventClass:kInternetEventClass andEventID:kAEGetURL];
 
@@ -148,6 +163,14 @@ static NSString *SLHostName(void)
 	[_server release];
 	[_dispatcher release];
 	[super dealloc];
+}
+
+#pragma mark -NSObject(NSKeyValueObserving)
+
+- (void)observeValueForKeyPath:(NSString *const)keyPath ofObject:(id const)object change:(NSDictionary *const)change context:(void *const)context
+{
+	if(BTEqualObjects(SLBlockRemoteConnectionsKey, keyPath)) return [self _restartServer];
+	[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 }
 
 #pragma mark -NSObject(NSMenuValidation)

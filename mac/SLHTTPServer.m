@@ -274,7 +274,7 @@ static void SLAccept(CFSocketRef const s, CFSocketCallBackType const type, NSDat
 
 #pragma mark -SLHTTPServer
 
-- (void)listenOnPort:(in_port_t const)port
+- (void)listenOnPort:(in_port_t const)port address:(in_addr_t const)address
 {
 	NSAssert(!_socket, @"Already listening");
 
@@ -288,27 +288,32 @@ static void SLAccept(CFSocketRef const s, CFSocketCallBackType const type, NSDat
 	int const yes = YES;
 	setsockopt(CFSocketGetNative(_socket), SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
 
-	struct sockaddr_in const address = {
-		.sin_len = sizeof(address),
+	struct sockaddr_in const addr = {
+		.sin_len = sizeof(addr),
 		.sin_family = AF_INET,
 		.sin_port = htons(port),
 		.sin_addr = {
-			.s_addr = htonl(INADDR_ANY),
+			.s_addr = htonl(address),
 		},
 	};
-	NSData *const addressData = [NSData dataWithBytes:&address length:sizeof(address)];
-	CFSocketSetAddress(_socket, (CFDataRef)addressData);
+	NSData *const addrData = [NSData dataWithBytes:&addr length:sizeof(addr)];
+	CFSocketSetAddress(_socket, (CFDataRef)addrData);
 
 	_source = CFSocketCreateRunLoopSource(kCFAllocatorDefault, _socket, 0);
 	CFRunLoopAddSource(CFRunLoopGetCurrent(), _source, kCFRunLoopCommonModes);
 }
 - (void)close
 {
-	CFRunLoopSourceInvalidate(_source);
-	CFRelease(_source);
-	_source = NULL;
-	CFRelease(_socket);
-	_socket = NULL;
+	if(_source) {
+		CFRunLoopSourceInvalidate(_source);
+		CFRelease(_source);
+		_source = NULL;
+	}
+	if(_socket) {
+		CFSocketInvalidate(_socket);
+		CFRelease(_socket);
+		_socket = NULL;
+	}
 }
 
 #pragma mark -SLHTTPServer
@@ -357,15 +362,7 @@ static void SLAccept(CFSocketRef const s, CFSocketCallBackType const type, NSDat
 
 - (void)dealloc
 {
-	[_handler release];
-	if(_source) {
-		CFRunLoopSourceInvalidate(_source);
-		CFRelease(_source);
-	}
-	if(_socket) {
-		CFSocketInvalidate(_socket);
-		CFRelease(_socket);
-	}
+	[self close];
 	[super dealloc];
 }
 

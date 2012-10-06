@@ -80,12 +80,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 @interface SLHTTPServer : SLEventEmitter // Emits request(SLHTTPRequest *, SLHTTPResponse *).
 {
 	@private
-	void (^_handler)(SLHTTPRequest *const req, SLHTTPResponse *const res);
 	CFSocketRef _socket;
 	CFRunLoopSourceRef _source;
 }
 
-- (void)listenOnPort:(in_port_t const)port;
+- (void)listenOnPort:(in_port_t const)port address:(in_addr_t const)address;
 - (void)close;
 
 @end
