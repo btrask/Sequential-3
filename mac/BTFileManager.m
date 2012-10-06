@@ -23,7 +23,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #import <sys/socket.h>
 #import <XADMaster/XADArchiveParser.h>
 #import <XADMaster/CSMemoryHandle.h>
-#import "ECVReadWriteLock.h"
 #import "BTErrno.h"
 
 static NSSet *BTArchiveExtensions = nil;
