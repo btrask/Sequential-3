@@ -21,8 +21,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 #import "BTFileManager.h"
 #import <sys/socket.h>
-#import <XADMaster/XADArchiveParser.h>
-#import <XADMaster/CSMemoryHandle.h>
+#import "XADMaster/XADArchiveParser.h"
+#import "XADMaster/CSMemoryHandle.h"
 #import "BTErrno.h"
 
 static NSSet *BTArchiveExtensions = nil;

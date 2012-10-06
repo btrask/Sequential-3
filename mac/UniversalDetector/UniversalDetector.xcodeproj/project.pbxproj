@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1B0DDC750A2CDD2E0009B697 /* UniversalDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B0DDC730A2CDD2D0009B697 /* UniversalDetector.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1B0DDC750A2CDD2E0009B697 /* UniversalDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B0DDC730A2CDD2D0009B697 /* UniversalDetector.h */; settings = {ATTRIBUTES = (); }; };
 		1B0DDC760A2CDD2E0009B697 /* UniversalDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0DDC740A2CDD2E0009B697 /* UniversalDetector.m */; };
 		1B0DDCB20A2D0B240009B697 /* DetectorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0DDCB10A2D0B240009B697 /* DetectorTest.m */; };
 		1B0DDCB30A2D0B2E0009B697 /* UniversalDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* UniversalDetector.framework */; };
