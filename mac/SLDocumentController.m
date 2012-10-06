@@ -81,6 +81,10 @@ static NSString *SLHostName(void)
 	NSError *error = nil;
 	if(![_dispatcher clearThumbnailCacheError:&error]) (void)[[NSAlert alertWithError:error] runModal];
 }
+- (IBAction)openLicense:(id)sender
+{
+	(void)[[NSWorkspace sharedWorkspace] openFile:[[NSBundle mainBundle] pathForResource:@"LICENSE" ofType:@""]]; // TODO: Better display method than opening TextEdit or the default editor?
+}
 
 #pragma mark -
 

@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 - (IBAction)showPreferences:(id)sender;
 - (IBAction)invalidateAllURLs:(id)sender;
 - (IBAction)clearThumbnailCache:(id)sender;
+- (IBAction)openLicense:(id)sender;
 
 - (void)handleGetURLEvent:(NSAppleEventDescriptor *const)event withReplyEvent:(NSAppleEventDescriptor *const)replyEvent;
 

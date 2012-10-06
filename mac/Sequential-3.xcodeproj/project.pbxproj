@@ -25,6 +25,7 @@
 		B59C3E0915A1E5EE00E08EEB /* SLMIMETypes.plist in Resources */ = {isa = PBXBuildFile; fileRef = B59C3E0815A1E5EE00E08EEB /* SLMIMETypes.plist */; };
 		B59C403A15A2868300E08EEB /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B59C403915A2868300E08EEB /* libcrypto.dylib */; };
 		B59C412815A3AA2600E08EEB /* ECVReadWriteLock.m in Sources */ = {isa = PBXBuildFile; fileRef = B59C412715A3AA2600E08EEB /* ECVReadWriteLock.m */; };
+		B59F1E1A1620DF1E00E9B3D5 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = B59F1E191620DF1E00E9B3D5 /* LICENSE */; };
 		B5BB005215C7CBBC00A901EC /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5BB001815C7CB8500A901EC /* XADMaster.framework */; };
 		B5BB006215C7CBDC00A901EC /* UniversalDetector.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = B5BB005B15C7CBD200A901EC /* UniversalDetector.framework */; };
 		B5BB00E415C7FC1D00A901EC /* XADMaster.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = B5BB001815C7CB8500A901EC /* XADMaster.framework */; };
@@ -219,6 +220,7 @@
 		B59C403915A2868300E08EEB /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = /usr/lib/libcrypto.dylib; sourceTree = "<absolute>"; };
 		B59C412615A3AA2600E08EEB /* ECVReadWriteLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECVReadWriteLock.h; sourceTree = "<group>"; };
 		B59C412715A3AA2600E08EEB /* ECVReadWriteLock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECVReadWriteLock.m; sourceTree = "<group>"; };
+		B59F1E191620DF1E00E9B3D5 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		B5BB000615C7CB8500A901EC /* XADMaster.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = XADMaster.xcodeproj; path = XADMaster/XADMaster.xcodeproj; sourceTree = "<group>"; };
 		B5BB005315C7CBD200A901EC /* UniversalDetector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UniversalDetector.xcodeproj; path = UniversalDetector/UniversalDetector.xcodeproj; sourceTree = "<group>"; };
 		B5D6C78515C076BF00F19CC5 /* SLAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAdditions.h; sourceTree = "<group>"; };
@@ -327,6 +329,7 @@
 				8D15AC360486D014006FF6A4 /* SLInfo.plist */,
 				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
 				B59C3E0815A1E5EE00E08EEB /* SLMIMETypes.plist */,
+				B59F1E191620DF1E00E9B3D5 /* LICENSE */,
 				B50CA36315A10631000389EA /* SLMenu.xib */,
 				B53B513315A42A79001F3306 /* SLPreferences.xib */,
 				B53B51AA15A437E0001F3306 /* Sequential.icns */,
@@ -590,6 +593,7 @@
 				B59C3E0915A1E5EE00E08EEB /* SLMIMETypes.plist in Resources */,
 				B53B513415A42A79001F3306 /* SLPreferences.xib in Resources */,
 				B53B51AB15A437E0001F3306 /* Sequential.icns in Resources */,
+				B59F1E1A1620DF1E00E9B3D5 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
