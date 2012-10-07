@@ -38,20 +38,20 @@ fs.readdir(DIR, function(err, items) {
 	bt.map(items, function(item, i) {
 		if(/^\./.test(item)) return;
 
-		var ext = pathModule.extname(items[i]);
+		var ext = pathModule.extname(item);
 		var encoding = "none";
 		if(".gz" === ext) {
-			ext = pathModule.extname(items[i].slice(0, -ext.length));
+			ext = pathModule.extname(item.slice(0, -ext.length));
 			encoding = "gzip";
 		}
 		var type = mime[ext.toLowerCase()] || "application/octet-stream";
 		if("text/" === type.slice(0, 5)) type += "; charset=utf-8";
 
-		fs.stat(DIR+"/"+items[i], function(err, stats) {
+		fs.stat(DIR+"/"+item, function(err, stats) {
 			var opts = {
 				"port": 443,
 				"host": config.staticDomain+".s3.amazonaws.com",
-				"path": "/"+items[i],
+				"path": "/"+item,
 				"method": "PUT",
 				"headers": {
 					"Content-Type": type,
@@ -65,7 +65,7 @@ fs.readdir(DIR, function(err, items) {
 			var req = https.request(opts, function(res) {
 				console.log(item, res.statusCode);
 			});
-			fs.createReadStream(DIR+"/"+items[i]).pipe(req);
+			fs.createReadStream(DIR+"/"+item).pipe(req);
 		});
 	});
 });
