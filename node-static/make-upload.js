@@ -38,13 +38,13 @@ fs.readdir(DIR, function(err, items) {
 	bt.map(items, function(item, i) {
 		if(/^\./.test(item)) return;
 
-		var ext = pathModule.extname(item);
+		var ext = pathModule.extname(item).toLowerCase();
 		var encoding = "none";
 		if(".gz" === ext) {
-			ext = pathModule.extname(item.slice(0, -ext.length));
+			ext = pathModule.extname(item.slice(0, -ext.length)).toLowerCase();
 			encoding = "gzip";
 		}
-		var type = mime[ext.toLowerCase()] || "application/octet-stream";
+		var type = mime[ext] || "application/octet-stream";
 		if("text/" === type.slice(0, 5)) type += "; charset=utf-8";
 
 		fs.stat(DIR+"/"+item, function(err, stats) {
