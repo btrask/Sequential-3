@@ -24,17 +24,18 @@ var proc = require("child_process");
 var zlib = require("zlib");
 var urlModule = require("url");
 var crypto = require("crypto");
+var https = require("https");
 
 var formidable = require("formidable");
-var knox = require("knox");
+var AwsSign = require("aws-sign");
 
 var bt = require("../node/bt");
 var fs = require("../node/fs+");
 var http = require("../node/http+");
 var mime = require("../node/mime");
 
-var secret = require("./secret");
 var config = require("./config");
+var signer = new AwsSign(require("./secret"));
 
 var TMP = (
 	process.env.TMP ||
@@ -44,22 +45,6 @@ var TMP = (
 	process.cwd()
 ).replace(/^(.*)\/$/, "$1");
 console.log(TMP);
-var bucket = {};
-bucket.image = knox.createClient({
-	"key": secret.key,
-	"secret": secret.secret,
-	"bucket": config.imageDomain,
-});
-bucket.thumb = knox.createClient({
-	"key": secret.key,
-	"secret": secret.secret,
-	"bucket": config.thumbDomain,
-});
-bucket.data = knox.createClient({
-	"key": secret.key,
-	"secret": secret.secret,
-	"bucket": config.dataDomain,
-});
 
 var IMAGE_EXTS = {
 	".jpeg": true,
@@ -109,6 +94,7 @@ function cleanHash(hash) {
 function treeInfo(path, callback/* (info) */) {
 	fs.stat(path, function(err, stats) {
 		function done(info) {
+			if(!info) return callback(null);
 			info.name = pathModule.basename(path);
 			info.ctime = stats.ctime;
 			info.mtime = stats.mtime;
@@ -116,7 +102,7 @@ function treeInfo(path, callback/* (info) */) {
 		}
 		if(stats.isDirectory()) return dirInfo(path, done);
 		if(!stats.size) return callback(null);
-		var ext = pathModule.extname(path);
+		var ext = pathModule.extname(path).toLowerCase();
 		if(isImageExt(ext)) return imageInfo(path, done);
 		if(isArchiveExt(ext)) return archiveInfo(path, done);
 		callback(null);
@@ -143,14 +129,28 @@ function imageInfo(path, callback/* (info) */) {
 	info.items = [];
 	fileHash(path, function(err, hash) {
 		if(err) return callback(null);
-		var ext = pathModule.extname(path);
-		var key = urlModule.parse(encodeURI("/"+hash+ext)).pathname;
+		var ext = pathModule.extname(path).toLowerCase();
+		var key = encodeURI("/"+hash+ext);
 		info.imageURL = "//"+config.imageDomain+"/"+hash+ext;
 		info.thumbURL = "//"+config.thumbDomain+"/"+hash+".jpg";
-		bucket.image.putFile(path, key, function(err, res) {
-			if(err) return callback(null);
-			if(200 !== res.statusCode) return callback(null);
-			callback(info);
+		fs.stat(path, function(err, stats) {
+			var opts = {
+				"port": 443,
+				"host": config.imageDomain+".s3.amazonaws.com",
+				"path": key,
+				"method": "PUT",
+				"headers": {
+					"Content-Type": mime[ext] || "application/octet-stream",
+					"Content-Length": stats.size,
+					"x-amz-acl": "public-read",
+				},
+			};
+			signer.sign(opts);
+			var req = https.request(opts, function(res) {
+				if(200 !== res.statusCode) return callback(null);
+				callback(info);
+			});
+			fs.createReadStream(path).pipe(req);
 		});
 	});
 }
@@ -213,12 +213,20 @@ function uploadInfo(info, callback/* (err, hash) */) {
 	var hash = randomString(14);
 	zlib.gzip(data, function(err, body) {
 		if(err) return callback(err, null);
-		var req = bucket.data.put("/"+hash+".json", {
-			"Content-Type": "text/json; charset=utf-8",
-			"Content-Length": body.length,
-			"Content-Encoding": "gzip",
-		});
-		req.addListener("response", function(res) {
+		var opts = {
+			"port": 443,
+			"host": config.dataDomain+".s3.amazonaws.com",
+			"path": "/"+hash+".json",
+			"method": "PUT",
+			"headers": {
+				"Content-Type": "text/json; charset=utf-8",
+				"Content-Length": body.length,
+				"Content-Encoding": "gzip",
+				"x-amz-acl": "public-read",
+			},
+		};
+		signer.sign(opts);
+		var req = https.request(opts, function(res) {
 			console.log("uploaded index", body.length, hash, res.statusCode);
 			if(200 === res.statusCode) return callback(null, hash);
 			callback(new Error("Index upload failed: "+res.statusCode), null);
