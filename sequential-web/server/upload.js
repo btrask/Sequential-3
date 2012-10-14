@@ -215,7 +215,9 @@ function fileHash(path, callback/* (err, hash) */) {
 }
 function uploadInfo(info, callback/* (err, hash) */) {
 	var data = new Buffer(JSON.stringify(info), "utf8");
-	var hash = randomString(14);
+	var sha1 = crypto.createHash("sha1");
+	sha1.update(data);
+	var hash = cleanHash(sha1.digest("base64"));
 	zlib.gzip(data, function(err, body) {
 		if(err) return callback(err, null);
 		var opts = {
