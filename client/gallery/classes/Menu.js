@@ -31,8 +31,8 @@ function Menu(index) {
 
 	menu.commands = new Submenu(menu, "Commands");
 	menu.navigation = new NavigationSubmenu(menu);
-	menu.scalingMode = new Submenu(menu, "Scaling Mode");
 	menu.readingDirection = new Submenu(menu, "Reading Direction");
+	menu.scalingMode = new Submenu(menu, "Scaling Mode");
 	menu.sortOrder = new Submenu(menu, "Sort Order");
 	menu.sortDirection = new Submenu(menu, "Sort Direction");
 	menu.repeat = new Submenu(menu, "Repeat");
@@ -55,17 +55,31 @@ function Menu(index) {
 		index.next(true);
 	};
 	menu.navigation["first"]._onclick = function(event) {
-		index.first(true);
+		index.last(false);
 	};
 	menu.navigation["last"]._onclick = function(event) {
-		index.first(false);
+		index.last(true);
 	};
 	menu.navigation["jumpPrevious"]._onclick = function() {};
 	menu.navigation["jumpNext"]._onclick = function() {};
 	menu.navigation["skipBefore"]._onclick = function() {};
 	menu.navigation["skipAfter"]._onclick = function() {};
-	menu.navigation["folderFirst"]._onclick = function() {};
-	menu.navigation["folderLast"]._onclick = function() {};
+	menu.navigation["folderFirst"]._onclick = function() {
+		index.folderLast(false);
+	};
+	menu.navigation["folderLast"]._onclick = function() {
+		index.folderLast(true);
+	};
+
+	function addReadingDirection(title, shortcut, readingDirection) {
+		var item = menu.readingDirection.addItem(title, shortcut, function(event, item) {
+			menu.readingDirection.selectItem(item); // FIXME: We won't need the `item` argument because calling index.setReadingDirection() should select the item for us (so that keyboard shortcuts update us too).
+			index.setReadingDirection(readingDirection);
+		});
+		if(index.scrollView.readingDirection.stringify() === readingDirection.stringify()) menu.readingDirection.selectItem(item);
+	}
+	addReadingDirection("Left to Right", "I", new ReadingDirection(true));
+	addReadingDirection("Right to Left", "O", new ReadingDirection(false));
 
 	function addScalingMode(title, shortcut, scaler) {
 		var item = menu.scalingMode.addItem(title, shortcut, function(event, item) {
@@ -80,21 +94,6 @@ function Menu(index) {
 	addScalingMode("Automatic Fit", "Shift-F", new AlmostFitScaler(index.scrollView));
 	addScalingMode("½× Size", "0", new ProportionalScaler(index.scrollView, 0.5));
 	addScalingMode("2× Size", "2", new ProportionalScaler(index.scrollView, 2));
-
-	function addReadingDirection(title, shortcut, readingDirection) {
-		var item = menu.readingDirection.addItem(title, shortcut, function(event, item) {
-			menu.readingDirection.selectItem(item); // FIXME: We wont need the `item` argument because calling index.setReadingDirection() should select the item for us (so that keyboard shortcuts update us too).
-			index.setReadingDirection(readingDirection);
-		});
-		if(index.scrollView.readingDirection.stringify() === readingDirection.stringify()) menu.readingDirection.selectItem(item);
-	}
-	function changeReadingDirection(obj) {
-		return function(event, item) {
-			menu.readingDirection.selectItem(item);
-		};
-	}
-	addReadingDirection("Left to Right", "I", new ReadingDirection(true));
-	addReadingDirection("Right to Left", "O", new ReadingDirection(false));
 
 	function changeSortOrder(obj) {
 		return function(event, item) {

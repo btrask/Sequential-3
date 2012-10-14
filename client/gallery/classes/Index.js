@@ -118,7 +118,7 @@ Index.prototype._next = function(forward, callback/* (node) */) {
 	var index = this;
 	if(forward && index.cache.next.node) return callback(index.cache.next.node);
 	function fromRoot() {
-		index.root.pageFirst(forward, true, null, callback);
+		index.root.pageLast(!forward, true, null, callback);
 	}
 	if(index.node) index.node.pageNext(forward, true, function(node) {
 		if(node) callback(node);
@@ -134,11 +134,20 @@ Index.prototype.next = function(forward) {
 		});
 	});
 };
-Index.prototype.first = function(forward) {
+Index.prototype.last = function(forward) {
 	var index = this;
 	index.async(function(done) {
-		index.root.pageFirst(forward, true, null, function(node) {
+		index.root.pageLast(forward, true, null, function(node) {
 			index.setCurrentNode(node, done);
+		});
+	});
+};
+Index.prototype.folderLast = function(forward) {
+	var index = this;
+	index.async(function(done) {
+		index.node.pageFolderLast(forward, function(node) {
+			if(node) index.setCurrentNode(node, done);
+			else done(); // TODO: Display some sort of "no more pages" alert.
 		});
 	});
 };
@@ -214,16 +223,16 @@ Index.prototype.onkeydown = function(event) {
 			return index.setScaler(new AlmostFitScaler(index.scrollView));
 
 		case index.scrollView.readingDirection.backwardKeyCode: // Shift-[
-			return index.first(true);
+			return index.last(false);
 		case index.scrollView.readingDirection.forwardKeyCode: // Shift-]
-			return index.first(false);
+			return index.last(true);
 
 		case 79: // Shift-o
 			return (config.open || function(){})();
 		case 82: // Shift-r
 			return (config.showOriginal || function(){})(index.node);
 	}
-	if(!event.shiftKey) switch(key) {
+	else switch(key) {
 		case 192: // `
 			return index.setScaler(new FitScaler(index.scrollView, "min"));
 		case 49: // 1
@@ -246,6 +255,14 @@ Index.prototype.onkeydown = function(event) {
 			return index.setReadingDirection(new ReadingDirection(true));
 		case 79: // o
 			return index.setReadingDirection(new ReadingDirection(false));
+	}
+	switch(key) {
+		case 74: // j
+			return; // TODO: Implement;
+		case 75: // k
+			return; // TODO: Implement;
+		case 76: // l
+			return index.folderLast(!event.shiftKey);
 	}
 };
 

@@ -206,27 +206,27 @@ Node.prototype.parentOutwardSearch = function(forward, child, includeChild, sear
 Node.prototype.pageNext = function(next, children, callback/* (node) */) {
 	var node = this;
 	function pageInnerOrOuter() {
-		node.pageFirst(next, false, null, function(node) {
+		node.pageLast(!next, false, null, function(node) {
 			if(node) callback(node);
 			else pageOuter(callback);
 		});
 	}
 	function pageOuter() {
 		node.parentOutwardSearch(next, node, false, function(node, callback) {
-			node.pageFirst(next, true, null, callback);
+			node.pageLast(!next, true, null, callback);
 		}, callback);
 	}
 	if(next && children) pageInnerOrOuter();
 	else pageOuter();
 };
-Node.prototype.pageFirst = function(first, includeSelf, descendentToStopAt, callback/* (node) */) {
+Node.prototype.pageLast = function(last, includeSelf, descendentToStopAt, callback/* (node) */) {
 	var node = this;
 	var i, step, result;
 	if(descendentToStopAt === node) return callback(null);
 	node.load(function() {
 		var items = node.items.slice(); // Protect from mutations.
 		var useSelf = includeSelf && node.viewable();
-		if(first) {
+		if(!last) {
 			if(useSelf) return callback(node);
 			i = 0;
 			step = 1;
@@ -236,7 +236,7 @@ Node.prototype.pageFirst = function(first, includeSelf, descendentToStopAt, call
 		}
 		asyncLoop(function(next) {
 			if(i < 0 || i >= items.length) return stop();
-			items[i].pageFirst(first, true, descendentToStopAt, function(result) {
+			items[i].pageLast(last, true, descendentToStopAt, function(result) {
 				if(result) callback(result);
 				else if(descendentToStopAt && descendentToStopAt.ancestorChildOf(node) === items[i]) callback(null);
 				else {
@@ -246,17 +246,21 @@ Node.prototype.pageFirst = function(first, includeSelf, descendentToStopAt, call
 			});
 		});
 		function stop() {
-			if(!first && useSelf) callback(node);
+			if(last && useSelf) callback(node);
 			else callback(null);
 		}
 	});
 };
-Node.prototype.pageFolderFirst = function(first, skip, callback) {
+Node.prototype.pageFolderLast = function(last, callback) {
 	var node = this;
-	node.pageFirst(first, true, null, function(other) {
-		if(other && other !== skip) return callback(other);
-		if(!node.parent) return callback(null);
-		node.parent.pageFolderFirst(first, skip, callback);
+	var ancestor = this.parent;
+	asyncLoop(function(next) {
+		if(!ancestor) return callback(null);
+		ancestor.pageLast(last, true, null, function(result) {
+			if(result !== node) return callback(result);
+			ancestor = ancestor.parent;
+			next();
+		});
 	});
 };
 Node.prototype.ancestors = function() {
