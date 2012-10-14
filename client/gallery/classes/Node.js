@@ -198,7 +198,7 @@ Node.prototype.outwardSearch = function(forward, child, includeChild, search/* (
 		});
 	});
 };
-Node.prototype.parentOutwardSearch = function(forward, child, includeChild, search/* (node) */, callback/* (node) */) {
+Node.prototype.parentOutwardSearch = function(forward, child, includeChild, search/* (node, callback (result)) */, callback/* (node) */) {
 	var node = this;
 	if(node.parent) node.parent.outwardSearch(forward, child, includeChild, search, callback);
 	else callback(null);
@@ -249,6 +249,18 @@ Node.prototype.pageLast = function(last, includeSelf, descendentToStopAt, callba
 			if(last && useSelf) callback(node);
 			else callback(null);
 		}
+	});
+};
+Node.prototype.pagePastFolder = function(past, callback) {
+	var node = this;
+	var current = node;
+	asyncLoop(function(next) {
+		current.pageNext(past, true, function(result) {
+			if(!result) return callback(null);
+			if(result.parent !== node.parent) return callback(result);
+			current = result;
+			next();
+		});
 	});
 };
 Node.prototype.pageFolderLast = function(last, callback) {

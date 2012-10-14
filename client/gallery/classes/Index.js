@@ -142,12 +142,21 @@ Index.prototype.last = function(forward) {
 		});
 	});
 };
+Index.prototype.skipPastFolder = function(forward) {
+	var index = this;
+	index.async(function(done) {
+		index.node.pagePastFolder(forward, function(node) {
+			if(node) return index.setCurrentNode(node, done);
+			done(); // TODO: Loop?
+		});
+	});
+};
 Index.prototype.folderLast = function(forward) {
 	var index = this;
 	index.async(function(done) {
 		index.node.pageFolderLast(forward, function(node) {
-			if(node) index.setCurrentNode(node, done);
-			else done(); // TODO: Display some sort of "no more pages" alert.
+			if(node) return index.setCurrentNode(node, done);
+			done(); // TODO: Display some sort of "no more pages" alert.
 		});
 	});
 };
@@ -260,7 +269,7 @@ Index.prototype.onkeydown = function(event) {
 		case 74: // j
 			return; // TODO: Implement;
 		case 75: // k
-			return; // TODO: Implement;
+			return index.skipPastFolder(!event.shiftKey);
 		case 76: // l
 			return index.folderLast(!event.shiftKey);
 	}
