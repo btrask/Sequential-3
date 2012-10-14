@@ -90,25 +90,30 @@ function asyncLoop(func/* (next) */) { // TODO: Put this somewhere too.
 function cleanHash(hash) {
 	return hash.slice(0, 14).replace(/\+/g, "-").replace(/\//g, "_");
 }
+function timestamp(date) {
+	return Math.floor(+date / 1000);
+}
 
-function treeInfo(path, callback/* (info) */) {
+function treeInfo(path, time, callback/* (info) */) {
 	fs.stat(path, function(err, stats) {
 		function done(info) {
 			if(!info) return callback(null);
 			info.name = pathModule.basename(path);
-			info.ctime = stats.ctime;
-			info.mtime = stats.mtime;
+			var ctime = timestamp(stats.ctime);
+			var mtime = timestamp(stats.mtime);
+			if(ctime < time) info.ctime = ctime;
+			if(mtime < time) info.mtime = mtime;
 			callback(info);
 		}
-		if(stats.isDirectory()) return dirInfo(path, done);
+		if(stats.isDirectory()) return dirInfo(path, time, done);
 		if(!stats.size) return callback(null);
 		var ext = pathModule.extname(path).toLowerCase();
-		if(isImageExt(ext)) return imageInfo(path, done);
-		if(isArchiveExt(ext)) return archiveInfo(path, done);
+		if(isImageExt(ext)) return imageInfo(path, time, done);
+		if(isArchiveExt(ext)) return archiveInfo(path, time, done);
 		callback(null);
 	});
 }
-function dirInfo(path, callback/* (info) */) {
+function dirInfo(path, time, callback/* (info) */) {
 	var info = {};
 	info.thumbURL = "//"+config.staticDomain+"/folder.png";
 	info.items = [];
@@ -116,7 +121,7 @@ function dirInfo(path, callback/* (info) */) {
 		if(err) return callback(null);
 		var remaining = files.length;
 		for(var i = 0; i < files.length; ++i) {
-			treeInfo(path+"/"+files[i], function(subinfo) {
+			treeInfo(path+"/"+files[i], time, function(subinfo) {
 				if(subinfo) info.items.push(subinfo);
 				if(--remaining) return;
 				callback(info);
@@ -124,7 +129,7 @@ function dirInfo(path, callback/* (info) */) {
 		}
 	});
 }
-function imageInfo(path, callback/* (info) */) {
+function imageInfo(path, time, callback/* (info) */) {
 	var info = {};
 	info.items = [];
 	fileHash(path, function(err, hash) {
@@ -154,7 +159,7 @@ function imageInfo(path, callback/* (info) */) {
 		});
 	});
 }
-function archiveInfo(path, callback/* (info) */) {
+function archiveInfo(path, time, callback/* (info) */) {
 	var hash = randomString(14);
 	var dir = TMP+"/"+hash.slice(0, 2)+"/"+hash+"/";
 	fs.mkdirRecursive(dir, function(err) {
@@ -166,7 +171,7 @@ function archiveInfo(path, callback/* (info) */) {
 		]);
 		decompressor.addListener("exit", function(code) {
 			if(0 !== code && 1 !== code) return callback(null);
-			treeInfo(dir, function(info) {
+			treeInfo(dir, time, function(info) {
 				fs.rmRecursive(dir);
 				info.name = pathModule.basename(path);
 				if(1 === info.items.length) info.items = info.items[0].items;
@@ -175,11 +180,11 @@ function archiveInfo(path, callback/* (info) */) {
 		});
 	});
 }
-function filesInfo(files, callback/* (info) */) {
+function filesInfo(files, time, callback/* (info) */) {
 	var info = {}, remaining = files.length;
 	info.items = [];
 	bt.map(files, function(file) {
-		treeInfo(file.path, function(subinfo) {
+		treeInfo(file.path, time, function(subinfo) {
 			fs.unlink(file.path);
 			if(subinfo) {
 				var name = file.name.
@@ -240,6 +245,7 @@ function upload(req, res) {
 		console.log((new Error(err)).stack);
 		res.sendMessage(500, "Internal Server Error");
 	}
+	var time = timestamp(new Date);
 	var form = new formidable.IncomingForm({
 		"keepExtensions": true,
 	});
@@ -257,7 +263,7 @@ function upload(req, res) {
 		res.writeHead(200, {
 			"Content-Type": "text/json; charset=utf-8",
 		});
-		filesInfo(files, function(info) {
+		filesInfo(files, time, function(info) {
 			if(!info) {
 				clearInterval(interval);
 				return res.end();
