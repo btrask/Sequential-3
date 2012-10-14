@@ -213,12 +213,17 @@ Index.prototype.onkeydown = function(event) {
 		case 70: // Shift-f
 			return index.setScaler(new AlmostFitScaler(index.scrollView));
 
-		case index.scrollView.readingDirection.backwardKeyCode: // [
-			return index.first(true); // TODO: Use reading direction
-		case index.scrollView.readingDirection.forwardKeyCode: // ]
-			return index.first(false); // TODO: Use reading direction
+		case index.scrollView.readingDirection.backwardKeyCode: // Shift-[
+			return index.first(true);
+		case index.scrollView.readingDirection.forwardKeyCode: // Shift-]
+			return index.first(false);
+
+		case 79: // Shift-o
+			return (config.open || function(){})();
+		case 82: // Shift-r
+			return (config.showOriginal || function(){})(index.node);
 	}
-	switch(key) {
+	if(!event.shiftKey) switch(key) {
 		case 192: // `
 			return index.setScaler(new FitScaler(index.scrollView, "min"));
 		case 49: // 1
@@ -229,9 +234,9 @@ Index.prototype.onkeydown = function(event) {
 			return index.setScaler(new ProportionalScaler(index.scrollView, 0.5));
 
 		case index.scrollView.readingDirection.backwardKeyCode: // [
-			return index.next(false); // TODO: Use reading direction
+			return index.next(false);
 		case index.scrollView.readingDirection.forwardKeyCode: // ]
-			return index.next(true); // TODO: Use reading direction
+			return index.next(true);
 
 		case 84: // t
 			return index.showThumbnailBrowser();
