@@ -267,7 +267,7 @@ static Str SLRandomString(Len length)
 	Str type = [query objectForKey:@"type"];
 	if(!type) {
 		BTFileManager *const fileManager = [root objectForKey:@"fileManager"];
-		return [res sendFile:_indexPath compressed:YES fileManager:fileManager];
+		return [res sendFile:_galleryPath compressed:YES fileManager:fileManager];
 	}
 	SEL const sel = [self next:type selector:_cmd];
 	IMPVoid const imp = [self voidMethodForSelector:sel];
@@ -365,7 +365,7 @@ static Str SLRandomString(Len length)
 {
 	if((self = [super init])) {
 		_clientPath = [[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"client"] copy];
-		_indexPath = [[_clientPath stringByAppendingPathComponent:@"index.html"] copy];
+		_galleryPath = [[_clientPath stringByAppendingPathComponent:@"gallery/index.html"] copy];
 		SLIntegerSize const thumbnailSize = {128, 128};
 		_thumbnailCache = [[SLContentThumbnailCache alloc] initWithCachePath:SLThumbnailsPath thumbnailSize:thumbnailSize fileType:NSJPEGFileType properties:[NSDictionary dictionaryWithObjectsAndKeys:
 			[NSColor blackColor], NSImageFallbackBackgroundColor,
@@ -378,7 +378,7 @@ static Str SLRandomString(Len length)
 - (void)dealloc
 {
 	[_clientPath release];
-	[_indexPath release];
+	[_galleryPath release];
 	[_thumbnailCache release];
 	[_iconCache release];
 	[super dealloc];

@@ -643,10 +643,9 @@
 		B59C3E2015A247CE00E08EEB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLIENT_BUILD_DIR = "$(CONFIGURATION_BUILD_DIR)/client";
+				BUILD_DIR = "$(CONFIGURATION_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Resources/client";
 				CLOSURE_FLAGS = "--compilation_level WHITESPACE_ONLY --formatting PRETTY_PRINT";
 				CONTENTS_FOLDER_PATH = Sequential.app/Contents;
-				INSTALL_DIR = "$(CONFIGURATION_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Resources/client";
 				PRODUCT_NAME = Client;
 			};
 			name = Debug;
@@ -654,10 +653,9 @@
 		B59C3E2115A247CE00E08EEB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLIENT_BUILD_DIR = "$(CONFIGURATION_BUILD_DIR)/client";
+				BUILD_DIR = "$(CONFIGURATION_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Resources/client";
 				CLOSURE_FLAGS = "";
 				CONTENTS_FOLDER_PATH = Sequential.app/Contents;
-				INSTALL_DIR = "$(CONFIGURATION_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Resources/client";
 				PRODUCT_NAME = Client;
 			};
 			name = Release;

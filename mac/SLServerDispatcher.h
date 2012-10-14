@@ -38,7 +38,7 @@ typedef SLHTTPResponse *const Res;
 {
 	@private
 	NSString *_clientPath;
-	NSString *_indexPath;
+	NSString *_galleryPath;
 	SLThumbnailCache *_thumbnailCache;
 	SLThumbnailCache *_iconCache;
 }

@@ -26,7 +26,5 @@ var config = {
 //	init: function() {},
 //	components: function() {},
 //	path: function(node) {},
-//	exts: [],
-//	mimes: [],
 //	thumbErrorURL: "",
 };

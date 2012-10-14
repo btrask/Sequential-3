@@ -1,76 +1,63 @@
-ifndef CLIENT_BUILD_DIR
-	#abort
-	CLIENT_BUILD_DIR := build
-endif
-ifndef INSTALL_DIR
-	#abort
-	INSTALL_DIR := install
+ifndef BUILD_DIR
+	BUILD_DIR := build
 endif
 ifndef CONFIG_PATH
-	CONFIG_PATH := config.js
+	CONFIG_PATH := gallery/config.js
 endif
 
-SCRIPTS := external/json2.js \
-           utilities/bt.js \
-           utilities/sort.js \
-           utilities/DOM.js \
-           utilities/Geometry.js \
-           classes/Uploader.js \
-           classes/Menu.js \
-           classes/ReadingDirection.js \
-           classes/Scaler.js \
-           classes/Scroller.js \
-           classes/ScrollView.js \
-           classes/Node.js \
-           classes/ThumbnailBrowser.js \
-           classes/Index.js \
-           $(CONFIG_PATH) \
-           index.js
+CLIENT_SCRIPTS := \
+	gallery/external/json2.js \
+	gallery/utilities/bt.js \
+	gallery/utilities/sort.js \
+	gallery/utilities/DOM.js \
+	gallery/utilities/Geometry.js \
+	gallery/classes/Menu.js \
+	gallery/classes/ReadingDirection.js \
+	gallery/classes/Scaler.js \
+	gallery/classes/Scroller.js \
+	gallery/classes/ScrollView.js \
+	gallery/classes/Node.js \
+	gallery/classes/ThumbnailBrowser.js \
+	gallery/classes/Index.js \
+	$(CONFIG_PATH) \
+	gallery/index.js
 
-FILES := index.html \
-         index.css \
-         index.js \
-         robots.txt \
-         favicon.ico \
-         folder.png \
-         error.png \
-         background.png
+CLIENT_FILES := \
+	robots.txt \
+	favicon.ico \
+	gallery/index.html \
+	gallery/index.css \
+	gallery/index.js \
+	gallery/folder.png \
+	gallery/error.png \
+	gallery/background.png
 
-FILES_GZ := $(addsuffix .gz,$(FILES))
+CLIENT_GZIPS := $(addsuffix .gz,$(CLIENT_FILES))
 
-all: gzip
-
-gzip: $(addprefix $(CLIENT_BUILD_DIR)/,$(FILES)) $(addprefix $(CLIENT_BUILD_DIR)/,$(FILES_GZ))
-
-install: $(addprefix $(INSTALL_DIR)/,$(FILES_GZ))
+client: $(addprefix $(BUILD_DIR)/,$(CLIENT_FILES)) $(addprefix $(BUILD_DIR)/,$(CLIENT_GZIPS))
 
 clean:
-	-rm -rf $(CLIENT_BUILD_DIR)
-	-rm -rf $(INSTALL_DIR)
+	-rm -rf $(BUILD_DIR)
 
-$(CLIENT_BUILD_DIR)/index.js: $(SCRIPTS) utilities/externs.js
+$(BUILD_DIR)/gallery/index.js: gallery/utilities/externs.js $(CLIENT_SCRIPTS)
 	-mkdir -p $(dir $@)
-	java -jar ../deps/compiler-latest/compiler.jar $(addprefix --js=,$(SCRIPTS)) --js_output_file=$@ --language_in=ECMASCRIPT5 $(CLOSURE_FLAGS) --compilation_level ADVANCED_OPTIMIZATIONS --externs utilities/externs.js
+	java -jar ../deps/compiler-latest/compiler.jar $(addprefix --js=,$(filter-out $<,$^)) --js_output_file=$@ --language_in=ECMASCRIPT5 $(CLOSURE_FLAGS) --compilation_level ADVANCED_OPTIMIZATIONS --externs $<
 
-$(CLIENT_BUILD_DIR)/%.css: %.css
+$(BUILD_DIR)/%.css: %.css
 	-mkdir -p $(dir $@)
 	cat $+ | java -jar ../deps/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar --type css --charset utf-8 -o $@
 
-$(CLIENT_BUILD_DIR)/%: %
+$(BUILD_DIR)/%: %
 	-mkdir -p $(dir $@)
 	cp -R $< $@
 
-$(CLIENT_BUILD_DIR)/%.gz: $(CLIENT_BUILD_DIR)/%
+$(BUILD_DIR)/%.gz: $(BUILD_DIR)/%
 	-mkdir -p $(dir $@)
 	gzip -nc9 $< > $@
 
-$(INSTALL_DIR)/%.gz: $(CLIENT_BUILD_DIR)/%.gz
-	-mkdir -p $(dir $@)
-	cp $< $@
-
-Debug_: install
-Release_: install
+Debug_: client
+Release_: client
 Release_clean: clean
 Debug_clean: clean
 
-.PHONY: all gzip install clean Debug_ Release_ Release_clean Debug_clean
+.PHONY: client clean Debug_ Release_ Release_clean Debug_clean

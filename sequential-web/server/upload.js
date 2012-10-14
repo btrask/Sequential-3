@@ -29,10 +29,10 @@ var https = require("https");
 var formidable = require("formidable");
 var AwsSign = require("aws-sign");
 
-var bt = require("../node/bt");
-var fs = require("../node/fs+");
-var http = require("../node/http+");
-var mime = require("../node/mime");
+var bt = require("../../node-shared/bt");
+var fs = require("../../node-shared/fs+");
+var http = require("../../node-shared/http+");
+var mime = require("../../node-shared/mime");
 
 var config = require("./config");
 var signer = new AwsSign(require("./secret"));

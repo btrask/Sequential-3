@@ -44,9 +44,6 @@ if(!config.init) config.init = function() {
 		DOM.addListener(window, "popstate", function(event) {
 			if(event && null !== event.state) index.load();
 		});
-	} else if(config.exts.length || config.mimes.length) {
-		var uploader = new Uploader(config.exts, config.mimes);
-		document.body.appendChild(uploader.element);
 	} else {
 		// TODO: Some sort of blank page thing?
 	}
@@ -66,8 +63,6 @@ if(!config.path) config.path = function(node) {
 	});
 	return encodeURI(["", state.id, state.hash].concat(components).join("/"));
 };
-if(!config.exts) config.exts = [];
-if(!config.mimes) config.mimes = [];
 if(!config.thumbErrorURL) config.thumbErrorURL = "/error.png";
 
 config.init();

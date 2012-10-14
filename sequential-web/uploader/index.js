@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /* Copyright (c) 2012, Ben Trask
 All rights reserved.
 
@@ -20,26 +19,4 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
-var fs = require("fs");
-var http = require("http");
-var urlModule = require("url");
-
-var upload = require("./upload");
-var config = require("./config");
-
-var CLIENT = __dirname+"/build";
-var INDEX = CLIENT+"/index.html";
-
-http.createServer(function(req, res) {
-	var path = urlModule.parse(req.url).pathname || "/";
-	if("/upload" === path) return upload(req, res);
-	if("/robots.txt" === path) return res.sendFile(CLIENT+path); // TODO: Enforce caching.
-	if("/favicon.ico" === path) return res.sendFile(CLIENT+path);
-	if("/" === path || "/id/" === path.slice(0, 4)) return res.sendFile(INDEX);
-	res.writeHead(301, "Moved Permanently", {
-		"Location": "//"+config.staticDomain+path+".gz",
-		// TODO: Enforce caching.
-		// TODO: Detect gzip support.
-	});
-	res.end();
-}).listen(9003);
+document.body.appendChild(new Uploader(config.exts, config.mimes).element);

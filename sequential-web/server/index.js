@@ -21,51 +21,27 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 var fs = require("fs");
-var pathModule = require("path");
-var https = require("https");
+var http = require("http");
+var urlModule = require("url");
 
-var AwsSign = require("aws-sign");
-
-var bt = require("../node/bt");
-var mime = require("../node/mime");
-
+var upload = require("./upload");
 var config = require("./config");
-var signer = new AwsSign(require("./secret"));
 
-var DIR = __dirname+"/build";
+var CLIENT = __dirname+"/../build";
+var INDEX = CLIENT+"/index.html";
+var GALLERY = CLIENT+"/gallery/index.html";
 
-fs.readdir(DIR, function(err, items) {
-	bt.map(items, function(item, i) {
-		if(/^\./.test(item)) return;
-
-		var ext = pathModule.extname(item).toLowerCase();
-		var encoding = "none";
-		if(".gz" === ext) {
-			ext = pathModule.extname(item.slice(0, -ext.length)).toLowerCase();
-			encoding = "gzip";
-		}
-		var type = mime[ext] || "application/octet-stream";
-		if("text/" === type.slice(0, 5)) type += "; charset=utf-8";
-
-		fs.stat(DIR+"/"+item, function(err, stats) {
-			var opts = {
-				"port": 443,
-				"host": config.staticDomain+".s3.amazonaws.com",
-				"path": "/"+item,
-				"method": "PUT",
-				"headers": {
-					"Content-Type": type,
-					"Content-Length": stats.size,
-					"Content-Encoding": encoding,
-					"x-amz-acl": "public-read",
-				},
-			};
-			signer.sign(opts);
-
-			var req = https.request(opts, function(res) {
-				console.log(item, res.statusCode);
-			});
-			fs.createReadStream(DIR+"/"+item).pipe(req);
-		});
+http.createServer(function(req, res) {
+	var path = urlModule.parse(req.url).pathname || "/";
+	if("/upload" === path) return upload(req, res);
+	if("/robots.txt" === path) return res.sendFile(CLIENT+path); // TODO: Enforce caching.
+	if("/favicon.ico" === path) return res.sendFile(CLIENT+path);
+	if("/" === path) return res.sendFile(INDEX);
+	if("/id/" === path.slice(0, 4)) return res.sendFile(GALLERY);
+	res.writeHead(301, "Moved Permanently", {
+		"Location": "//"+config.staticDomain+path+".gz",
+		// TODO: Enforce caching.
+		// TODO: Detect gzip support.
 	});
-});
+	res.end();
+}).listen(9003);

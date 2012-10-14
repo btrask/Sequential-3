@@ -23,9 +23,9 @@ var pathModule = require("path");
 var urlModule = require("url");
 var crypto = require("crypto");
 
-var bt = require("../node/bt");
-var fs = require("../node/fs+");
-var http = require("../node/http+");
+var bt = require("../node-shared/bt");
+var fs = require("../node-shared/fs+");
+var http = require("../node-shared/http+");
 
 var config = require("./config");
 var ThumbnailCache = require("./ThumbnailCache");
