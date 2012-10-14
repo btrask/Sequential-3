@@ -26,8 +26,8 @@ var https = require("https");
 
 var AwsSign = require("aws-sign");
 
-var bt = require("../node/bt");
-var mime = require("../node/mime");
+var bt = require("../node-shared/bt");
+var mime = require("../node-shared/mime");
 
 var config = require("./server/config");
 var signer = new AwsSign(require("./server/secret"));
@@ -56,7 +56,7 @@ function upload(root, subpath) {
 				var opts = {
 					"port": 443,
 					"host": config.staticDomain+".s3.amazonaws.com",
-					"path": "/"+subpath,
+					"path": subpath,
 					"method": "PUT",
 					"headers": {
 						"Content-Type": type,
