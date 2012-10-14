@@ -19,14 +19,10 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
-var config = {
-//	windowState: function() {},
-//	rootIndexURLFromHash: function(hash) {},
-//	rootIndexURL: function() {},
-//	init: function() {},
-//	components: function() {},
-//	path: function(node) {},
-//	thumbErrorURL: "",
-//	open: function() {},
-//	showOriginal: function(node) {},
+var config = {};
+config.open = function() {
+	window.location = "x-sequential:///open";
+};
+config.showOriginal = function(node) {
+	window.location = "x-sequential:///reveal"+config.path(node);
 };

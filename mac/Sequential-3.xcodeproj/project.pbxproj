@@ -645,6 +645,7 @@
 			buildSettings = {
 				BUILD_DIR = "$(CONFIGURATION_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Resources/client";
 				CLOSURE_FLAGS = "--compilation_level WHITESPACE_ONLY --formatting PRETTY_PRINT";
+				CONFIG_PATH = "$(PROJECT_DIR)/config.js";
 				CONTENTS_FOLDER_PATH = Sequential.app/Contents;
 				PRODUCT_NAME = Client;
 			};
@@ -654,7 +655,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_DIR = "$(CONFIGURATION_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Resources/client";
-				CLOSURE_FLAGS = "";
+				CLOSURE_FLAGS = "$(PROJECT_DIR)/config.js";
+				CONFIG_PATH = "";
 				CONTENTS_FOLDER_PATH = Sequential.app/Contents;
 				PRODUCT_NAME = Client;
 			};

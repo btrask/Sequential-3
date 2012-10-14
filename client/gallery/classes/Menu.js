@@ -29,8 +29,7 @@ function Menu(index) {
 	menu.element = menu.scrollView.element;
 	menu.content = DOM.clone("menu", menu);
 
-	menu.sequential = new Submenu(menu, "Sequential");
-	menu.file = new Submenu(menu, "File");
+	menu.commands = new Submenu(menu, "Commands");
 	menu.navigation = new NavigationSubmenu(menu);
 	menu.scalingMode = new Submenu(menu, "Scaling Mode");
 	menu.readingDirection = new Submenu(menu, "Reading Direction");
@@ -38,17 +37,16 @@ function Menu(index) {
 	menu.sortDirection = new Submenu(menu, "Sort Direction");
 	menu.repeat = new Submenu(menu, "Repeat");
 
-	menu.sequential.addItem("Open…", "Shift-O", function(event) {
-		window.location = "x-sequential:///open";
-	});
-	menu.sequential.addItem("About…", "", function() {});
-
-	menu.file.addItem("Browse…", "T", function(event) {
+	menu.commands.addItem("Browse", "T", function(event) {
 		index.showThumbnailBrowser();
 	});
-	menu.file.addItem("Reveal in Finder", "Shift-R", function(event) {
-		window.location = "x-sequential:///reveal"+index.node.encodedPath();
+	if(config.showOriginal) menu.commands.addItem("Show Original", "Shift-R", function(event) {
+		config.showOriginal(index.node);
 	});
+	if(config.open) menu.commands.addItem("Open", "Shift-O", function(event) {
+		config.open();
+	});
+	menu.commands.addItem("About", "", function() {});
 
 	menu.navigation["previous"]._onclick = function(event) {
 		index.next(false);
