@@ -19,12 +19,10 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
-function Uploader(exts, mimes) {
+function Uploader() {
 	var uploader = this;
 	var uploading = false;
 	uploader.element = DOM.clone("uploader", uploader);
-
-	uploader["input"].setAttribute("accept", mimes.join(","));
 
 	DOM.addListener(uploader["target"], "dragenter", function(event) {
 		if(!uploading) DOM.classify(uploader["droppable"], "dragging", true);
@@ -63,6 +61,18 @@ function Uploader(exts, mimes) {
 			return Math.round(s)+"B";
 		}
 		function hasValidExtension(name) {
+			var exts = [
+				".jpg", ".jpeg",
+				".png",
+				".gif",
+				".zip", ".cbz",
+				".rar", ".cbr",
+				".7z",
+				".gz",
+				".bz2", ".bzip2", ".bz",
+				".tar",
+				".gtar"
+			];
 			for(var i = 0; i < exts.length; ++i) {
 				if(exts[i] === name.slice(-exts[i].length)) return true;
 			}
