@@ -30,7 +30,7 @@ var bt = require("../node-shared/bt");
 var mime = require("../node-shared/mime");
 
 var config = require("./server/config");
-var signer = new AwsSign(require("./server/secret"));
+var signer = new AwsSign(require("./server/secret").aws);
 
 upload(__dirname+"/build", "");
 

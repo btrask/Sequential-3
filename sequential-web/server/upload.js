@@ -35,7 +35,8 @@ var http = require("../../node-shared/http+");
 var mime = require("../../node-shared/mime");
 
 var config = require("./config");
-var signer = new AwsSign(require("./secret"));
+var secret = require("./secret");
+var signer = new AwsSign(secret.aws);
 
 var TMP = (
 	process.env.TMP ||
@@ -203,6 +204,7 @@ function filesInfo(files, time, callback/* (info) */) {
 function fileHash(path, callback/* (err, hash) */) {
 	var sha1 = crypto.createHash("sha1");
 	var stream = fs.createReadStream(path);
+	sha1.update(secret.salt, "utf8");
 	stream.on("data", function(chunk) {
 		sha1.update(chunk);
 	});
@@ -216,6 +218,7 @@ function fileHash(path, callback/* (err, hash) */) {
 function uploadInfo(info, callback/* (err, hash) */) {
 	var data = new Buffer(JSON.stringify(info), "utf8");
 	var sha1 = crypto.createHash("sha1");
+	sha1.update(secret.salt, "utf8");
 	sha1.update(data);
 	var hash = cleanHash(sha1.digest("base64"));
 	zlib.gzip(data, function(err, body) {
