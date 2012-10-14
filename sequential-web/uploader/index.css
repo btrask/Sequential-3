@@ -56,6 +56,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 ul > li  { list-style: none; }
 ul > li:before { content: "• "; }
 
+.optimize-speed { image-rendering: -moz-crisp-edges; }
+
+body {
+	font-family: "Lucida Grande", sans-serif;
+	font-weight: bold;
+}
+
+.background {
+/*	background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 800, from(#8d8d8d), to(#0d0d0d)), url("/background.png"); /|* OmniWeb *|/
+	background: -moz-radial-gradient(50% 50%, circle closest-corner, #8d8d8d, #0d0d0d), url("/background.png");
+	background: -webkit-radial-gradient(50% 50%, circle closest-corner, #8d8d8d, #0d0d0d), url("/background.png");*/
+	background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 800, from(rgba(0, 0, 0, 0.0)), to(rgba(0, 0, 0, 0.8))), url("/gallery/background.png"); /* OmniWeb */
+	background: -moz-radial-gradient(50% 50%, circle closest-corner, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.8)), url("/gallery/background.png");
+	background: -webkit-radial-gradient(50% 50%, circle closest-corner, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.8)), url("/gallery/background.png");
+}
+
 .uploader {
 	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
 }
