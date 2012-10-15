@@ -49,27 +49,35 @@ function Menu(index) {
 	menu.commands.addItem("About", "", function() {});
 
 	menu.navigation["previous"]._onclick = function(event) {
+		if(menu.onclose) menu.onclose(event);
 		index.next(false);
 	};
 	menu.navigation["next"]._onclick = function(event) {
+		if(menu.onclose) menu.onclose(event);
 		index.next(true);
 	};
 	menu.navigation["first"]._onclick = function(event) {
+		if(menu.onclose) menu.onclose(event);
 		index.last(false);
 	};
 	menu.navigation["last"]._onclick = function(event) {
+		if(menu.onclose) menu.onclose(event);
 		index.last(true);
 	};
 	menu.navigation["skipPrevious"]._onclick = function() {
+		if(menu.onclose) menu.onclose(event);
 		index.skipForward(false);
 	};
 	menu.navigation["skipNext"]._onclick = function() {
+		if(menu.onclose) menu.onclose(event);
 		index.skipForward(true);
 	};
 	menu.navigation["folderFirst"]._onclick = function() {
+		if(menu.onclose) menu.onclose(event);
 		index.folderLast(false);
 	};
 	menu.navigation["folderLast"]._onclick = function() {
+		if(menu.onclose) menu.onclose(event);
 		index.folderLast(true);
 	};
 
