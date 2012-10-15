@@ -180,7 +180,7 @@ Node.prototype.pageCount = function(goal, callback/* (count) */) {
 Node.prototype.outwardSearch = function(forward, child, includeChild, search/* (node, callback (result)) */, callback/* (node) */) {
 	var node = this;
 	function continueOutward() {
-		node.parentOutwardSearch(forward, node, false, search, callback);
+		node.parentOutwardSearch(forward, search, callback);
 	}
 	node.load(function() {
 		var items = node.items.slice(); // Protect from mutations.
@@ -198,9 +198,9 @@ Node.prototype.outwardSearch = function(forward, child, includeChild, search/* (
 		});
 	});
 };
-Node.prototype.parentOutwardSearch = function(forward, child, includeChild, search/* (node, callback (result)) */, callback/* (node) */) {
+Node.prototype.parentOutwardSearch = function(forward, search/* (node, callback (result)) */, callback/* (node) */) {
 	var node = this;
-	if(node.parent) node.parent.outwardSearch(forward, child, includeChild, search, callback);
+	if(node.parent) node.parent.outwardSearch(forward, node, false, search, callback);
 	else callback(null);
 };
 Node.prototype.pageNext = function(next, children, callback/* (node) */) {
@@ -212,7 +212,7 @@ Node.prototype.pageNext = function(next, children, callback/* (node) */) {
 		});
 	}
 	function pageOuter() {
-		node.parentOutwardSearch(next, node, false, function(node, callback) {
+		node.parentOutwardSearch(next, function(node, callback) {
 			node.pageLast(!next, true, null, callback);
 		}, callback);
 	}
