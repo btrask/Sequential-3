@@ -280,7 +280,6 @@ static BOOL BTIsArchivePath(NSString *const path)
 		if(-1 == fd) return NO;
 		off_t len = 0;
 		BTErrno(sendfile(fd, socket, 0, &len, NULL, 0));
-		(void)close(fd);
 		return YES;
 	} else {
 		NSData *const data = [self contentsAtPath:path];
@@ -541,7 +540,6 @@ static BOOL BTIsArchivePath(NSString *const path)
 	if(-1 == fd) return NO;
 	off_t len = 0;
 	BTErrno(sendfile(fd, socket, 0, &len, NULL, 0));
-	(void)close(fd);
 	return YES;
 }
 - (NSData *)contentsAtPath:(NSString *const)path options:(NSDataReadingOptions const)readOptionsMask error:(out NSError **const)outError
