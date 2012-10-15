@@ -254,9 +254,10 @@ Node.prototype.pageLast = function(last, includeSelf, descendentToStopAt, callba
 Node.prototype.pageSkipForward = function(forward, callback) {
 	var node = this;
 	node.parentOutwardSearch(forward, function(searchNode, searchCallback) {
-		searchNode.pageLast(false, true, null, function(firstNode) {
-			if(!firstNode || firstNode.parent === node.parent) return searchCallback(null);
-			searchCallback(firstNode);
+		searchNode.pageLast(!forward, true, null, function(innerNode) {
+			if(!innerNode || innerNode.parent === node.parent) return searchCallback(null);
+			if(!forward && innerNode !== searchNode) return innerNode.parent.pageLast(false, true, null, searchCallback);
+			return searchCallback(innerNode);
 		});
 	}, callback);
 };
