@@ -60,13 +60,11 @@ function Menu(index) {
 	menu.navigation["last"]._onclick = function(event) {
 		index.last(true);
 	};
-	menu.navigation["jumpPrevious"]._onclick = function() {};
-	menu.navigation["jumpNext"]._onclick = function() {};
-	menu.navigation["skipBefore"]._onclick = function() {
-		index.skipPastFolder(false);
+	menu.navigation["skipPrevious"]._onclick = function() {
+		index.skipForward(false);
 	};
-	menu.navigation["skipAfter"]._onclick = function() {
-		index.skipPastFolder(true);
+	menu.navigation["skipNext"]._onclick = function() {
+		index.skipForward(true);
 	};
 	menu.navigation["folderFirst"]._onclick = function() {
 		index.folderLast(false);

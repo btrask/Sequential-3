@@ -251,17 +251,14 @@ Node.prototype.pageLast = function(last, includeSelf, descendentToStopAt, callba
 		}
 	});
 };
-Node.prototype.pagePastFolder = function(past, callback) {
+Node.prototype.pageSkipForward = function(forward, callback) {
 	var node = this;
-	var current = node;
-	asyncLoop(function(next) {
-		current.pageNext(past, true, function(result) {
-			if(!result) return callback(null);
-			if(result.parent !== node.parent) return callback(result);
-			current = result;
-			next();
+	node.parentOutwardSearch(forward, function(searchNode, searchCallback) {
+		searchNode.pageLast(false, true, null, function(firstNode) {
+			if(!firstNode || firstNode.parent === node.parent) return searchCallback(null);
+			searchCallback(firstNode);
 		});
-	});
+	}, callback);
 };
 Node.prototype.pageFolderLast = function(last, callback) {
 	var node = this;

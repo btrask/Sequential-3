@@ -142,10 +142,10 @@ Index.prototype.last = function(forward) {
 		});
 	});
 };
-Index.prototype.skipPastFolder = function(forward) {
+Index.prototype.skipForward = function(forward) {
 	var index = this;
 	index.async(function(done) {
-		index.node.pagePastFolder(forward, function(node) {
+		index.node.pageSkipForward(forward, function(node) {
 			if(node) return index.setCurrentNode(node, done);
 			done(); // TODO: Loop?
 		});
@@ -269,7 +269,7 @@ Index.prototype.onkeydown = function(event) {
 		case 74: // j
 			return; // TODO: Implement;
 		case 75: // k
-			return index.skipPastFolder(!event.shiftKey);
+			return index.skipForward(!event.shiftKey);
 		case 76: // l
 			return index.folderLast(!event.shiftKey);
 	}
