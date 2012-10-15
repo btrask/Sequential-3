@@ -43,6 +43,9 @@ function Menu(index) {
 	if(config.showOriginal) menu.commands.addItem("Show Original", "Shift-R", function(event) {
 		config.showOriginal(index.node);
 	});
+	if(config.remove) menu.commands.addItem("Remove", "Shift-Delete", function(event) {
+		config.remove(index.node);
+	});
 	if(config.open) menu.commands.addItem("Open", "Shift-O", function(event) {
 		config.open();
 	});

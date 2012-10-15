@@ -26,3 +26,6 @@ config.open = function() {
 config.showOriginal = function(node) {
 	window.location = "x-sequential:///reveal"+config.path(node);
 };
+config.remove = function(node) {
+	alert("Not implemented");
+};
