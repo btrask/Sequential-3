@@ -85,6 +85,10 @@ static Str SLRandomString(Len length)
 	free(out);
 	return str;
 }
+static void SLDicSetKeyObject(NSMutableDictionary *const dic, id const key, id const obj)
+{
+	if(obj) [dic setObject:obj forKey:key];
+}
 
 @implementation SLServerDispatcher
 
@@ -170,21 +174,21 @@ static Str SLRandomString(Len length)
 	NSDictionary *const attrs = [fileManager attributesOfItemAtPath:fullpath error:NULL];
 	Str const escaped = [(NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)subpath, NULL, NULL, kCFStringEncodingUTF8) autorelease]; // This should be on par with encodeURI() in JS.
 	NSMutableDictionary *const info = [NSMutableDictionary dictionary];
-	[info setObject:[fullpath lastPathComponent] forKey:@"name"];
-	[info setObject:SLDateToNumber([attrs objectForKey:NSFileCreationDate]) forKey:@"ctime"];
-	[info setObject:SLDateToNumber([attrs objectForKey:NSFileModificationDate]) forKey:@"mtime"];
+	SLDicSetKeyObject(info, @"name", [fullpath lastPathComponent]);
+	SLDicSetKeyObject(info, @"ctime", SLDateToNumber([attrs objectForKey:NSFileCreationDate]));
+	SLDicSetKeyObject(info, @"mtime", SLDateToNumber([attrs objectForKey:NSFileModificationDate]));
 	if(BTEqualObjects(NSFileTypeDirectory, [attrs fileType])) {
-		[info setObject:[NSString stringWithFormat:@"/id/%@%@?type=thumb", hash, escaped] forKey:@"thumbURL"];
-		if(depth) [info setObject:[self itemsForDirectoryAtHash:hash root:root subpath:subpath depth:depth fileManager:fileManager] forKey:@"items"];
-		else [info setObject:[NSString stringWithFormat:@"/id/%@%@?type=index&format=json", hash, escaped] forKey:@"indexURL"];
+		SLDicSetKeyObject(info, @"thumbURL", [NSString stringWithFormat:@"/id/%@%@?type=thumb", hash, escaped]);
+		if(depth) SLDicSetKeyObject(info, @"items", [self itemsForDirectoryAtHash:hash root:root subpath:subpath depth:depth fileManager:fileManager]);
+		else SLDicSetKeyObject(info, @"indexURL", [NSString stringWithFormat:@"/id/%@%@?type=index&format=json", hash, escaped]);
 		return info;
 	} else if(BTEqualObjects(NSFileTypeRegular, [attrs fileType])) {
 		if(!SLIsImagePath(fullpath)) {
 			return nil;
 		}
-		[info setObject:[attrs objectForKey:NSFileSize] forKey:@"size"];
-		[info setObject:[NSString stringWithFormat:@"/id/%@%@?type=image", hash, escaped] forKey:@"imageURL"];
-		[info setObject:[NSString stringWithFormat:@"/id/%@%@?type=thumb", hash, escaped] forKey:@"thumbURL"];
+		SLDicSetKeyObject(info, @"size", [attrs objectForKey:NSFileSize]);
+		SLDicSetKeyObject(info, @"imageURL", [NSString stringWithFormat:@"/id/%@%@?type=image", hash, escaped]);
+		SLDicSetKeyObject(info, @"thumbURL", [NSString stringWithFormat:@"/id/%@%@?type=thumb", hash, escaped]);
 		return info;
 	}
 	return nil;
