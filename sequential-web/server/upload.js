@@ -116,7 +116,7 @@ function treeInfo(path, time, callback/* (info) */) {
 }
 function dirInfo(path, time, callback/* (info) */) {
 	var info = {};
-	info.thumbURL = "//"+config.staticDomain+"/folder.png";
+	info.thumbURL = "//"+config.staticDomain+"/gallery/folder.png";
 	info.items = [];
 	fs.readdir(path, function(err, files) {
 		if(err) return callback(null);
