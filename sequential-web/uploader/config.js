@@ -23,7 +23,7 @@ var config = {};
 config.rootIndexURLFromHash = function(hash) {
 	return "//data.sequentialweb.com/"+hash+".json";
 };
-config.thumbErrorURL = "//static.sequentialweb.com/error.png";
+config.thumbErrorURL = "//static.sequentialweb.com/gallery/error.png";
 config.open = function() {
 	window.location = "/";
 };
