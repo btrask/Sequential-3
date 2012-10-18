@@ -63,6 +63,6 @@ if(!config.path) config.path = function(node) {
 	});
 	return encodeURI(["", state.id, state.hash].concat(components).join("/"));
 };
-if(!config.thumbErrorURL) config.thumbErrorURL = "/error.png";
+if(!config.thumbErrorURL) config.thumbErrorURL = "/gallery/error.png";
 
 config.init();
