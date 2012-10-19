@@ -44,4 +44,4 @@ http.createServer(function(req, res) {
 		// TODO: Detect gzip support.
 	});
 	res.end();
-}).listen(9003);
+}).listen(config.port);
