@@ -68,8 +68,7 @@ Index.prototype.setCurrentNode = function(node, callback) {
 	index.node = node;
 	if(node) {
 		var cache = index.cache.next;
-		function onShow(err, element, rescale) {
-			if(err) return callback(); // TODO: Handle error.
+		function onShow(element, rescale) {
 			if(index.node !== node) return callback(); // We're obsolete.
 			// TODO: Handle real cancelation.
 			index.scrollView.setContent(element, node.position || index.scrollView.homePosition(true), rescale);
@@ -84,7 +83,7 @@ Index.prototype.setCurrentNode = function(node, callback) {
 				cache.node = next;
 				if(next === node) {
 					cache.show = Array.prototype.slice.call(args);
-				} else next.show(function(err, element, rescale) {
+				} else next.show(function(element, rescale) {
 					if(cache.node !== next) return;
 					cache.show = Array.prototype.slice.call(arguments);
 				});
