@@ -72,7 +72,7 @@ function ThumbnailFolder(browser, node) {
 			item.element._onclick = function(event) {
 				folder.show(item.node);
 				if(item.node.viewable()) {
-					folder.browser.index.setCurrentNode(item.node);
+					folder.browser.index.jumpToNode(item.node);
 					if(folder.browser.onclose) folder.browser.onclose(event);
 				}
 			};

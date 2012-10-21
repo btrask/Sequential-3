@@ -43,18 +43,36 @@ function Index(indexURL) {
 }
 Index.prototype.load = function(path) {
 	var index = this;
-	index.async(function(done) {
+	index.navigate(false, function(node, callback) {
 		index.root.load(function() {
-			index.root.descendant(config.components(), function(node) {
-				if(node.viewable()) index.setCurrentNode(node, done);
-				else node.pageNext(true, true, function(node) {
-					index.setCurrentNode(node, done);
-				});
+			index.root.descendant(config.components(), function(result) {
+				if(result.viewable()) callback(result);
+				else result.pageNext(true, true, callback);
 			});
 		});
 	});
 };
-Index.prototype.setCurrentNode = function(node, callback) {
+Index.prototype.navigate = function(relative, func/* (node, callback(node)) */) {
+	var index = this;
+	if(!relative) index.queue = [];
+	index.queue.push(func);
+	if(1 !== index.queue.length) return;
+	var node = index.node;
+	index.async(function(done) {
+		asyncLoop(function(next) {
+			var func = index.queue[0];
+			func(node, function(result) {
+				var canceled = func !== index.queue[0];
+				if(canceled) return done();
+				node = result;
+				index.queue.shift();
+				if(index.queue.length) return next();
+				index._setCurrentNode(node, done);
+			});
+		});
+	});
+};
+Index.prototype._setCurrentNode = function(node, callback) {
 	var index = this;
 	callback = callback || function() {};
 	if(index.node === node) return callback();
@@ -88,49 +106,45 @@ Index.prototype.async = function(func/* (done) */) {
 		clearTimeout(timeout);
 	});
 }
-Index.prototype._next = function(forward, callback/* (node) */) {
-	var index = this;
-	function fromRoot() {
-		index.root.pageLast(!forward, true, null, callback);
-	}
-	if(index.node) index.node.pageNext(forward, true, function(node) {
-		if(node) callback(node);
-		else fromRoot();
-	});
-	else fromRoot();
-};
 Index.prototype.next = function(forward) {
 	var index = this;
-	index.async(function(done) {
-		index._next(forward, function(node) {
-			index.setCurrentNode(node, done);
+	index.navigate(true, function(node, callback) {
+		function fromRoot() {
+			index.root.pageLast(!forward, true, null, callback);
+		}
+		if(!node) fromRoot();
+		else node.pageNext(forward, true, function(result) {
+			if(result) callback(result);
+			else fromRoot();
 		});
 	});
 };
 Index.prototype.last = function(forward) {
 	var index = this;
-	index.async(function(done) {
-		index.root.pageLast(forward, true, null, function(node) {
-			index.setCurrentNode(node, done);
-		});
+	index.navigate(false, function(node, callback) {
+		index.root.pageLast(forward, true, null, callback);
 	});
 };
 Index.prototype.skipForward = function(forward) {
 	var index = this;
-	index.async(function(done) {
-		index.node.pageSkipForward(forward, function(node) {
-			if(node) return index.setCurrentNode(node, done);
-			done(); // TODO: Loop?
+	index.navigate(true, function(node, callback) {
+		node.pageSkipForward(forward, function(result) {
+			callback(result || node); // TODO: Loop?
 		});
 	});
 };
 Index.prototype.folderLast = function(forward) {
 	var index = this;
-	index.async(function(done) {
-		index.node.pageFolderLast(forward, function(node) {
-			if(node) return index.setCurrentNode(node, done);
-			done(); // TODO: Display some sort of "no more pages" alert.
+	index.navigate(true, function(node, callback) {
+		node.pageFolderLast(forward, function(result) {
+			callback(result || node); // TODO: Display some sort of "no more pages" alert.
 		});
+	});
+};
+Index.prototype.jumpToNode = function(node) {
+	var index = this;
+	index.navigate(false, function(ignored, callback) {
+		callback(node);
 	});
 };
 Index.prototype.setScaler = function(scaler) {
