@@ -45,7 +45,7 @@ var animation = {};
 			last = time;
 			req(next);
 		}
-		next(+new Date);
+		next(undefined);
 		return obj;
 	}
 	animation.clear = function(obj) {
