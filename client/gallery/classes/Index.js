@@ -215,6 +215,7 @@ Index.prototype.showThumbnailBrowser = function() {
 };
 Index.prototype.showOptions = function() {
 	var index = this;
+	if(index.menu) return;
 	index.menu = new Menu(index);
 	if(index.thumbnailBrowser) {
 		DOM.remove(index.thumbnailBrowser.element); // FIXME: This is a mess.
