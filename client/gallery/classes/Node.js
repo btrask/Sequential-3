@@ -124,35 +124,9 @@ Node.prototype.descendant = function(components, callback/* (descendant) */) {
 		node.itemByName[components[0]].descendant(components.slice(1), callback);
 	});
 };
-Node.prototype.show = function(callback/* (element, rescale(scaler)) */) {
+Node.prototype.page = function() {
 	var node = this;
-	if(!node.viewable()) return callback(null, null);
-	var elems = {};
-	var element = DOM.clone("image", elems);
-	elems["image"].onload = function() {
-		var originalSize = new Size(elems["image"].width, elems["image"].height);
-		if(callback) callback(element, function rescale(scaler) {
-			var size = scaler.scaledSize(originalSize, Size.fromElement(element).difference(Size.fromElement(elems["area"])));
-			elems["image"].width = size.w;
-			elems["image"].height = size.h;
-		});
-	};
-	elems["image"].onerror = function() {
-		// TODO: Do something.
-	};
-	elems["image"].src = node.imageURL;
-	elems["options"]._onclick = function(event) {
-		node.index.showOptions();
-	};
-	elems["browse"]._onclick = function(event) {
-		node.index.showThumbnailBrowser();
-	};
-	DOM.fill(elems["title"], node.name);
-	DOM.fill(elems["options"], "Options");
-	DOM.fill(elems["browse"], "Browse"); // TODO: Localize.
-	node.index.root.pageCount(1, function(count) {
-		DOM.classify(elems["browse"], "disabled", count <= 1);
-	});
+	return new ImagePage(node);
 };
 Node.compare = function(a, b) {
 	return sort.numericStringCompare(a.name || "", b.name || ""); // TODO: Support sort options.

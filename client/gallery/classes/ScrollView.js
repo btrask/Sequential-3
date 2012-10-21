@@ -81,9 +81,9 @@ function ScrollView() {
 	scrollView.setPosition = function(position, reset) {
 		if(position.x === scrollView.position.x && position.y === scrollView.position.y && !reset) return;
 		scrollView.position = position;
-		if(!scrollView.content) return;
-		scrollView.content.style.left = String(Math.round(scrollView.position.x)) + "px";
-		scrollView.content.style.top = String(Math.round(scrollView.position.y)) + "px";
+		if(!scrollView.page || !scrollView.page.element) return;
+		scrollView.page.element.style.left = String(Math.round(scrollView.position.x)) + "px";
+		scrollView.page.element.style.top = String(Math.round(scrollView.position.y)) + "px";
 	}
 	scrollView.scrollTo = function(position) { // Returns the clamped position.
 		scrollView.setPosition(position.clamp(scrollView.scrollableRect));
@@ -94,24 +94,21 @@ function ScrollView() {
 		return scrollView.scrollTo(scrollView.position.offset(size)).distance(oldPos);
 	};
 
-	scrollView.rescale = function(){};
 	scrollView.reflow = function() {
-		if(!scrollView.content) return;
-		scrollView.rescale(scrollView.scaler);
-		var contentSize = Size.fromElement(scrollView.content);
+		if(!scrollView.page || !scrollView.page.element) return;
+		scrollView.page.rescale(scrollView.scaler);
+		var pageSize = Size.fromElement(scrollView.page.element);
 		bounds.s = Size.fromElement(scrollView.element);
-		var center = bounds.s.scale(1 / 2).difference(contentSize.scale(1 / 2)).pointFromOrigin().clamp(new Rect(new Point(0, 0), bounds.s));
-		scrollView.scrollableRect.s = contentSize.difference(bounds.s);
+		var center = bounds.s.scale(1 / 2).difference(pageSize.scale(1 / 2)).pointFromOrigin().clamp(new Rect(new Point(0, 0), bounds.s));
+		scrollView.scrollableRect.s = pageSize.difference(bounds.s);
 		scrollView.scrollableRect.o = center.offset(scrollView.scrollableRect.s.scale(-1));
 		scrollView.setPosition(scrollView.position.clamp(scrollView.scrollableRect)); // Reclamp.
 	};
-	scrollView.setContent = function(content, position, rescale/* (scaler) */) {
-		var old = scrollView.content;
-		scrollView.content = content || null;
-		scrollView.rescale = rescale || function(){};
-		scrollView.setPosition(position || new Point(0, 0), true); // We don't need to clamp because we clamp when we reflow().
-		// TODO: Instead of accepting falsy values and converting them to {0, 0}, just reject them, I think.
-		DOM.fill(scrollView.element, content);
+	scrollView.setPage = function(page, position) {
+		var old = scrollView.page;
+		scrollView.page = page || null;
+		scrollView.setPosition(position, true); // We don't need to clamp because we clamp when we reflow().
+		DOM.fill(scrollView.element, page.element);
 		scrollView.reflow();
 	};
 
@@ -157,11 +154,11 @@ function ScrollView() {
 	(function() {
 		var optimizeTimeout = null;
 		function optimizeTemporarily() {
-			if(!scrollView.content) return;
-			DOM.classify(scrollView.content, "optimize-speed", true);
+			if(!scrollView.page || !scrollView.page.element) return;
+			DOM.classify(scrollView.page.element, "optimize-speed", true);
 			clearTimeout(optimizeTimeout)
 			optimizeTimeout = setTimeout(function() {
-				DOM.classify(scrollView.content, "optimize-speed", false);
+				DOM.classify(scrollView.page.element, "optimize-speed", false);
 			}, 1000 * 0.2);
 		}
 		DOM.addListener(document, "mousewheel", function(event) { // Sane browsers.
@@ -195,18 +192,18 @@ function ScrollView() {
 					var dist = scrollView.scrollBy(velocity.scale(scale));
 					if(dist.w || dist.h) {
 						if(!optimized) {
-							DOM.classify(scrollView.content, "optimize-speed", true);
+							DOM.classify(scrollView.page.element, "optimize-speed", true);
 							optimized = true;
 						}
 					} else {
 						if(optimized) {
-							DOM.classify(scrollView.content, "optimize-speed", false);
+							DOM.classify(scrollView.page.element, "optimize-speed", false);
 							optimized = false;
 						}
 					}
 				});
 			} else if(!busy && scrolling) {
-				DOM.classify(scrollView.content, "optimize-speed", false);
+				DOM.classify(scrollView.page.element, "optimize-speed", false);
 				optimized = false;
 				animation.clear(scrolling);
 				scrolling = null;

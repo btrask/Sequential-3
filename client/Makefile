@@ -16,6 +16,7 @@ CLIENT_SCRIPTS := \
 	gallery/classes/Scaler.js \
 	gallery/classes/Scroller.js \
 	gallery/classes/ScrollView.js \
+	gallery/classes/Page.js \
 	gallery/classes/Node.js \
 	gallery/classes/ThumbnailBrowser.js \
 	gallery/classes/Index.js \

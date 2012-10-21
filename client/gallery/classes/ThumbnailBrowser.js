@@ -30,7 +30,7 @@ function ThumbnailBrowser(index) {
 	browser.folder = new ThumbnailFolder(browser, index.root);
 	browser.content.appendChild(browser.folder.element);
 	browser.element = browser.scrollView.element;
-	browser.scrollView.setContent(browser.content);
+	browser.scrollView.setPage(new GenericPage(browser.content), new Point(0, 0));
 }
 ThumbnailBrowser.prototype.show = function(node) {
 	this.folder.show(node);

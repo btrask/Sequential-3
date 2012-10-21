@@ -135,7 +135,7 @@ function Menu(index) {
 	menu.repeat.addItem("Repeat All", "", changeRepeat(null));
 	menu.repeat.addItem("Repeat None", "", changeRepeat(null));
 
-	menu.scrollView.setContent(menu.content);
+	menu.scrollView.setPage(new GenericPage(menu.content), new Point(0, 0));
 }
 
 function Submenu(menu, title) {

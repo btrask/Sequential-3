@@ -27,12 +27,6 @@ function Index(indexURL) {
 	index.node = undefined;
 	index.thumbnailBrowser = null;
 	index.menu = null;
-	index.cache = {
-		next: {
-			node: null,
-			show: null,
-		},
-	};
 	index.scrollView = new ScrollView();
 	index.scrollView.setScaler(Scaler.parse(localStorage.getItem("scaler"), index.scrollView));
 	index.scrollView.setReadingDirection(ReadingDirection.parse(localStorage.getItem("readingDirection")));
@@ -67,30 +61,11 @@ Index.prototype.setCurrentNode = function(node, callback) {
 	if(index.node) index.node.position = index.scrollView.position;
 	index.node = node;
 	if(node) {
-		var cache = index.cache.next;
-		function onShow(element, rescale) {
-			if(index.node !== node) return callback(); // We're obsolete.
-			// TODO: Handle real cancelation.
-			index.scrollView.setContent(element, node.position || index.scrollView.homePosition(true), rescale);
+		var page = node.page();
+		page.load(function() {
+			if(page.element) index.scrollView.setPage(page, node.position || index.scrollView.homePosition(true));
 			callback();
-
-			// Clever caching.
-			var args = arguments;
-			cache.node = null;
-			cache.show = null;
-			index._next(true, function(next) {
-				if(index.node !== node) return;
-				cache.node = next;
-				if(next === node) {
-					cache.show = Array.prototype.slice.call(args);
-				} else next.show(function(element, rescale) {
-					if(cache.node !== next) return;
-					cache.show = Array.prototype.slice.call(arguments);
-				});
-			});
-		}
-		if(cache.node === node && cache.show) onShow.apply(index, cache.show);
-		else node.show(onShow);
+		});
 		document.title = node.displayablePath(" ▹ ");
 		var path = config.path(node);
 		if(path !== window.location.pathname && history.pushState) history.pushState("", "", path); // For IE we can just skip calling pushState(), the URL won't change but it'll still mostly work.
@@ -98,7 +73,7 @@ Index.prototype.setCurrentNode = function(node, callback) {
 	} else {
 		// TODO: setCurrentNode(null, ...) is different from "wow, we checked everywhere and didn't find any nodes", so this code should be elsewhere.
 		document.title = "SequentialWeb (no images)";
-		index.scrollView.setContent(DOM.clone("empty"));
+		index.scrollView.setPage(new GenericPage(DOM.clone("empty")), new Point(0, 0));
 		callback();
 	}
 };
@@ -115,7 +90,6 @@ Index.prototype.async = function(func/* (done) */) {
 }
 Index.prototype._next = function(forward, callback/* (node) */) {
 	var index = this;
-	if(forward && index.cache.next.node) return callback(index.cache.next.node);
 	function fromRoot() {
 		index.root.pageLast(!forward, true, null, callback);
 	}

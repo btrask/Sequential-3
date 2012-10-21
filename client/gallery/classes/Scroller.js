@@ -33,7 +33,7 @@ function RelativeScroller(scrollView, event) {
 		velocity = vector.size();
 		if(vector.mag) {
 			if(!optimized) {
-				DOM.classify(scrollView.content, "optimize-speed", true);
+				DOM.classify(scrollView.page.element, "optimize-speed", true);
 				optimized = true;
 			}
 			clicked = false;
@@ -69,6 +69,6 @@ function RelativeScroller(scrollView, event) {
 		if(clicked) onclick(element)(event);
 		animation.clear(scrolling);
 		clearTimeout(clickTimeout);
-		DOM.classify(scrollView.content, "optimize-speed", false);
+		DOM.classify(scrollView.page.element, "optimize-speed", false);
 	};
 }
