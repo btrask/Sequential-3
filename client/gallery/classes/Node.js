@@ -159,7 +159,7 @@ Node.prototype.outwardSearch = function(forward, child, includeChild, search/* (
 	node.load(function() {
 		var items = node.items.slice(); // Protect from mutations.
 		var increment = forward ? 1 : -1;
-		var i = items.indexOf(child); // Array.prototype.indexOf dangerous on IE?
+		var i = items.indexOf(child);
 		console.assert(-1 !== i);
 		if(!includeChild) i += increment;
 		asyncLoop(function(next) {
