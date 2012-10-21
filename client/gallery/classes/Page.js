@@ -29,18 +29,19 @@ function ImagePage(node) {
 	var page = this;
 	page.node = node;
 	page.element = null;
-	page.cancel = null;
+	page.cancel = function(){};
 	page.originalSize = null;
 }
 ImagePage.prototype.load = function(callback) {
 	var page = this;
+	if(page.element) return (callback || function(){})();
 	var element = DOM.clone("image", page);
 	var image = page["image"];
 	var title = page["title"];
 	var options = page["options"];
 	var browse = page["browse"];
 	function finished() {
-		page.cancel = null;
+		page.cancel = function(){};
 		image.onload = null;
 		image.onerror = null;
 		if(callback) callback();

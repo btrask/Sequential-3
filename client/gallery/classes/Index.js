@@ -25,6 +25,11 @@ function Index(indexURL) {
 	index.root = new Node(index);
 	index.root.indexURL = indexURL;
 	index.node = undefined;
+	index.page = undefined;
+	index.cache = {
+		node: null,
+		page: null,
+	};
 	index.thumbnailBrowser = null;
 	index.menu = null;
 	index.scrollView = new ScrollView();
@@ -77,18 +82,34 @@ Index.prototype._setCurrentNode = function(node, callback) {
 	callback = callback || function() {};
 	if(index.node === node) return callback();
 	if(index.node) index.node.position = index.scrollView.position;
+	if(index.page) index.page.cancel();
 	index.node = node;
 	if(node) {
-		var page = node.page();
-		page.load(function() {
-			if(page.element) index.scrollView.setPage(page, node.position || index.scrollView.homePosition(true));
+		if(index.cache.page && index.cache.page.node === node) {
+			index.page = index.cache.page;
+		} else {
+			index.page = node.page();
+		}
+		index.cache.node = null;
+		index.cache.page = null;
+
+		index.page.load(function() {
+			if(index.page.element) index.scrollView.setPage(index.page, node.position || index.scrollView.homePosition(true));
 			callback();
+
+			index._next(true, index.node, function(result) {
+				if(index.node !== node) return;
+				index.cache.node = result;
+				index.cache.page = result.page();
+				index.cache.page.load();
+			});
 		});
 		document.title = node.displayablePath(" ▹ ");
 		var path = config.path(node);
 		if(path !== window.location.pathname && history.pushState) history.pushState("", "", path); // For IE we can just skip calling pushState(), the URL won't change but it'll still mostly work.
 		if(index.thumbnailBrowser) index.thumbnailBrowser.show(node);
 	} else {
+		index.page = null;
 		// TODO: setCurrentNode(null, ...) is different from "wow, we checked everywhere and didn't find any nodes", so this code should be elsewhere.
 		document.title = "SequentialWeb (no images)";
 		index.scrollView.setPage(new GenericPage(DOM.clone("empty")), new Point(0, 0));
@@ -106,17 +127,22 @@ Index.prototype.async = function(func/* (done) */) {
 		clearTimeout(timeout);
 	});
 }
+Index.prototype._next = function(forward, node, callback) {
+	var index = this;
+	if(forward && node === index.node && index.cache.node) return callback(index.cache.node);
+	function fromRoot() {
+		index.root.pageLast(!forward, true, null, callback);
+	}
+	if(!node) fromRoot();
+	else node.pageNext(forward, true, function(result) {
+		if(result) callback(result);
+		else fromRoot();
+	});
+};
 Index.prototype.next = function(forward) {
 	var index = this;
 	index.navigate(true, function(node, callback) {
-		function fromRoot() {
-			index.root.pageLast(!forward, true, null, callback);
-		}
-		if(!node) fromRoot();
-		else node.pageNext(forward, true, function(result) {
-			if(result) callback(result);
-			else fromRoot();
-		});
+		index._next(forward, node, callback);
 	});
 };
 Index.prototype.last = function(forward) {
