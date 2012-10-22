@@ -8,12 +8,10 @@ endif
 CLIENT_SCRIPTS := \
 	gallery/external/json2.js \
 	gallery/external/indexOf.js \
-	gallery/external/mousetrap.js \
 	gallery/utilities/bt.js \
 	gallery/utilities/sort.js \
 	gallery/utilities/DOM.js \
 	gallery/utilities/Geometry.js \
-	gallery/utilities/Mousewrap.js \
 	gallery/classes/Menu.js \
 	gallery/classes/ReadingDirection.js \
 	gallery/classes/Scaler.js \
