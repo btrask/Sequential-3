@@ -13,6 +13,7 @@ CLIENT_SCRIPTS := \
 	gallery/utilities/sort.js \
 	gallery/utilities/DOM.js \
 	gallery/utilities/Geometry.js \
+	gallery/utilities/Mousewrap.js \
 	gallery/classes/Menu.js \
 	gallery/classes/ReadingDirection.js \
 	gallery/classes/Scaler.js \
