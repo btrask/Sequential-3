@@ -28,13 +28,13 @@ function keyEvent(event) {
 	var e = event || window.event;
 	var keyCode = e.keyCode || e.which;
 	return {
-		"charCode": null,
-		"keyCode": keyCode,
-		"shiftKey": e.shiftKey,
-		"metaKey": e.metaKey,
-		"ctrlKey": e.ctrlKey,
-		"altKey": e.altKey,
-		"numberPad": 3 === e.keyLocation || (keyCode >= NUMBER_PAD_0 && keyCode <= NUMBER_PAD_ASTERISK)
+		charCode: null,
+		keyCode: keyCode,
+		shiftKey: e.shiftKey,
+		metaKey: e.metaKey,
+		ctrlKey: e.ctrlKey,
+		altKey: e.altKey,
+		numberPad: 3 === e.keyLocation || (keyCode >= NUMBER_PAD_0 && keyCode <= NUMBER_PAD_ASTERISK)
 	};
 }
 function has(a, b) {
@@ -71,6 +71,7 @@ listen("keydown", function(event) {
 	var key = pendingKey = keyEvent(event);
 	setTimeout(function() {
 		pendingKey = null;
+		console.log(key.charCode ? String.fromCharCode(key.charCode) : null, key.keyCode);
 		emit(listeners, "keydown", key);
 	}, 0);
 });

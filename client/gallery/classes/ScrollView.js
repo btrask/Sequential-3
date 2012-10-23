@@ -110,6 +110,8 @@ function ScrollView() {
 	KBD.bind("=", 187, function(e) {
 		//if(!e.shiftKey); // TODO: Implement.
 	});
+
+	scrollView.registerShortcuts();
 	scrollView.registerScrollShortcuts();
 	scrollView.registerScrollWheel();
 }
@@ -186,6 +188,50 @@ ScrollView.prototype.animator = function() {
 	};
 };
 
+ScrollView.prototype.registerShortcuts = function() {
+	var scrollView = this;
+
+	KBD.bind(null, 36, function(e) { // Home
+		scrollView.scrollTo(scrollView.homePosition(true));
+	});
+	KBD.bind(null, 33, function(e) { // Page Up
+		scrollView.scrollBy(new Size(0, 100)); // TODO: Get the right page distance.
+	});
+	KBD.bind(null, 34, function(e) { // Page Down
+		scrollView.scrollBy(new Size(0, -100)); // TODO: Get the right page distance.
+	});
+	KBD.bind(null, 35, function(e) { // End
+		scrollView.scrollTo(scrollView.homePosition(false));
+	});
+
+	KBD.bind("1", 97, function(e) {
+		if(e.numberPad) scrollView.scrollBy(new Size(100, -100));
+	});
+	KBD.bind("2", 98, function(e) {
+		if(e.numberPad) scrollView.scrollBy(new Size(0, -100));
+	});
+	KBD.bind("3", 99, function(e) {
+		if(e.numberPad) scrollView.scrollBy(new Size(-100, -100));
+	});
+	KBD.bind("4", 100, function(e) {
+		if(e.numberPad) scrollView.scrollBy(new Size(100, 0));
+	});
+	KBD.bind("5", 101, function(e) {
+		if(e.numberPad) scrollView.scrollBy(new Size(0, -100));
+	});
+	KBD.bind("6", 102, function(e) {
+		if(e.numberPad) scrollView.scrollBy(new Size(-100, 0));
+	});
+	KBD.bind("7", 103, function(e) {
+		if(e.numberPad) scrollView.scrollBy(new Size(100, 100));
+	});
+	KBD.bind("8", 104, function(e) {
+		if(e.numberPad) scrollView.scrollBy(new Size(0, 100));
+	});
+	KBD.bind("9", 105, function(e) {
+		if(e.numberPad) scrollView.scrollBy(new Size(-100, 100));
+	});
+};
 ScrollView.prototype.registerScrollShortcuts = function() {
 	var scrollView = this;
 	var scrollDirectionByKeyCode = {};
