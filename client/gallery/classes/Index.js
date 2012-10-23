@@ -42,9 +42,7 @@ function Index(indexURL) {
 		index.next(forward);
 	};
 	index.element.appendChild(index.scrollView.element);
-	DOM.addListener(document, "keydown", function(event) {
-		index.onkeydown(event);
-	});
+	index.registerShortcuts();
 }
 Index.prototype.load = function(path) {
 	var index = this;
@@ -231,69 +229,78 @@ Index.prototype.showOptions = function() {
 		index.menu = null;
 	};
 };
-Index.prototype.onkeydown = function(event) {
+Index.prototype.registerShortcuts = function() {
 	var index = this;
-	var key = event.keyCode || event.which;
-	if(event.metaKey) return;
-	if(event.shiftKey) switch(key) {
-		case 65: // Shift-a
-			return index.setScaler(new ProportionalScaler(index.scrollView, 1));
-		case 83: // Shift-s
-			return index.setScaler(new FitScaler(index.scrollView, "min"));
-		case 68: // Shift-d
-			return index.setScaler(new FitScaler(index.scrollView, "max"));
-		case 70: // Shift-f
-			return index.setScaler(new AlmostFitScaler(index.scrollView));
+	KBD.bind("A", 65, function(e) {
+		if(e.shiftKey) index.setScaler(new ProportionalScaler(index.scrollView, 1));
+	});
+	KBD.bind("S", 83, function(e) {
+		if(e.shiftKey) index.setScaler(new FitScaler(index.scrollView, "min"));
+	});
+	KBD.bind("D", 68, function(e) {
+		if(e.shiftKey) index.setScaler(new FitScaler(index.scrollView, "max"));
+	});
+	KBD.bind("F", 70, function(e) {
+		if(e.shiftKey) index.setScaler(new AlmostFitScaler(index.scrollView));
+	});
 
-		case index.scrollView.readingDirection.backwardKeyCode: // Shift-[
-			return index.last(false);
-		case index.scrollView.readingDirection.forwardKeyCode: // Shift-]
-			return index.last(true);
+	KBD.bind("{", 219, function(e) {
+		if(e.shiftKey) index.last(index.scrollView.readingDirection.rtl);
+	});
+	KBD.bind("}", 221, function(e) {
+		if(e.shiftKey) index.last(index.scrollView.readingDirection.ltr);
+	});
 
-		case 79: // Shift-o
-			return (config.open || function(){})();
-		case 82: // Shift-r
-			return (config.showOriginal || function(){})(index.node);
-	}
-	else switch(key) {
-		case 192: // `
-			return index.setScaler(new FitScaler(index.scrollView, "min"));
-		case 49: // 1
-			return index.setScaler(new ProportionalScaler(index.scrollView, 1));
-		case 50: // 2
-			return index.setScaler(new ProportionalScaler(index.scrollView, 2));
-		case 48: // 0
-			return index.setScaler(new ProportionalScaler(index.scrollView, 0.5));
+	KBD.bind("O", 79, function(e) {
+		if(e.shiftKey && config.open) config.open();
+	});
+	KBD.bind("R", 82, function(e) {
+		if(e.shiftKey && config.showOriginal) config.showOriginal(index.node);
+	});
 
-		case index.scrollView.readingDirection.backwardKeyCode: // [
-			return index.next(false);
-		case index.scrollView.readingDirection.forwardKeyCode: // ]
-			return index.next(true);
+	KBD.bind("`", 192, function(e) {
+		if(!e.shiftKey) index.setScaler(new FitScaler(index.scrollView, "min"));
+	});
+	KBD.bind("1", 49, function(e) {
+		if(!e.shiftKey && !e.numberPad) index.setScaler(new ProportionalScaler(index.scrollView, 1));
+	});
+	KBD.bind("2", 50, function(e) {
+		if(!e.shiftKey && !e.numberPad) index.setScaler(new ProportionalScaler(index.scrollView, 2));
+	});
+	KBD.bind("0", 48, function(e) {
+		if(!e.shiftKey && !e.numberPad) index.setScaler(new ProportionalScaler(index.scrollView, 0.5));
+	});
 
-		case 84: // t
-			return index.showThumbnailBrowser();
-		case 77: // m
-			return index.showOptions();
-		case 73: // i
-			return index.setReadingDirection(new ReadingDirection(true));
-		case 79: // o
-			return index.setReadingDirection(new ReadingDirection(false));
-	}
-	switch(key) {
-		case 74: // j
-			return; // TODO: Implement;
-		case 75: // k
-			return index.skipForward(!event.shiftKey);
-		case 76: // l
-			return index.folderLast(!event.shiftKey);
-	}
+	KBD.bind("[", 219, function(e) {
+		if(!e.shiftKey) index.next(index.scrollView.readingDirection.rtl);
+	});
+	KBD.bind("]", 221, function(e) {
+		if(!e.shiftKey) index.next(index.scrollView.readingDirection.ltr);
+	});
+
+	KBD.bind("m", 84, function(e) {
+		if(!e.shiftKey) index.showThumbnailBrowser();
+	});
+	KBD.bind("t", 77, function(e) {
+		if(!e.shiftKey) index.showOptions();
+	});
+	KBD.bind("i", 73, function(e) {
+		if(!e.shiftKey) index.setReadingDirection(new ReadingDirection(true));
+	});
+	KBD.bind("o", 79, function(e) {
+		if(!e.shiftKey) index.setReadingDirection(new ReadingDirection(false));
+	});
+
+	KBD.bind("k", 75, function(e) {
+		if(!e.shiftKey) index.skipForward(true);
+	});
+	KBD.bind("l", 76, function(e) {
+		if(!e.shiftKey) index.folderLast(true);
+	});
+	KBD.bind("K", 75, function(e) {
+		if(e.shiftKey) index.skipForward(false);
+	});
+	KBD.bind("L", 76, function(e) {
+		if(e.shiftKey) index.folderLast(false);
+	});
 };
-
-
-
-
-
-
-
-
-
