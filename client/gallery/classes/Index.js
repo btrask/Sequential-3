@@ -278,10 +278,10 @@ Index.prototype.registerShortcuts = function() {
 		if(!e.shiftKey) index.next(index.scrollView.readingDirection.ltr);
 	});
 
-	KBD.bind("m", 84, function(e) {
+	KBD.bind("t", 84, function(e) {
 		if(!e.shiftKey) index.showThumbnailBrowser();
 	});
-	KBD.bind("t", 77, function(e) {
+	KBD.bind("m", 77, function(e) {
 		if(!e.shiftKey) index.showOptions();
 	});
 	KBD.bind("i", 73, function(e) {
