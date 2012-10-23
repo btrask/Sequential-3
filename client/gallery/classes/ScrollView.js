@@ -57,7 +57,6 @@ var animation = {};
 function ScrollView() {
 	var scrollView = this;
 	var bounds = Rect.make(0, 0, 0, 0);
-	var busy = false;
 
 	scrollView.animationCount = 0;
 
@@ -130,24 +129,24 @@ function ScrollView() {
 		return false;
 	});
 	DOM.addListener(scrollView.element, "mousedown", function(firstEvent) {
-		if(!busy && scrollView.active) {
-			var scroller = new scrollView.scroller(scrollView, firstEvent);
-			busy = true;
-			var onmousemove, onmouseup;
-			DOM.addListener(document, "mousemove", onmousemove = function(event) {
-				scroller.update(Point.fromEvent(event));
-				event.preventDefault();
-				return false;
-			});
-			DOM.addListener(document, "mouseup", onmouseup = function(event) {
-				busy = false;
-				DOM.removeListener(document, "mousemove", onmousemove);
-				DOM.removeListener(document, "mouseup", onmouseup);
-				scroller.end();
-				event.preventDefault();
-				return false;
-			});
+		if(!scrollView.active) {
+			event.preventDefault();
+			return false;
 		}
+		var scroller = new scrollView.scroller(scrollView, firstEvent);
+		var onmousemove, onmouseup;
+		DOM.addListener(document, "mousemove", onmousemove = function(event) {
+			scroller.update(Point.fromEvent(event));
+			event.preventDefault();
+			return false;
+		});
+		DOM.addListener(document, "mouseup", onmouseup = function(event) {
+			DOM.removeListener(document, "mousemove", onmousemove);
+			DOM.removeListener(document, "mouseup", onmouseup);
+			scroller.end();
+			event.preventDefault();
+			return false;
+		});
 		firstEvent.preventDefault();
 		return false;
 	});
