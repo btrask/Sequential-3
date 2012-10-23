@@ -56,62 +56,23 @@ var animation = {};
 
 function ScrollView() {
 	var scrollView = this;
+
+	scrollView.element = DOM.clone("scrollView", scrollView);
+
 	scrollView.bounds = Rect.make(0, 0, 0, 0);
-	scrollView.animationCount = 0;
-
-	scrollView.scaler = new AlmostFitScaler(scrollView);
-	scrollView.setScaler = function(scaler) {
-		scrollView.scaler = scaler;
-		scrollView.reflow();
-	};
-	scrollView.readingDirection = new ReadingDirection(true);
-	scrollView.setReadingDirection = function(readingDirection) {
-		scrollView.readingDirection = readingDirection;
-		readingDirection.classify(scrollView.element);
-//		scrollView.element.setAttribute("dir", readingDirection.ltr ? "ltr" : "rtl");
-	};
-	scrollView.homePosition = function(home) {
-		return scrollView.readingDirection.size.scale(home ? Infinity : -Infinity).pointFromOrigin();
-	};
-
-	scrollView.scroller = RelativeScroller; // TODO: Configurable.
-
 	scrollView.scrollableRect = Rect.make(0, 0, 0, 0);
 	scrollView.position = new Point(0, 0);
-	scrollView.setPosition = function(position, reset) {
-		if(position.x === scrollView.position.x && position.y === scrollView.position.y && !reset) return;
-		scrollView.position = position;
-		if(!scrollView.page || !scrollView.page.element) return;
-		scrollView.page.element.style.left = String(Math.round(scrollView.position.x)) + "px";
-		scrollView.page.element.style.top = String(Math.round(scrollView.position.y)) + "px";
-	}
-	scrollView.scrollTo = function(position) { // Returns the clamped position.
-		scrollView.setPosition(position.clamp(scrollView.scrollableRect));
-		return scrollView.position;
-	};
-	scrollView.scrollBy = function(size) { // Returns the clamped size.
-		var oldPos = scrollView.position;
-		return scrollView.scrollTo(scrollView.position.offset(size)).distance(oldPos);
-	};
+	scrollView.page = null;
 
-	scrollView.setPage = function(page, position) {
-		var old = scrollView.page;
-		scrollView.page = page || null;
-		scrollView.setPosition(position, true); // We don't need to clamp because we clamp when we reflow().
-		DOM.fill(scrollView.element, page.element);
-		scrollView.reflow();
-	};
-
+	scrollView.scroller = RelativeScroller; // TODO: Configurable.
 	scrollView.active = true;
-	scrollView.setActive = function(flag) {
-		scrollView.active = Boolean(flag);
-		DOM.classify(scrollView.element, "inactive", !scrollView.active);
-	};
+	scrollView.scaler = new AlmostFitScaler(scrollView);
+	scrollView.readingDirection = new ReadingDirection(true);
+	scrollView.animationCount = 0;
 
 	DOM.addListener(window, "resize", function() {
 		scrollView.reflow();
 	});
-	scrollView.element = DOM.clone("scrollView", scrollView);
 	DOM.addListener(scrollView.element, "contextmenu", function(event) {
 //		var props = [];
 //		for(var x in event) props.push(x+"="+event[x]);
@@ -152,6 +113,7 @@ function ScrollView() {
 	scrollView.registerScrollShortcuts();
 	scrollView.registerScrollWheel();
 }
+
 ScrollView.prototype.reflow = function() {
 	var scrollView = this;
 	if(!scrollView.page || !scrollView.page.element) return;
@@ -162,6 +124,54 @@ ScrollView.prototype.reflow = function() {
 	scrollView.scrollableRect.s = pageSize.difference(scrollView.bounds.s);
 	scrollView.scrollableRect.o = center.offset(scrollView.scrollableRect.s.scale(-1));
 	scrollView.setPosition(scrollView.position.clamp(scrollView.scrollableRect)); // Reclamp.
+};
+
+ScrollView.prototype.setPosition = function(position, reset) {
+	var scrollView = this;
+	if(position.x === scrollView.position.x && position.y === scrollView.position.y && !reset) return;
+	scrollView.position = position;
+	if(!scrollView.page || !scrollView.page.element) return;
+	scrollView.page.element.style.left = String(Math.round(scrollView.position.x)) + "px";
+	scrollView.page.element.style.top = String(Math.round(scrollView.position.y)) + "px";
+}
+ScrollView.prototype.scrollTo = function(position) { // Returns the clamped position.
+	var scrollView = this;
+	scrollView.setPosition(position.clamp(scrollView.scrollableRect));
+	return scrollView.position;
+};
+ScrollView.prototype.scrollBy = function(size) { // Returns the clamped size.
+	var scrollView = this;
+	var oldPos = scrollView.position;
+	return scrollView.scrollTo(scrollView.position.offset(size)).distance(oldPos);
+};
+ScrollView.prototype.homePosition = function(home) {
+	var scrollView = this;
+	return scrollView.readingDirection.size.scale(home ? Infinity : -Infinity).pointFromOrigin();
+};
+ScrollView.prototype.setPage = function(page, position) {
+	var scrollView = this;
+	var old = scrollView.page;
+	scrollView.page = page || null;
+	scrollView.setPosition(position, true); // We don't need to clamp because we clamp when we reflow().
+	DOM.fill(scrollView.element, page.element);
+	scrollView.reflow();
+};
+
+ScrollView.prototype.setActive = function(flag) {
+	var scrollView = this;
+	scrollView.active = Boolean(flag);
+	DOM.classify(scrollView.element, "inactive", !scrollView.active);
+};
+ScrollView.prototype.setScaler = function(scaler) {
+	var scrollView = this;
+	scrollView.scaler = scaler;
+	scrollView.reflow();
+};
+ScrollView.prototype.setReadingDirection = function(readingDirection) {
+	var scrollView = this;
+	scrollView.readingDirection = readingDirection;
+	readingDirection.classify(scrollView.element);
+//	scrollView.element.setAttribute("dir", readingDirection.ltr ? "ltr" : "rtl");
 };
 ScrollView.prototype.animator = function() {
 	var scrollView = this;
@@ -175,6 +185,7 @@ ScrollView.prototype.animator = function() {
 		DOM.classify(scrollView.page.element, "optimize-speed", flag);
 	};
 };
+
 ScrollView.prototype.registerScrollShortcuts = function() {
 	var scrollView = this;
 	var scrollDirectionByKeyCode = {};
