@@ -115,6 +115,7 @@ function ScrollView() {
 	scrollView.registerScrollShortcuts();
 	scrollView.registerScrollWheel();
 }
+ScrollView.pageSizeRatio = 0.85;
 
 ScrollView.prototype.reflow = function() {
 	var scrollView = this;
@@ -149,6 +150,10 @@ ScrollView.prototype.scrollBy = function(size) { // Returns the clamped size.
 ScrollView.prototype.homePosition = function(home) {
 	var scrollView = this;
 	return scrollView.readingDirection.size.scale(home ? Infinity : -Infinity).pointFromOrigin();
+};
+ScrollView.prototype.pageSize = function(direction) {
+	var scrollView = this;
+	return scrollView.bounds.s.scale(ScrollView.pageSizeRatio).product(direction);
 };
 ScrollView.prototype.setPage = function(page, position) {
 	var scrollView = this;
@@ -195,41 +200,41 @@ ScrollView.prototype.registerShortcuts = function() {
 		scrollView.scrollTo(scrollView.homePosition(true));
 	});
 	KBD.bind(null, 33, function(e) { // Page Up
-		scrollView.scrollBy(new Size(0, 100)); // TODO: Get the right page distance.
+		scrollView.scrollBy(scrollView.pageSize(new Size(0, 1)));
 	});
 	KBD.bind(null, 34, function(e) { // Page Down
-		scrollView.scrollBy(new Size(0, -100)); // TODO: Get the right page distance.
+		scrollView.scrollBy(scrollView.pageSize(new Size(0, -1)));
 	});
 	KBD.bind(null, 35, function(e) { // End
 		scrollView.scrollTo(scrollView.homePosition(false));
 	});
 
 	KBD.bind("1", 97, function(e) {
-		if(e.numberPad) scrollView.scrollBy(new Size(100, -100));
+		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(1, -1)));
 	});
 	KBD.bind("2", 98, function(e) {
-		if(e.numberPad) scrollView.scrollBy(new Size(0, -100));
+		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(0, -1)));
 	});
 	KBD.bind("3", 99, function(e) {
-		if(e.numberPad) scrollView.scrollBy(new Size(-100, -100));
+		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(-1, -1)));
 	});
 	KBD.bind("4", 100, function(e) {
-		if(e.numberPad) scrollView.scrollBy(new Size(100, 0));
+		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(1, 0)));
 	});
 	KBD.bind("5", 101, function(e) {
-		if(e.numberPad) scrollView.scrollBy(new Size(0, -100));
+		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(0, -1)));
 	});
 	KBD.bind("6", 102, function(e) {
-		if(e.numberPad) scrollView.scrollBy(new Size(-100, 0));
+		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(-1, 0)));
 	});
 	KBD.bind("7", 103, function(e) {
-		if(e.numberPad) scrollView.scrollBy(new Size(100, 100));
+		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(1, 1)));
 	});
 	KBD.bind("8", 104, function(e) {
-		if(e.numberPad) scrollView.scrollBy(new Size(0, 100));
+		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(0, 1)));
 	});
 	KBD.bind("9", 105, function(e) {
-		if(e.numberPad) scrollView.scrollBy(new Size(-100, 100));
+		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(-1, 1)));
 	});
 };
 ScrollView.prototype.registerScrollShortcuts = function() {

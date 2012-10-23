@@ -83,10 +83,9 @@ AlmostFitScaler.prototype = new Scaler();
 AlmostFitScaler.prototype.computedScale = function(size, border) {
 	var chunks = 2;
 	var overlap = 0.5;
-	var skip = 0.15;
 
 	var bounds = Size.fromElement(this.scrollView.element).difference(border || Size.zero);
-	var skipScale = bounds.scale(1 + skip).quotient(size).min();
+	var skipScale = bounds.scale(1 / ScrollView.pageSizeRatio).quotient(size).min();
 	var almostFitScale = bounds.scale(1 + (1 - overlap) * (chunks - 1)).quotient(size).min();
 	var maxOneWayScrollScale = bounds.quotient(size).max();
 	return Geometry.clampMin(skipScale, almostFitScale, maxOneWayScrollScale);
