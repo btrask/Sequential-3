@@ -152,31 +152,6 @@ function ScrollView() {
 		return false;
 	});
 
-	// TODO: We should try to use touch events instead, I think.
-	(function() {
-		var animationTimeout = null;
-		var setAnimating = scrollView.animator();
-		function animateTemporarily() {
-			if(!scrollView.page || !scrollView.page.element) return;
-			setAnimating(true);
-			clearTimeout(animationTimeout);
-			animationTimeout = setTimeout(function() {
-				setAnimating(false);
-			}, 1000 * 0.2);
-		}
-		DOM.addListener(document, "mousewheel", function(event) { // Sane browsers.
-			if(!scrollView.active) return true;
-			animateTemporarily();
-			scrollView.scrollBy(new Size(event.wheelDeltaX, event.wheelDeltaY)); // TODO: Check the resulting magnitude before optimizing.
-		});
-		DOM.addListener(document, "DOMMouseScroll", function(event) { // Gecko.
-			if(!scrollView.active) return true;
-			var size = 1 === event.axis ? new Size(event.detail, 0) : new Size(0, event.detail);
-			animateTemporarily();
-			scrollView.scrollBy(size.scale(5)); // TODO: Check the resulting magnitude before optimizing.
-		});
-	})();
-
 	// TODO: These probably belong in Index.
 	KBD.bind("-", 189, function(e) {
 		//if(!e.shiftKey); // TODO: Implement.
@@ -185,6 +160,7 @@ function ScrollView() {
 		//if(!e.shiftKey); // TODO: Implement.
 	});
 	scrollView.registerScrollShortcuts();
+	scrollView.registerScrollWheel();
 }
 ScrollView.prototype.animator = function() {
 	var scrollView = this;
@@ -245,5 +221,30 @@ ScrollView.prototype.registerScrollShortcuts = function() {
 		animation.clear(scrollTimer);
 		scrollTimer = null;
 		setAnimating(false);
+	});
+};
+ScrollView.prototype.registerScrollWheel = function() {
+	// TODO: We should try to use touch events instead, I think.
+	var scrollView = this;
+	var animationTimeout = null;
+	var setAnimating = scrollView.animator();
+	function animateTemporarily() {
+		if(!scrollView.page || !scrollView.page.element) return;
+		setAnimating(true);
+		clearTimeout(animationTimeout);
+		animationTimeout = setTimeout(function() {
+			setAnimating(false);
+		}, 1000 * 0.2);
+	}
+	DOM.addListener(document, "mousewheel", function(event) { // Sane browsers.
+		if(!scrollView.active) return true;
+		animateTemporarily();
+		scrollView.scrollBy(new Size(event.wheelDeltaX, event.wheelDeltaY)); // TODO: Check the resulting magnitude before optimizing.
+	});
+	DOM.addListener(document, "DOMMouseScroll", function(event) { // Gecko.
+		if(!scrollView.active) return true;
+		var size = 1 === event.axis ? new Size(event.detail, 0) : new Size(0, event.detail);
+		animateTemporarily();
+		scrollView.scrollBy(size.scale(5)); // TODO: Check the resulting magnitude before optimizing.
 	});
 };
