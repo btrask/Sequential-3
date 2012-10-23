@@ -56,8 +56,7 @@ var animation = {};
 
 function ScrollView() {
 	var scrollView = this;
-	var bounds = Rect.make(0, 0, 0, 0);
-
+	scrollView.bounds = Rect.make(0, 0, 0, 0);
 	scrollView.animationCount = 0;
 
 	scrollView.scaler = new AlmostFitScaler(scrollView);
@@ -95,16 +94,6 @@ function ScrollView() {
 		return scrollView.scrollTo(scrollView.position.offset(size)).distance(oldPos);
 	};
 
-	scrollView.reflow = function() {
-		if(!scrollView.page || !scrollView.page.element) return;
-		scrollView.page.rescale(scrollView.scaler);
-		var pageSize = Size.fromElement(scrollView.page.element);
-		bounds.s = Size.fromElement(scrollView.element);
-		var center = bounds.s.scale(1 / 2).difference(pageSize.scale(1 / 2)).pointFromOrigin().clamp(new Rect(new Point(0, 0), bounds.s));
-		scrollView.scrollableRect.s = pageSize.difference(bounds.s);
-		scrollView.scrollableRect.o = center.offset(scrollView.scrollableRect.s.scale(-1));
-		scrollView.setPosition(scrollView.position.clamp(scrollView.scrollableRect)); // Reclamp.
-	};
 	scrollView.setPage = function(page, position) {
 		var old = scrollView.page;
 		scrollView.page = page || null;
@@ -119,7 +108,9 @@ function ScrollView() {
 		DOM.classify(scrollView.element, "inactive", !scrollView.active);
 	};
 
-	DOM.addListener(window, "resize", scrollView.reflow);
+	DOM.addListener(window, "resize", function() {
+		scrollView.reflow();
+	});
 	scrollView.element = DOM.clone("scrollView", scrollView);
 	DOM.addListener(scrollView.element, "contextmenu", function(event) {
 //		var props = [];
@@ -161,6 +152,17 @@ function ScrollView() {
 	scrollView.registerScrollShortcuts();
 	scrollView.registerScrollWheel();
 }
+ScrollView.prototype.reflow = function() {
+	var scrollView = this;
+	if(!scrollView.page || !scrollView.page.element) return;
+	scrollView.page.rescale(scrollView.scaler);
+	var pageSize = Size.fromElement(scrollView.page.element);
+	scrollView.bounds.s = Size.fromElement(scrollView.element);
+	var center = scrollView.bounds.s.scale(1 / 2).difference(pageSize.scale(1 / 2)).pointFromOrigin().clamp(new Rect(new Point(0, 0), scrollView.bounds.s));
+	scrollView.scrollableRect.s = pageSize.difference(scrollView.bounds.s);
+	scrollView.scrollableRect.o = center.offset(scrollView.scrollableRect.s.scale(-1));
+	scrollView.setPosition(scrollView.position.clamp(scrollView.scrollableRect)); // Reclamp.
+};
 ScrollView.prototype.animator = function() {
 	var scrollView = this;
 	var animating = false;
