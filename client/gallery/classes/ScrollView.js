@@ -220,7 +220,7 @@ function ScrollView() {
 			if(!scrollView.active) return true; // TODO: When we become inactive, we should automatically release all keys.
 			if(event.metaKey) return true; // Simply ignore all Command modifiers.
 			var key = event.keyCode || event.which;
-console.log(key);
+//console.log(key);
 /*			if(!busy && !scrolling) {
 				if(handleShortcut(event, key)) {
 					event.preventDefault();
