@@ -277,10 +277,10 @@ ScrollView.prototype.registerScrollShortcuts = function() {
 		});
 	}
 	(function() { var
-	d = new Size( 0,  1); bind("w", 87, d); bind(null, 38, d);
-	d = new Size( 1,  0); bind("a", 65, d); bind(null, 37, d);
-	d = new Size( 0, -1); bind("s", 83, d); bind(null, 40, d);
-	d = new Size(-1,  0); bind("d", 68, d); bind(null, 39, d);
+	d = new Size( 0,  1); bind(null, 87, d); bind(null, 38, d); // w, up
+	d = new Size( 1,  0); bind(null, 65, d); bind(null, 37, d); // a, left
+	d = new Size( 0, -1); bind(null, 83, d); bind(null, 40, d); // s, down
+	d = new Size(-1,  0); bind(null, 68, d); bind(null, 39, d); // d, right
 	})();
 	KBD.addEventListener("keyup", function(e) {
 		if(!bt.hasOwnProperty(scrollDirectionByKeyCode, e.keyCode)) return;
