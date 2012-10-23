@@ -174,81 +174,67 @@ function ScrollView() {
 		});
 	})();
 
-	(function() {
-		var keys = {};
-		var scrolling = null;
-		var velocity = new Size(0, 0);
-		var optimized = false;
-		function updateArrowScrolling() {
-			busy = false;
-			velocity = new Size(0, 0);
-			if(bt.hasOwnProperty(keys, 38) || bt.hasOwnProperty(keys, 87)) velocity.h += 1, busy = true;
-			if(bt.hasOwnProperty(keys, 40) || bt.hasOwnProperty(keys, 83)) velocity.h -= 1, busy = true;
-			if(bt.hasOwnProperty(keys, 37) || bt.hasOwnProperty(keys, 65)) velocity.w += 1, busy = true;
-			if(bt.hasOwnProperty(keys, 39) || bt.hasOwnProperty(keys, 68)) velocity.w -= 1, busy = true;
-			velocity = velocity.scale(20);
-			if(busy && !scrolling) {
-				scrolling = animation.start(function(scale) {
-					var dist = scrollView.scrollBy(velocity.scale(scale));
-					if(dist.w || dist.h) {
-						if(!optimized) {
-							DOM.classify(scrollView.page.element, "optimize-speed", true);
-							optimized = true;
-						}
-					} else {
-						if(optimized) {
-							DOM.classify(scrollView.page.element, "optimize-speed", false);
-							optimized = false;
-						}
-					}
-				});
-			} else if(!busy && scrolling) {
-				DOM.classify(scrollView.page.element, "optimize-speed", false);
-				optimized = false;
-				animation.clear(scrolling);
-				scrolling = null;
-			}
-		}
-		function updateZooming() {
-			switch(0) { // TODO: Implement zooming shortcuts.
-				case 187: // +
-				case 189: // -
-					return false;
-			}
-		}
-		DOM.addListener(document, "keydown", function(event) {
-			if(!scrollView.active) return true; // TODO: When we become inactive, we should automatically release all keys.
-			if(event.metaKey) return true; // Simply ignore all Command modifiers.
-			var key = event.keyCode || event.which;
-//console.log(key);
-/*			if(!busy && !scrolling) {
-				if(handleShortcut(event, key)) {
-					event.preventDefault();
-					return false;
-				}
-			}*/
-			if(!busy || scrolling) {
-				if(!event.shiftKey && !bt.hasOwnProperty(keys, key)) {
-					keys[key] = true;
-					updateArrowScrolling();
-				}
-			}
-			if(busy || scrolling) {
-				event.preventDefault();
-				return false;
-			}
-		});
-		DOM.addListener(document, "keyup", function(event) {
-			var key = event.keyCode || event.which;
-			if(!busy || scrolling) {
-				if(bt.hasOwnProperty(keys, key)) {
-					delete keys[key];
-					updateArrowScrolling();
-				}
-			} else {
-				event.preventDefault();
-				return false;
-			}
-		});
-	})();
+	// TODO: These probably belong in Index.
+	KBD.bind("-", 189, function(e) {
+		//if(!e.shiftKey); // TODO: Implement.
+	});
+	KBD.bind("=", 187, function(e) {
+		//if(!e.shiftKey); // TODO: Implement.
+	});
+	scrollView.registerScrollShortcuts();
 }
+ScrollView.prototype.registerScrollShortcuts = function() {
+	var scrollView = this;
+	var scrollDirectionByKeyCode = {};
+	var scrollDirection = new Size(0, 0);
+	var scrollCount = 0;
+	var scrollTimer = null;
+
+	var optimized = false; // TODO: Make this a separate method on scrollView? Public so we can access it from Scroller too.
+	function optimize(flag) {
+		if(flag === optimized) return;
+		DOM.classify(scrollView.page.element, "optimize-speed", true);
+		optimized = flag;
+	}
+
+	function updateDirection() {
+		scrollDirection = new Size(0, 0);
+		bt.map(scrollDirectionByKeyCode, function(direction) {
+			scrollDirection.w += direction.w;
+			scrollDirection.h += direction.h;
+		});
+		scrollDirection.w = Geometry.clampMax(-1, scrollDirection.w, 1);
+		scrollDirection.h = Geometry.clampMax(-1, scrollDirection.h, 1); // TODO: We might want to add size.clamp().
+	}
+	function scrollKeyDown(event, direction) {
+		if(event.shiftKey) return;
+		if(!scrollView.active) return;
+		if(bt.hasOwnProperty(scrollDirectionByKeyCode, event.keyCode)) return;
+		scrollDirectionByKeyCode[event.keyCode] = direction;
+		updateDirection();
+		if(!scrollCount++) scrollTimer = animation.start(function(scale) {
+			var velocity = scrollView.scrollBy(scrollDirection.scale(scale * 10));
+			optimize(velocity.w || velocity.h);
+		});
+	}
+	function bind(char, keyCode, direction) {
+		KBD.bind(char, keyCode, function(event) {
+			scrollKeyDown(event, direction);
+		});
+	}
+	(function() { var
+	d = new Size( 0,  1); bind("w", 87, d); bind(null, 38, d);
+	d = new Size( 1,  0); bind("a", 65, d); bind(null, 37, d);
+	d = new Size( 0, -1); bind("s", 83, d); bind(null, 40, d);
+	d = new Size(-1,  0); bind("d", 68, d); bind(null, 39, d);
+	})();
+	KBD.addEventListener("keyup", function(e) {
+		if(!bt.hasOwnProperty(scrollDirectionByKeyCode, e.keyCode)) return;
+		delete scrollDirectionByKeyCode[e.keyCode];
+		updateDirection();
+		if(--scrollCount) return;
+		animation.clear(scrollTimer);
+		scrollTimer = null;
+		optimize(false);
+	});
+};
