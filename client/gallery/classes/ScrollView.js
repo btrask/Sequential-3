@@ -59,6 +59,8 @@ function ScrollView() {
 	var bounds = Rect.make(0, 0, 0, 0);
 	var busy = false;
 
+	scrollView.animationCount = 0;
+
 	scrollView.scaler = new AlmostFitScaler(scrollView);
 	scrollView.setScaler = function(scaler) {
 		scrollView.scaler = scaler;
@@ -152,24 +154,25 @@ function ScrollView() {
 
 	// TODO: We should try to use touch events instead, I think.
 	(function() {
-		var optimizeTimeout = null;
-		function optimizeTemporarily() {
+		var animationTimeout = null;
+		var setAnimating = scrollView.animator();
+		function animateTemporarily() {
 			if(!scrollView.page || !scrollView.page.element) return;
-			DOM.classify(scrollView.page.element, "optimize-speed", true);
-			clearTimeout(optimizeTimeout)
-			optimizeTimeout = setTimeout(function() {
-				DOM.classify(scrollView.page.element, "optimize-speed", false);
+			setAnimating(true);
+			clearTimeout(animationTimeout);
+			animationTimeout = setTimeout(function() {
+				setAnimating(false);
 			}, 1000 * 0.2);
 		}
 		DOM.addListener(document, "mousewheel", function(event) { // Sane browsers.
 			if(!scrollView.active) return true;
-			optimizeTemporarily();
+			animateTemporarily();
 			scrollView.scrollBy(new Size(event.wheelDeltaX, event.wheelDeltaY)); // TODO: Check the resulting magnitude before optimizing.
 		});
 		DOM.addListener(document, "DOMMouseScroll", function(event) { // Gecko.
 			if(!scrollView.active) return true;
 			var size = 1 === event.axis ? new Size(event.detail, 0) : new Size(0, event.detail);
-			optimizeTemporarily();
+			animateTemporarily();
 			scrollView.scrollBy(size.scale(5)); // TODO: Check the resulting magnitude before optimizing.
 		});
 	})();
@@ -183,19 +186,25 @@ function ScrollView() {
 	});
 	scrollView.registerScrollShortcuts();
 }
+ScrollView.prototype.animator = function() {
+	var scrollView = this;
+	var animating = false;
+	return function(flag) {
+		if(flag === animating) return;
+		var old = !!scrollView.animationCount;
+		animating = flag;
+		scrollView.animationCount += flag ? 1 : -1;
+		if(old === flag) return;
+		DOM.classify(scrollView.page.element, "optimize-speed", flag);
+	};
+};
 ScrollView.prototype.registerScrollShortcuts = function() {
 	var scrollView = this;
 	var scrollDirectionByKeyCode = {};
 	var scrollDirection = new Size(0, 0);
 	var scrollCount = 0;
 	var scrollTimer = null;
-
-	var optimized = false; // TODO: Make this a separate method on scrollView? Public so we can access it from Scroller too.
-	function optimize(flag) {
-		if(flag === optimized) return;
-		DOM.classify(scrollView.page.element, "optimize-speed", true);
-		optimized = flag;
-	}
+	var setAnimating = scrollView.animator();
 
 	function updateDirection() {
 		scrollDirection = new Size(0, 0);
@@ -214,7 +223,7 @@ ScrollView.prototype.registerScrollShortcuts = function() {
 		updateDirection();
 		if(!scrollCount++) scrollTimer = animation.start(function(scale) {
 			var velocity = scrollView.scrollBy(scrollDirection.scale(scale * 10));
-			optimize(velocity.w || velocity.h);
+			setAnimating(velocity.w || velocity.h);
 		});
 	}
 	function bind(char, keyCode, direction) {
@@ -235,6 +244,6 @@ ScrollView.prototype.registerScrollShortcuts = function() {
 		if(--scrollCount) return;
 		animation.clear(scrollTimer);
 		scrollTimer = null;
-		optimize(false);
+		setAnimating(false);
 	});
 };

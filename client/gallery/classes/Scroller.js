@@ -21,7 +21,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 function RelativeScroller(scrollView, event) {
 	var scroller = this;
-	var clicked = true, optimized = false;
+	var setAnimating = scrollView.animator();
+	var clicked = true;
 	var velocity = new Size(0, 0);
 	var element = event.target;
 	var firstPoint = Point.fromEvent(event);
@@ -31,13 +32,8 @@ function RelativeScroller(scrollView, event) {
 		vector.mag = Math.max(0, vector.mag - 48);
 		vector.mag /= 5; // Linear adjustment seems pretty good TBH.
 		velocity = vector.size();
-		if(vector.mag) {
-			if(!optimized) {
-				DOM.classify(scrollView.page.element, "optimize-speed", true);
-				optimized = true;
-			}
-			clicked = false;
-		}
+		if(vector.mag) clicked = false;
+		setAnimating(vector.mag);
 	}
 	var scrolling = animation.start(function(scale) {
 		var desired = velocity.scale(scale);
@@ -65,10 +61,9 @@ function RelativeScroller(scrollView, event) {
 	};
 	scroller.end = function() {
 		DOM.classify(scrollView.element, "cursor-hidden", false);
-		optimized = false;
 		if(clicked) onclick(element)(event);
 		animation.clear(scrolling);
 		clearTimeout(clickTimeout);
-		DOM.classify(scrollView.page.element, "optimize-speed", false);
+		setAnimating(false);
 	};
 }
