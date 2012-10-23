@@ -88,6 +88,9 @@ Size.prototype.max = function() {
 Size.prototype.round = function() {
 	return new Size(Math.round(this.w), Math.round(this.h));
 };
+Size.prototype.ceil = function() {
+	return new Size(Math.ceil(this.w), Math.ceil(this.h));
+};
 Size.prototype.vector = function() {
 	return new Vector(Math.atan2(this.h, this.w) / Geometry.TAU, Math.sqrt(this.w * this.w + this.h * this.h));
 };
@@ -111,6 +114,14 @@ Rect.prototype.toString = function() {
 };
 Rect.prototype.inset = function(size) {
 	return new Rect(this.o.offset(size), this.s.difference(size));
+};
+Rect.prototype.extent = function() {
+	return this.o.offset(this.s);
+};
+Rect.prototype.intersect = function(rect) {
+	var o = this.o.clamp(rect);
+	var s = this.extent().clamp(rect).distance(o);
+	return new Rect(o, s);
 };
 Rect.make = function(x, y, w, h) {
 	return new Rect(new Point(x, y), new Size(w, h));

@@ -153,7 +153,13 @@ ScrollView.prototype.homePosition = function(home) {
 };
 ScrollView.prototype.pageSize = function(direction) {
 	var scrollView = this;
-	return scrollView.bounds.s.scale(ScrollView.pageSizeRatio).product(direction);
+	var maxSize = scrollView.bounds.s.scale(ScrollView.pageSizeRatio).product(direction);
+	var remainingSize = new Rect(scrollView.position, direction.scale(Infinity)).intersect(scrollView.scrollableRect).s; // FIXME: direction.scale(Infinity) produces NaNs.
+	var steps = remainingSize.quotient(maxSize).ceil();
+	var evenSize = remainingSize.quotient(steps).ceil(); // These also produce NaNs...
+	if(isNaN(evenSize.w)) evenSize.w = 0;
+	if(isNaN(evenSize.h)) evenSize.h = 0;
+	return evenSize;
 };
 ScrollView.prototype.setPage = function(page, position) {
 	var scrollView = this;
