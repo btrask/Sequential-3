@@ -141,21 +141,19 @@ ScrollView.prototype.scrollBy = function(size) { // Returns the clamped size.
 };
 ScrollView.prototype.homePosition = function(home) {
 	var scrollView = this;
-	return scrollView.readingDirection.size.scale(home ? Infinity : -Infinity).pointFromOrigin();
+	return scrollView.readingDirection.size.scale(home ? 9e9 : -9e9).pointFromOrigin();
 };
 ScrollView.prototype.scrollDistanceInDirection = function(direction) {
 	var scrollView = this;
-	var potentialDistance = direction.scale(Infinity); // FIXME: This produces NaNs.
-	if(isNaN(potentialDistance.w)) potentialDistance.w = 0;
-	if(isNaN(potentialDistance.h)) potentialDistance.h = 0;
-	return new Rect(scrollView.position, potentialDistance).intersect(scrollView.scrollableRect).s;
+	var potentialRect = new Rect(scrollView.position, direction.scale(9e9));
+	return scrollView.scrollableRect.intersect(potentialRect).s;
 };
 ScrollView.prototype.pageDistanceInDirection = function(direction) {
 	var scrollView = this;
 	var scrollDistance = scrollView.scrollDistanceInDirection(direction);
-	var maxPageDistance = scrollView.bounds.s.scale(ScrollView.pageDistanceInDirectionRatio).product(direction);
-	var steps = scrollDistance.quotient(maxPageDistance).ceil();
-	var evenDistance = scrollDistance.quotient(steps).ceil(); // These also produce NaNs...
+	var maxPageDistance = scrollView.bounds.s.product(direction).scale(ScrollView.pageDistanceRatio);
+	var steps = scrollDistance.quotient(maxPageDistance).roundFromZero();
+	var evenDistance = scrollDistance.quotient(steps).roundFromZero(); // These also produce NaNs...
 	if(isNaN(evenDistance.w)) evenDistance.w = 0;
 	if(isNaN(evenDistance.h)) evenDistance.h = 0;
 	return evenDistance;
@@ -197,9 +195,23 @@ ScrollView.prototype.animator = function() {
 		DOM.classify(scrollView.page.element, "optimize-speed", flag);
 	};
 };
+ScrollView.prototype.smartScroll = function(forward, d1, d2) {
+	var scrollView = this;
+	var dir = scrollView.readingDirection.size;
+	var mag = forward ? -1 : 1; // FIXME: This is backwards because readingDirection.size is backwards.
+	var x = scrollView.pageDistanceInDirection(d1.product(dir).scale(mag));
+	if(x.w || x.h) return scrollView.scrollBy(x);
+	var y = scrollView.pageDistanceInDirection(d2.product(dir).scale(mag));
+	if(y.w || y.h) return scrollView.scrollBy(y.sum(d1.product(dir).scale(mag * -9e9)));
+	// TODO: Switch pages.
+};
 
 ScrollView.prototype.registerShortcuts = function() {
 	var scrollView = this;
+
+	KBD.bind({char: " ", key: 32, shift: null}, function(e) {
+		scrollView.smartScroll(!e.shift, new Size(0, 1), new Size(1, 0));
+	});
 
 	KBD.bind({key: 36}, function(e) { // Home
 		scrollView.scrollTo(scrollView.homePosition(true));

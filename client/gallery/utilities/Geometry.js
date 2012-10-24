@@ -20,6 +20,16 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 var Geometry = {};
+Geometry.clamp = function(a, val, b) {
+	if(a < b) {
+		if(val < a) return a;
+		if(val > b) return b;
+	} else {
+		if(val < b) return b;
+		if(val > a) return a;
+	}
+	return val;
+};
 Geometry.clampMax = function(min, val, max) {
 	if(min > max) return max;
 	if(val < min) return min;
@@ -31,6 +41,11 @@ Geometry.clampMin = function(min, val, max) {
 	if(val < min) return min;
 	if(val > max) return max;
 	return val;
+};
+Geometry.roundFromZero = function(x) { // <https://en.wikipedia.org/wiki/Rounding>
+	var y = Math.ceil(x);
+	if(x >= 0 || y === x) return y;
+	return y - 1;
 };
 Geometry.TAU = Math.PI * 2;
 
@@ -47,7 +62,7 @@ Point.prototype.offset = function(size) {
 };
 Point.prototype.clamp = function(rect) {
 	var x = rect.o.x, y = rect.o.y;
-	return new Point(Geometry.clampMax(x, this.x, x + rect.s.w), Geometry.clampMax(y, this.y, y + rect.s.h));
+	return new Point(Geometry.clamp(x, this.x, x + rect.s.w), Geometry.clamp(y, this.y, y + rect.s.h));
 };
 Point.prototype.distance = function(that) {
 	return new Size(this.x - that.x, this.y - that.y);
@@ -88,8 +103,8 @@ Size.prototype.max = function() {
 Size.prototype.round = function() {
 	return new Size(Math.round(this.w), Math.round(this.h));
 };
-Size.prototype.ceil = function() {
-	return new Size(Math.ceil(this.w), Math.ceil(this.h));
+Size.prototype.roundFromZero = function() {
+	return new Size(Geometry.roundFromZero(this.w), Geometry.roundFromZero(this.h));
 };
 Size.prototype.vector = function() {
 	return new Vector(Math.atan2(this.h, this.w) / Geometry.TAU, Math.sqrt(this.w * this.w + this.h * this.h));
