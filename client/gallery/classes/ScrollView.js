@@ -127,8 +127,11 @@ ScrollView.prototype.setPosition = function(position, reset) {
 	if(position.x === scrollView.position.x && position.y === scrollView.position.y && !reset) return;
 	scrollView.position = position;
 	if(!scrollView.page || !scrollView.page.element) return;
-	scrollView.page.element.style.left = String(Math.round(scrollView.position.x)) + "px";
-	scrollView.page.element.style.top = String(Math.round(scrollView.position.y)) + "px";
+	var maximum = scrollView.scrollableRect.extent();
+	var position = scrollView.position.distance(scrollView.scrollableRect.o);
+	var flippedPosition = maximum.offset(position.scale(-1));
+	scrollView.page.element.style.left = String(Math.round(flippedPosition.x)) + "px";
+	scrollView.page.element.style.top = String(Math.round(flippedPosition.y)) + "px";
 }
 ScrollView.prototype.scrollTo = function(position) { // Returns the clamped position.
 	var scrollView = this;
@@ -146,7 +149,7 @@ ScrollView.prototype.scrollByPage = function(dir) {
 };
 ScrollView.prototype.smartScroll = function(d1, d2) {
 	var scrollView = this;
-	var dir = scrollView.readingDirection.size.scale(-1); // FIXME: This is backwards because readingDirection.size is backwards.
+	var dir = scrollView.readingDirection.size;
 	var x = scrollView.pageDistanceInDirection(d1.product(dir));
 	if(x.w || x.h) return scrollView.scrollBy(x);
 	var y = scrollView.pageDistanceInDirection(d2.product(dir));
@@ -156,7 +159,7 @@ ScrollView.prototype.smartScroll = function(d1, d2) {
 
 ScrollView.prototype.homePosition = function(home) {
 	var scrollView = this;
-	return scrollView.readingDirection.size.scale(home ? 9e9 : -9e9).pointFromOrigin();
+	return scrollView.readingDirection.size.scale(home ? -9e9 : 9e9).pointFromOrigin();
 };
 ScrollView.prototype.scrollDistanceInDirection = function(direction) {
 	var scrollView = this;
@@ -241,41 +244,41 @@ ScrollView.prototype.registerShortcuts = function() {
 		scrollView.scrollTo(scrollView.homePosition(true));
 	});
 	KBD.bind({key: 33}, function(e) { // Page Up
-		scrollView.scrollByPage(new Size(0, 1));
+		scrollView.scrollByPage(new Size(0, -1));
 	});
 	KBD.bind({key: 34}, function(e) { // Page Down
-		scrollView.scrollByPage(new Size(0, -1));
+		scrollView.scrollByPage(new Size(0, 1));
 	});
 	KBD.bind({key: 35}, function(e) { // End
 		scrollView.scrollTo(scrollView.homePosition(false));
 	});
 
 	KBD.bind({char: "1", key: 97, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(1, -1));
+		scrollView.scrollByPage(new Size(-1, 1));
 	});
 	KBD.bind({char: "2", key: 98, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(0, -1));
-	});
-	KBD.bind({char: "3", key: 99, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(-1, -1));
-	});
-	KBD.bind({char: "4", key: 100, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(1, 0));
-	});
-	KBD.bind({char: "5", key: 101, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(0, -1));
-	});
-	KBD.bind({char: "6", key: 102, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(-1, 0));
-	});
-	KBD.bind({char: "7", key: 103, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(1, 1));
-	});
-	KBD.bind({char: "8", key: 104, numberPad: true}, function(e) {
 		scrollView.scrollByPage(new Size(0, 1));
 	});
+	KBD.bind({char: "3", key: 99, numberPad: true}, function(e) {
+		scrollView.scrollByPage(new Size(1, 1));
+	});
+	KBD.bind({char: "4", key: 100, numberPad: true}, function(e) {
+		scrollView.scrollByPage(new Size(-1, 0));
+	});
+	KBD.bind({char: "5", key: 101, numberPad: true}, function(e) {
+		scrollView.scrollByPage(new Size(0, 1));
+	});
+	KBD.bind({char: "6", key: 102, numberPad: true}, function(e) {
+		scrollView.scrollByPage(new Size(1, 0));
+	});
+	KBD.bind({char: "7", key: 103, numberPad: true}, function(e) {
+		scrollView.scrollByPage(new Size(-1, -1));
+	});
+	KBD.bind({char: "8", key: 104, numberPad: true}, function(e) {
+		scrollView.scrollByPage(new Size(0, -1));
+	});
 	KBD.bind({char: "9", key: 105, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(-1, 1));
+		scrollView.scrollByPage(new Size(1, -1));
 	});
 };
 ScrollView.prototype.registerScrollShortcuts = function() {
@@ -310,10 +313,10 @@ ScrollView.prototype.registerScrollShortcuts = function() {
 		});
 	}
 	(function() { var
-	d = new Size( 0,  1); bind(87, d); bind(38, d); // w, up
-	d = new Size( 1,  0); bind(65, d); bind(37, d); // a, left
-	d = new Size( 0, -1); bind(83, d); bind(40, d); // s, down
-	d = new Size(-1,  0); bind(68, d); bind(39, d); // d, right
+	d = new Size( 0, -1); bind(87, d); bind(38, d); // w, up
+	d = new Size(-1,  0); bind(65, d); bind(37, d); // a, left
+	d = new Size( 0,  1); bind(83, d); bind(40, d); // s, down
+	d = new Size( 1,  0); bind(68, d); bind(39, d); // d, right
 	})();
 	KBD.addEventListener("keyup", function(e) {
 		if(!bt.hasOwnProperty(scrollDirectionByKey, e.key)) return;
@@ -341,11 +344,11 @@ ScrollView.prototype.registerScrollWheel = function() {
 	DOM.addListener(document, "mousewheel", function(event) { // Sane browsers.
 		if(!scrollView.active) return true;
 		animateTemporarily();
-		scrollView.scrollBy(new Size(event.wheelDeltaX, event.wheelDeltaY)); // TODO: Check the resulting magnitude before optimizing.
+		scrollView.scrollBy(new Size(-event.wheelDeltaX, -event.wheelDeltaY)); // TODO: Check the resulting magnitude before optimizing.
 	});
 	DOM.addListener(document, "DOMMouseScroll", function(event) { // Gecko.
 		if(!scrollView.active) return true;
-		var size = 1 === event.axis ? new Size(event.detail, 0) : new Size(0, event.detail);
+		var size = 1 === event.axis ? new Size(-event.detail, 0) : new Size(0, -event.detail);
 		animateTemporarily();
 		scrollView.scrollBy(size.scale(5)); // TODO: Check the resulting magnitude before optimizing.
 	});

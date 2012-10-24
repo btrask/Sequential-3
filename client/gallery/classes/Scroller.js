@@ -28,7 +28,7 @@ function RelativeScroller(scrollView, event) {
 	var firstPoint = Point.fromEvent(event);
 	var latestPoint;
 	function recalculateVelocity() {
-		var vector = latestPoint.distance(firstPoint).vector();
+		var vector = firstPoint.distance(latestPoint).vector();
 		vector.mag = Math.max(0, vector.mag - 48);
 		vector.mag /= 5; // Linear adjustment seems pretty good TBH.
 		velocity = vector.size();
