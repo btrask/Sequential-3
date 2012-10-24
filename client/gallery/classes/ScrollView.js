@@ -147,7 +147,10 @@ ScrollView.prototype.homePosition = function(home) {
 ScrollView.prototype.scrollDistanceInDirection = function(direction) {
 	var scrollView = this;
 	var potentialRect = new Rect(scrollView.position, direction.scale(9e9));
-	return scrollView.scrollableRect.intersect(potentialRect).s;
+	var scrollDistance = scrollView.scrollableRect.intersect(potentialRect).s;
+	if(scrollDistance.w < 0) scrollDistance.w = 0;
+	if(scrollDistance.h < 0) scrollDistance.h = 0;
+	return scrollDistance;
 };
 ScrollView.prototype.pageDistanceInDirection = function(direction) {
 	var scrollView = this;
