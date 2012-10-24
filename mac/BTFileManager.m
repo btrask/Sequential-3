@@ -73,7 +73,7 @@ static BOOL BTIsArchivePath(NSString *const path)
 }
 
 - (id)initWithParser:(XADArchiveParser *const)parser;
-- (XADArchiveParser *)parser; // FIXME: Do not return the parser directly, wrap it in a threadsafe way.
+- (XADArchiveParser *)parser;
 
 @end
 
