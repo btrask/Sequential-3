@@ -107,7 +107,7 @@ function ScrollView() {
 	scrollView.registerScrollShortcuts();
 	scrollView.registerScrollWheel();
 }
-ScrollView.pageSizeRatio = 0.85;
+ScrollView.pageDistanceRatio = 0.85;
 
 ScrollView.prototype.reflow = function() {
 	var scrollView = this;
@@ -143,15 +143,22 @@ ScrollView.prototype.homePosition = function(home) {
 	var scrollView = this;
 	return scrollView.readingDirection.size.scale(home ? Infinity : -Infinity).pointFromOrigin();
 };
-ScrollView.prototype.pageSize = function(direction) {
+ScrollView.prototype.scrollDistanceInDirection = function(direction) {
 	var scrollView = this;
-	var maxSize = scrollView.bounds.s.scale(ScrollView.pageSizeRatio).product(direction);
-	var remainingSize = new Rect(scrollView.position, direction.scale(Infinity)).intersect(scrollView.scrollableRect).s; // FIXME: direction.scale(Infinity) produces NaNs.
-	var steps = remainingSize.quotient(maxSize).ceil();
-	var evenSize = remainingSize.quotient(steps).ceil(); // These also produce NaNs...
-	if(isNaN(evenSize.w)) evenSize.w = 0;
-	if(isNaN(evenSize.h)) evenSize.h = 0;
-	return evenSize;
+	var potentialDistance = direction.scale(Infinity); // FIXME: This produces NaNs.
+	if(isNaN(potentialDistance.w)) potentialDistance.w = 0;
+	if(isNaN(potentialDistance.h)) potentialDistance.h = 0;
+	return new Rect(scrollView.position, potentialDistance).intersect(scrollView.scrollableRect).s;
+};
+ScrollView.prototype.pageDistanceInDirection = function(direction) {
+	var scrollView = this;
+	var scrollDistance = scrollView.scrollDistanceInDirection(direction);
+	var maxPageDistance = scrollView.bounds.s.scale(ScrollView.pageDistanceInDirectionRatio).product(direction);
+	var steps = scrollDistance.quotient(maxPageDistance).ceil();
+	var evenDistance = scrollDistance.quotient(steps).ceil(); // These also produce NaNs...
+	if(isNaN(evenDistance.w)) evenDistance.w = 0;
+	if(isNaN(evenDistance.h)) evenDistance.h = 0;
+	return evenDistance;
 };
 ScrollView.prototype.setPage = function(page, position) {
 	var scrollView = this;
@@ -198,41 +205,41 @@ ScrollView.prototype.registerShortcuts = function() {
 		scrollView.scrollTo(scrollView.homePosition(true));
 	});
 	KBD.bind({key: 33}, function(e) { // Page Up
-		scrollView.scrollBy(scrollView.pageSize(new Size(0, 1)));
+		scrollView.scrollBy(scrollView.pageDistanceInDirection(new Size(0, 1)));
 	});
 	KBD.bind({key: 34}, function(e) { // Page Down
-		scrollView.scrollBy(scrollView.pageSize(new Size(0, -1)));
+		scrollView.scrollBy(scrollView.pageDistanceInDirection(new Size(0, -1)));
 	});
 	KBD.bind({key: 35}, function(e) { // End
 		scrollView.scrollTo(scrollView.homePosition(false));
 	});
 
 	KBD.bind({char: "1", key: 97, numberPad: true}, function(e) {
-		scrollView.scrollBy(scrollView.pageSize(new Size(1, -1)));
+		scrollView.scrollBy(scrollView.pageDistanceInDirection(new Size(1, -1)));
 	});
 	KBD.bind({char: "2", key: 98, numberPad: true}, function(e) {
-		scrollView.scrollBy(scrollView.pageSize(new Size(0, -1)));
+		scrollView.scrollBy(scrollView.pageDistanceInDirection(new Size(0, -1)));
 	});
 	KBD.bind({char: "3", key: 99, numberPad: true}, function(e) {
-		scrollView.scrollBy(scrollView.pageSize(new Size(-1, -1)));
+		scrollView.scrollBy(scrollView.pageDistanceInDirection(new Size(-1, -1)));
 	});
 	KBD.bind({char: "4", key: 100, numberPad: true}, function(e) {
-		scrollView.scrollBy(scrollView.pageSize(new Size(1, 0)));
+		scrollView.scrollBy(scrollView.pageDistanceInDirection(new Size(1, 0)));
 	});
 	KBD.bind({char: "5", key: 101, numberPad: true}, function(e) {
-		scrollView.scrollBy(scrollView.pageSize(new Size(0, -1)));
+		scrollView.scrollBy(scrollView.pageDistanceInDirection(new Size(0, -1)));
 	});
 	KBD.bind({char: "6", key: 102, numberPad: true}, function(e) {
-		scrollView.scrollBy(scrollView.pageSize(new Size(-1, 0)));
+		scrollView.scrollBy(scrollView.pageDistanceInDirection(new Size(-1, 0)));
 	});
 	KBD.bind({char: "7", key: 103, numberPad: true}, function(e) {
-		scrollView.scrollBy(scrollView.pageSize(new Size(1, 1)));
+		scrollView.scrollBy(scrollView.pageDistanceInDirection(new Size(1, 1)));
 	});
 	KBD.bind({char: "8", key: 104, numberPad: true}, function(e) {
-		scrollView.scrollBy(scrollView.pageSize(new Size(0, 1)));
+		scrollView.scrollBy(scrollView.pageDistanceInDirection(new Size(0, 1)));
 	});
 	KBD.bind({char: "9", key: 105, numberPad: true}, function(e) {
-		scrollView.scrollBy(scrollView.pageSize(new Size(-1, 1)));
+		scrollView.scrollBy(scrollView.pageDistanceInDirection(new Size(-1, 1)));
 	});
 };
 ScrollView.prototype.registerScrollShortcuts = function() {
