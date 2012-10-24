@@ -116,10 +116,9 @@ ScrollView.prototype.reflow = function() {
 	var pageSize = Size.fromElement(scrollView.page.element);
 	scrollView.bounds.s = Size.fromElement(scrollView.element);
 	var center = scrollView.bounds.s.scale(1 / 2).difference(pageSize.scale(1 / 2)).pointFromOrigin().clamp(new Rect(new Point(0, 0), scrollView.bounds.s));
-	scrollView.scrollableRect.s = pageSize.difference(scrollView.bounds.s);
+	scrollView.scrollableRect.s = pageSize.difference(scrollView.bounds.s).clamp(Rect.make(0, 0, 9e9, 9e9));
 	scrollView.scrollableRect.o = center.offset(scrollView.scrollableRect.s.scale(-1));
-	scrollView.setPosition(scrollView.position.clampMax(scrollView.scrollableRect)); // Reclamp.
-	// TODO: Switch to clamp(), probably requires changing scrollableRect.
+	scrollView.setPosition(scrollView.position.clamp(scrollView.scrollableRect)); // Reclamp.
 };
 
 ScrollView.prototype.setPosition = function(position, reset) {
@@ -132,7 +131,7 @@ ScrollView.prototype.setPosition = function(position, reset) {
 }
 ScrollView.prototype.scrollTo = function(position) { // Returns the clamped position.
 	var scrollView = this;
-	scrollView.setPosition(position.clampMax(scrollView.scrollableRect)); // TODO: Switch to clamp(), probably requires changing scrollableRect.
+	scrollView.setPosition(position.clamp(scrollView.scrollableRect));
 	return scrollView.position;
 };
 ScrollView.prototype.scrollBy = function(size) { // Returns the clamped size.
@@ -287,13 +286,11 @@ ScrollView.prototype.registerScrollShortcuts = function() {
 	var setAnimating = scrollView.animator();
 
 	function updateDirection() {
-		scrollDirection = new Size(0, 0);
-		bt.map(scrollDirectionByKey, function(direction) {
-			scrollDirection.w += direction.w;
-			scrollDirection.h += direction.h;
+		var total = new Size(0, 0);
+		bt.map(scrollDirectionByKey, function(dir) {
+			total = total.sum(dir);
 		});
-		scrollDirection.w = Geometry.clampMax(-1, scrollDirection.w, 1);
-		scrollDirection.h = Geometry.clampMax(-1, scrollDirection.h, 1); // TODO: We might want to add size.clamp().
+		scrollDirection = total.clamp(Rect.make(-1, -1, 2, 2));
 	}
 	function scrollKeyDown(event, direction) {
 		if(event.shiftKey) return;

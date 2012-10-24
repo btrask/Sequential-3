@@ -64,10 +64,6 @@ Point.prototype.clamp = function(rect) {
 	var x = rect.o.x, y = rect.o.y;
 	return new Point(Geometry.clamp(x, this.x, x + rect.s.w), Geometry.clamp(y, this.y, y + rect.s.h));
 };
-Point.prototype.clampMax = function(rect) { // FIXME: Once we don't need this anymore, remove it.
-	var x = rect.o.x, y = rect.o.y;
-	return new Point(Geometry.clampMax(x, this.x, x + rect.s.w), Geometry.clampMax(y, this.y, y + rect.s.h));
-};
 Point.prototype.distance = function(that) {
 	return new Size(this.x - that.x, this.y - that.y);
 };
@@ -103,6 +99,10 @@ Size.prototype.min = function() {
 };
 Size.prototype.max = function() {
 	return Math.max(this.w, this.h);
+};
+Size.prototype.clamp = function(rect) {
+	var x = rect.o.x, y = rect.o.y;
+	return new Size(Geometry.clamp(x, this.w, x + rect.s.w), Geometry.clamp(y, this.h, y + rect.s.h)); // TODO: Repeated code from point.clamp()...
 };
 Size.prototype.round = function() {
 	return new Size(Math.round(this.w), Math.round(this.h));
