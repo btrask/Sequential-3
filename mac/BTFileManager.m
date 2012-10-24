@@ -153,8 +153,8 @@ static BOOL BTIsArchivePath(NSString *const path)
 }
 - (NSString *)_subpathOfPath:(NSString *const)path fromDirectory:(NSString *const)dirname
 {
-	NSCParameterAssert([dirname hasSuffix:@"/"]);
-	NSCParameterAssert(![dirname hasSuffix:@"//"]);
+	NSParameterAssert([dirname hasSuffix:@"/"]);
+	NSParameterAssert(![dirname hasSuffix:@"//"]);
 	if(![path hasPrefix:dirname]) return nil;
 	return [path substringFromIndex:[dirname length]];
 }
