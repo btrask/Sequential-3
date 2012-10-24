@@ -212,6 +212,18 @@ ScrollView.prototype.registerShortcuts = function() {
 	KBD.bind({char: " ", key: 32, shift: null}, function(e) {
 		scrollView.smartScroll(!e.shift, new Size(0, 1), new Size(1, 0));
 	});
+	KBD.bind({char: "c", key: 67, shift: null}, function(e) {
+		scrollView.smartScroll(e.shift, new Size(0, 1), new Size(1, 0));
+	});
+	KBD.bind({char: "v", key: 86, shift: null}, function(e) {
+		scrollView.smartScroll(!e.shift, new Size(0, 1), new Size(1, 0));
+	});
+	KBD.bind({char: "b", key: 66, shift: null}, function(e) {
+		scrollView.smartScroll(e.shift, new Size(1, 0), new Size(0, 1));
+	});
+	KBD.bind({char: "n", key: 78, shift: null}, function(e) {
+		scrollView.smartScroll(!e.shift, new Size(1, 0), new Size(0, 1));
+	});
 
 	KBD.bind({key: 36}, function(e) { // Home
 		scrollView.scrollTo(scrollView.homePosition(true));
