@@ -220,64 +220,69 @@ ScrollView.prototype.animator = function() {
 ScrollView.prototype.registerShortcuts = function() {
 	var scrollView = this;
 
+	function bind(event, listener) {
+		KBD.bind(event, function(e) {
+			if(scrollView.active) listener(e);
+		});
+	}
 	function smartScroll(forward, d1, d2) {
 		var mag = forward ? 1 : -1;
 		scrollView.smartScroll(d1.scale(mag), d2.scale(mag));
 	}
-	KBD.bind({char: " ", key: 32, shift: null}, function(e) {
+	bind({char: " ", key: 32, shift: null}, function(e) {
 		smartScroll(!e.shift, new Size(0, 1), new Size(1, 0));
 	});
-	KBD.bind({char: "c", key: 67, shift: null}, function(e) {
+	bind({char: "c", key: 67, shift: null}, function(e) {
 		smartScroll(e.shift, new Size(0, 1), new Size(1, 0));
 	});
-	KBD.bind({char: "v", key: 86, shift: null}, function(e) {
+	bind({char: "v", key: 86, shift: null}, function(e) {
 		smartScroll(!e.shift, new Size(0, 1), new Size(1, 0));
 	});
-	KBD.bind({char: "b", key: 66, shift: null}, function(e) {
+	bind({char: "b", key: 66, shift: null}, function(e) {
 		smartScroll(e.shift, new Size(1, 0), new Size(0, 1));
 	});
-	KBD.bind({char: "n", key: 78, shift: null}, function(e) {
+	bind({char: "n", key: 78, shift: null}, function(e) {
 		smartScroll(!e.shift, new Size(1, 0), new Size(0, 1));
 	});
 
-	KBD.bind({key: 36}, function(e) { // Home
+	bind({key: 36}, function(e) { // Home
 		scrollView.scrollTo(scrollView.homePosition(true));
 	});
-	KBD.bind({key: 33}, function(e) { // Page Up
+	bind({key: 33}, function(e) { // Page Up
 		scrollView.scrollByPage(new Size(0, -1));
 	});
-	KBD.bind({key: 34}, function(e) { // Page Down
+	bind({key: 34}, function(e) { // Page Down
 		scrollView.scrollByPage(new Size(0, 1));
 	});
-	KBD.bind({key: 35}, function(e) { // End
+	bind({key: 35}, function(e) { // End
 		scrollView.scrollTo(scrollView.homePosition(false));
 	});
 
-	KBD.bind({char: "1", key: 97, numberPad: true}, function(e) {
+	bind({char: "1", key: 97, numberPad: true}, function(e) {
 		scrollView.scrollByPage(new Size(-1, 1));
 	});
-	KBD.bind({char: "2", key: 98, numberPad: true}, function(e) {
+	bind({char: "2", key: 98, numberPad: true}, function(e) {
 		scrollView.scrollByPage(new Size(0, 1));
 	});
-	KBD.bind({char: "3", key: 99, numberPad: true}, function(e) {
+	bind({char: "3", key: 99, numberPad: true}, function(e) {
 		scrollView.scrollByPage(new Size(1, 1));
 	});
-	KBD.bind({char: "4", key: 100, numberPad: true}, function(e) {
+	bind({char: "4", key: 100, numberPad: true}, function(e) {
 		scrollView.scrollByPage(new Size(-1, 0));
 	});
-	KBD.bind({char: "5", key: 101, numberPad: true}, function(e) {
+	bind({char: "5", key: 101, numberPad: true}, function(e) {
 		scrollView.scrollByPage(new Size(0, 1));
 	});
-	KBD.bind({char: "6", key: 102, numberPad: true}, function(e) {
+	bind({char: "6", key: 102, numberPad: true}, function(e) {
 		scrollView.scrollByPage(new Size(1, 0));
 	});
-	KBD.bind({char: "7", key: 103, numberPad: true}, function(e) {
+	bind({char: "7", key: 103, numberPad: true}, function(e) {
 		scrollView.scrollByPage(new Size(-1, -1));
 	});
-	KBD.bind({char: "8", key: 104, numberPad: true}, function(e) {
+	bind({char: "8", key: 104, numberPad: true}, function(e) {
 		scrollView.scrollByPage(new Size(0, -1));
 	});
-	KBD.bind({char: "9", key: 105, numberPad: true}, function(e) {
+	bind({char: "9", key: 105, numberPad: true}, function(e) {
 		scrollView.scrollByPage(new Size(1, -1));
 	});
 };
