@@ -118,7 +118,8 @@ ScrollView.prototype.reflow = function() {
 	var center = scrollView.bounds.s.scale(1 / 2).difference(pageSize.scale(1 / 2)).pointFromOrigin().clamp(new Rect(new Point(0, 0), scrollView.bounds.s));
 	scrollView.scrollableRect.s = pageSize.difference(scrollView.bounds.s);
 	scrollView.scrollableRect.o = center.offset(scrollView.scrollableRect.s.scale(-1));
-	scrollView.setPosition(scrollView.position.clamp(scrollView.scrollableRect)); // Reclamp.
+	scrollView.setPosition(scrollView.position.clampMax(scrollView.scrollableRect)); // Reclamp.
+	// TODO: Switch to clamp(), probably requires changing scrollableRect.
 };
 
 ScrollView.prototype.setPosition = function(position, reset) {
@@ -131,7 +132,7 @@ ScrollView.prototype.setPosition = function(position, reset) {
 }
 ScrollView.prototype.scrollTo = function(position) { // Returns the clamped position.
 	var scrollView = this;
-	scrollView.setPosition(position.clamp(scrollView.scrollableRect));
+	scrollView.setPosition(position.clampMax(scrollView.scrollableRect)); // TODO: Switch to clamp(), probably requires changing scrollableRect.
 	return scrollView.position;
 };
 ScrollView.prototype.scrollBy = function(size) { // Returns the clamped size.

@@ -64,6 +64,10 @@ Point.prototype.clamp = function(rect) {
 	var x = rect.o.x, y = rect.o.y;
 	return new Point(Geometry.clamp(x, this.x, x + rect.s.w), Geometry.clamp(y, this.y, y + rect.s.h));
 };
+Point.prototype.clampMax = function(rect) { // FIXME: Once we don't need this anymore, remove it.
+	var x = rect.o.x, y = rect.o.y;
+	return new Point(Geometry.clampMax(x, this.x, x + rect.s.w), Geometry.clampMax(y, this.y, y + rect.s.h));
+};
 Point.prototype.distance = function(that) {
 	return new Size(this.x - that.x, this.y - that.y);
 };
