@@ -115,9 +115,10 @@ ScrollView.prototype.reflow = function() {
 	scrollView.page.rescale(scrollView.scaler);
 	var pageSize = Size.fromElement(scrollView.page.element);
 	scrollView.bounds.s = Size.fromElement(scrollView.element);
-	var center = scrollView.bounds.s.scale(1 / 2).difference(pageSize.scale(1 / 2)).pointFromOrigin().clamp(new Rect(new Point(0, 0), scrollView.bounds.s));
+	var center = scrollView.bounds.s.scale(1 / 2);
+	var pageLocation = center.difference(pageSize.scale(1 / 2)).pointFromOrigin().clamp(scrollView.bounds);
 	scrollView.scrollableRect.s = pageSize.difference(scrollView.bounds.s).clamp(Rect.make(0, 0, 9e9, 9e9));
-	scrollView.scrollableRect.o = center.offset(scrollView.scrollableRect.s.scale(-1));
+	scrollView.scrollableRect.o = pageLocation.offset(scrollView.scrollableRect.s.scale(-1));
 	scrollView.setPosition(scrollView.position.clamp(scrollView.scrollableRect)); // Reclamp.
 };
 
