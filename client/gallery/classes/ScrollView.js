@@ -103,14 +103,6 @@ function ScrollView() {
 		return false;
 	});
 
-	// TODO: These probably belong in Index.
-	KBD.bind("-", 189, function(e) {
-		//if(!e.shiftKey); // TODO: Implement.
-	});
-	KBD.bind("=", 187, function(e) {
-		//if(!e.shiftKey); // TODO: Implement.
-	});
-
 	scrollView.registerShortcuts();
 	scrollView.registerScrollShortcuts();
 	scrollView.registerScrollWheel();

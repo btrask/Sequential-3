@@ -43,6 +43,7 @@ function Index(indexURL) {
 	};
 	index.element.appendChild(index.scrollView.element);
 	index.registerShortcuts();
+	index.registerScalingShortcuts();
 }
 Index.prototype.load = function(path) {
 	var index = this;
@@ -298,5 +299,24 @@ Index.prototype.registerShortcuts = function() {
 	});
 	KBD.bind({char: "l", key: 76, shift: null}, function(e) {
 		index.folderLast(!e.shift);
+	});
+};
+Index.prototype.registerScalingShortcuts = function() {
+	var index = this;
+	// TODO: Implement.
+	KBD.bind({char: "-", key: 189}, function(e) {
+		
+	});
+	KBD.bind({char: "=", key: 187}, function(e) {
+		
+	});
+	KBD.bind({char: "_", key: 189, shift: true}, function(e) {
+		
+	});
+	KBD.bind({char: "+", key: 187, shift: true}, function(e) {
+		
+	});
+	KBD.addEventListener("keyup", function(e) {
+		
 	});
 };
