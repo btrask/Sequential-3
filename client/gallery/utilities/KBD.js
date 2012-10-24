@@ -22,19 +22,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 var KBD = {};
 (function() {
 
-var NUMBER_PAD_0 = 96;
-var NUMBER_PAD_ASTERISK = 106;
 function keyEvent(event) {
 	var e = event || window.event;
 	var keyCode = e.keyCode || e.which;
 	return {
-		charCode: null,
-		keyCode: keyCode,
-		shiftKey: e.shiftKey,
-		metaKey: e.metaKey,
-		ctrlKey: e.ctrlKey,
-		altKey: e.altKey,
-		numberPad: 3 === e.keyLocation || (keyCode >= NUMBER_PAD_0 && keyCode <= NUMBER_PAD_ASTERISK)
+		char: null,
+		key: keyCode,
+		numberPad: 3 === e.keyLocation || (keyCode >= 96/* 0 */ && keyCode <= 106/* * */),
+		shift: e.shiftKey,
+		meta: e.metaKey,
+		ctrl: e.ctrlKey,
+		alt: e.altKey
 	};
 }
 function has(a, b) {
@@ -43,20 +41,6 @@ function has(a, b) {
 function listen(e, l) {
 	if(document.addEventListener) document.addEventListener(e, l);
 	else if(document.attachEvent) document.attachEvent(e, l);
-}
-function toCharCode(charCode) {
-	return "string" === typeof charCode ? charCode.charCodeAt(0) : charCode;
-}
-function addListener(obj, prop, listener) {
-	if(!prop) return;
-	if(!has(obj, prop)) obj[prop] = [];
-	obj[prop].push(listener);
-}
-function removeListener(obj, prop, listener) {
-	if(!has(obj, prop)) return;
-	var a = obj[prop];
-	var i = a.indexOf(listener);
-	if(-1 !== i) a.splice(i, 1);
 }
 function emit(obj, prop, event) {
 	if(!has(obj, prop)) return false;
@@ -71,39 +55,74 @@ listen("keydown", function(event) {
 	var key = pendingKey = keyEvent(event);
 	setTimeout(function() {
 		pendingKey = null;
-		console.log(key.charCode ? String.fromCharCode(key.charCode) : null, key.keyCode);
+		console.log(key.char, key.key);
 		emit(listeners, "keydown", key);
 	}, 0);
 });
 listen("keypress", function(event) {
-	if(pendingKey) pendingKey.charCode = event.charCode;
+	if(pendingKey) pendingKey.char = String.fromCharCode(event.charCode).toLowerCase();
 	pendingKey = null;
 });
 listen("keyup", function(event) {
 	emit(listeners, "keyup", keyEvent(event));
 });
 KBD.addEventListener = function(event, listener) {
-	addListener(listeners, event, listener);
+	if(!has(listeners, event)) listeners[event] = [];
+	listeners[event].push(listener);
 };
 KBD.removeEventListener = function(event, listener) {
-	removeListener(listeners, event, listener);
+	if(!has(listeners, event)) return;
+	var a = listeners[event];
+	var i = a.indexOf(listener);
+	if(-1 !== i) a.splice(i, 1);
 };
 
-var charCodeBindings = {};
-var keyCodeBindings = {};
+var bindings = [];
 KBD.addEventListener("keydown", function(event) {
-	emit(charCodeBindings, event.charCode, event) ||
-	emit(keyCodeBindings, event.keyCode, event);
+	function match(a, b) {
+		switch(a) {
+			case null: return true;
+			case true: return b;
+			default: return !b;
+		}
+	}
+	function compare(a, b) {
+		if(!match(a.numberPad, b.numberPad)) return false;
+		if(!match(a.shift, b.shift)) return false;
+		if(!match(a.ctrl, b.ctrl)) return false;
+		if(!match(a.meta, b.meta)) return false;
+		if(!match(a.alt, b.alt)) return false;
+		return true;
+	}
+	function emit(filter) {
+		var emitted = false, b;
+		for(var i = 0; i < bindings.length; ++i) {
+			b = bindings[i];
+			if(!filter(b, event) || !compare(b, event)) continue;
+			b.listener(event);
+			emitted = true;
+		}
+		return emitted;
+	}
+	emit(function(a, b) { return a.char === b.char; }) ||
+	emit(function(a, b) { return a.key === b.key; });
 });
-KBD.bind = function(char, keyCode, listener) {
-	var charCode = toCharCode(char);
-	addListener(charCodeBindings, charCode, listener);
-	addListener(keyCodeBindings, keyCode, listener);
-};
-KBD.unbind = function(char, keyCode, listener) {
-	var charCode = toCharCode(char);
-	removeListener(charCodeBindings, charCode, listener);
-	removeListener(keyCodeBindings, keyCode, listener);
+KBD.bind = function(event, listener) {
+	var binding = {
+		listener: listener,
+		char: "string" === typeof event.char ? event.char.toLowerCase() : event.char,
+		key: event.key,
+		numberPad: event.numberPad,
+		shift: event.shift,
+		ctrl: event.ctrl,
+		meta: event.meta,
+		alt: event.alt
+	};
+	bindings.push(binding);
+	return function unbind() {
+		var i = bindings.indexOf(binding);
+		if(-1 !== i) bindings.splice(i, 1);
+	};
 };
 
 })();

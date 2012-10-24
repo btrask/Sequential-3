@@ -231,76 +231,72 @@ Index.prototype.showOptions = function() {
 };
 Index.prototype.registerShortcuts = function() {
 	var index = this;
-	KBD.bind("A", 65, function(e) {
-		if(e.shiftKey) index.setScaler(new ProportionalScaler(index.scrollView, 1));
+	KBD.bind({char: "a", key: 65, shift: true}, function(e) {
+		index.setScaler(new ProportionalScaler(index.scrollView, 1));
 	});
-	KBD.bind("S", 83, function(e) {
-		if(e.shiftKey) index.setScaler(new FitScaler(index.scrollView, "min"));
+	KBD.bind({char: "s", key: 83, shift: true}, function(e) {
+		index.setScaler(new FitScaler(index.scrollView, "min"));
 	});
-	KBD.bind("D", 68, function(e) {
-		if(e.shiftKey) index.setScaler(new FitScaler(index.scrollView, "max"));
+	KBD.bind({char: "d", key: 68, shift: true}, function(e) {
+		index.setScaler(new FitScaler(index.scrollView, "max"));
 	});
-	KBD.bind("F", 70, function(e) {
-		if(e.shiftKey) index.setScaler(new AlmostFitScaler(index.scrollView));
-	});
-
-	KBD.bind("{", 219, function(e) {
-		if(e.shiftKey) index.last(index.scrollView.readingDirection.rtl);
-	});
-	KBD.bind("}", 221, function(e) {
-		if(e.shiftKey) index.last(index.scrollView.readingDirection.ltr);
+	KBD.bind({char: "f", key: 70, shift: true}, function(e) {
+		index.setScaler(new AlmostFitScaler(index.scrollView));
 	});
 
-	KBD.bind("O", 79, function(e) {
-		if(e.shiftKey && config.open) config.open();
+	// FIXME: On a keyboard where shift-[] isn't {}, what should we do?
+	// Adding a second binding on {char: "[", shift: true} doesn't help, because shift-[ will produce some other character.
+	KBD.bind({char: "{", key: 219, shift: true}, function(e) {
+		index.last(index.scrollView.readingDirection.rtl);
 	});
-	KBD.bind("R", 82, function(e) {
-		if(e.shiftKey && config.showOriginal) config.showOriginal(index.node);
-	});
-
-	KBD.bind("`", 192, function(e) {
-		if(!e.shiftKey) index.setScaler(new FitScaler(index.scrollView, "min"));
-	});
-	KBD.bind("1", 49, function(e) {
-		if(!e.shiftKey && !e.numberPad) index.setScaler(new ProportionalScaler(index.scrollView, 1));
-	});
-	KBD.bind("2", 50, function(e) {
-		if(!e.shiftKey && !e.numberPad) index.setScaler(new ProportionalScaler(index.scrollView, 2));
-	});
-	KBD.bind("0", 48, function(e) {
-		if(!e.shiftKey && !e.numberPad) index.setScaler(new ProportionalScaler(index.scrollView, 0.5));
+	KBD.bind({char: "}", key: 221, shift: true}, function(e) {
+		index.last(index.scrollView.readingDirection.ltr);
 	});
 
-	KBD.bind("[", 219, function(e) {
-		if(!e.shiftKey) index.next(index.scrollView.readingDirection.rtl);
+	KBD.bind({char: "o", key: 79, shift: true}, function(e) {
+		if(config.open) config.open();
 	});
-	KBD.bind("]", 221, function(e) {
-		if(!e.shiftKey) index.next(index.scrollView.readingDirection.ltr);
-	});
-
-	KBD.bind("t", 84, function(e) {
-		if(!e.shiftKey) index.showThumbnailBrowser();
-	});
-	KBD.bind("m", 77, function(e) {
-		if(!e.shiftKey) index.showOptions();
-	});
-	KBD.bind("i", 73, function(e) {
-		if(!e.shiftKey) index.setReadingDirection(new ReadingDirection(true));
-	});
-	KBD.bind("o", 79, function(e) {
-		if(!e.shiftKey) index.setReadingDirection(new ReadingDirection(false));
+	KBD.bind({char: "r", key: 82, shift: true}, function(e) {
+		if(config.showOriginal) config.showOriginal(index.node);
 	});
 
-	KBD.bind("k", 75, function(e) {
-		if(!e.shiftKey) index.skipForward(true);
+	KBD.bind({char: "`", key: 192}, function(e) {
+		index.setScaler(new FitScaler(index.scrollView, "min"));
 	});
-	KBD.bind("l", 76, function(e) {
-		if(!e.shiftKey) index.folderLast(true);
+	KBD.bind({char: "1", key: 49}, function(e) {
+		index.setScaler(new ProportionalScaler(index.scrollView, 1));
 	});
-	KBD.bind("K", 75, function(e) {
-		if(e.shiftKey) index.skipForward(false);
+	KBD.bind({char: "2", key: 50}, function(e) {
+		index.setScaler(new ProportionalScaler(index.scrollView, 2));
 	});
-	KBD.bind("L", 76, function(e) {
-		if(e.shiftKey) index.folderLast(false);
+	KBD.bind({char: "0", key: 48}, function(e) {
+		index.setScaler(new ProportionalScaler(index.scrollView, 0.5));
+	});
+
+	KBD.bind({char: "[", key: 219}, function(e) {
+		index.next(index.scrollView.readingDirection.rtl);
+	});
+	KBD.bind({char: "]", key: 221}, function(e) {
+		index.next(index.scrollView.readingDirection.ltr);
+	});
+
+	KBD.bind({char: "t", key: 84}, function(e) {
+		index.showThumbnailBrowser();
+	});
+	KBD.bind({char: "m", key: 77}, function(e) {
+		index.showOptions();
+	});
+	KBD.bind({char: "i", key: 73}, function(e) {
+		index.setReadingDirection(new ReadingDirection(true));
+	});
+	KBD.bind({char: "o", key: 79}, function(e) {
+		index.setReadingDirection(new ReadingDirection(false));
+	});
+
+	KBD.bind({char: "k", key: 75, shift: null}, function(e) {
+		index.skipForward(!e.shift);
+	});
+	KBD.bind({char: "l", key: 76, shift: null}, function(e) {
+		index.folderLast(!e.shift);
 	});
 };

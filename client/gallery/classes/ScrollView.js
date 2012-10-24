@@ -202,50 +202,50 @@ ScrollView.prototype.animator = function() {
 ScrollView.prototype.registerShortcuts = function() {
 	var scrollView = this;
 
-	KBD.bind(null, 36, function(e) { // Home
+	KBD.bind({key: 36}, function(e) { // Home
 		scrollView.scrollTo(scrollView.homePosition(true));
 	});
-	KBD.bind(null, 33, function(e) { // Page Up
+	KBD.bind({key: 33}, function(e) { // Page Up
 		scrollView.scrollBy(scrollView.pageSize(new Size(0, 1)));
 	});
-	KBD.bind(null, 34, function(e) { // Page Down
+	KBD.bind({key: 34}, function(e) { // Page Down
 		scrollView.scrollBy(scrollView.pageSize(new Size(0, -1)));
 	});
-	KBD.bind(null, 35, function(e) { // End
+	KBD.bind({key: 35}, function(e) { // End
 		scrollView.scrollTo(scrollView.homePosition(false));
 	});
 
-	KBD.bind("1", 97, function(e) {
-		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(1, -1)));
+	KBD.bind({char: "1", key: 97, numberPad: true}, function(e) {
+		scrollView.scrollBy(scrollView.pageSize(new Size(1, -1)));
 	});
-	KBD.bind("2", 98, function(e) {
-		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(0, -1)));
+	KBD.bind({char: "2", key: 98, numberPad: true}, function(e) {
+		scrollView.scrollBy(scrollView.pageSize(new Size(0, -1)));
 	});
-	KBD.bind("3", 99, function(e) {
-		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(-1, -1)));
+	KBD.bind({char: "3", key: 99, numberPad: true}, function(e) {
+		scrollView.scrollBy(scrollView.pageSize(new Size(-1, -1)));
 	});
-	KBD.bind("4", 100, function(e) {
-		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(1, 0)));
+	KBD.bind({char: "4", key: 100, numberPad: true}, function(e) {
+		scrollView.scrollBy(scrollView.pageSize(new Size(1, 0)));
 	});
-	KBD.bind("5", 101, function(e) {
-		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(0, -1)));
+	KBD.bind({char: "5", key: 101, numberPad: true}, function(e) {
+		scrollView.scrollBy(scrollView.pageSize(new Size(0, -1)));
 	});
-	KBD.bind("6", 102, function(e) {
-		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(-1, 0)));
+	KBD.bind({char: "6", key: 102, numberPad: true}, function(e) {
+		scrollView.scrollBy(scrollView.pageSize(new Size(-1, 0)));
 	});
-	KBD.bind("7", 103, function(e) {
-		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(1, 1)));
+	KBD.bind({char: "7", key: 103, numberPad: true}, function(e) {
+		scrollView.scrollBy(scrollView.pageSize(new Size(1, 1)));
 	});
-	KBD.bind("8", 104, function(e) {
-		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(0, 1)));
+	KBD.bind({char: "8", key: 104, numberPad: true}, function(e) {
+		scrollView.scrollBy(scrollView.pageSize(new Size(0, 1)));
 	});
-	KBD.bind("9", 105, function(e) {
-		if(e.numberPad) scrollView.scrollBy(scrollView.pageSize(new Size(-1, 1)));
+	KBD.bind({char: "9", key: 105, numberPad: true}, function(e) {
+		scrollView.scrollBy(scrollView.pageSize(new Size(-1, 1)));
 	});
 };
 ScrollView.prototype.registerScrollShortcuts = function() {
 	var scrollView = this;
-	var scrollDirectionByKeyCode = {};
+	var scrollDirectionByKey = {};
 	var scrollDirection = new Size(0, 0);
 	var scrollCount = 0;
 	var scrollTimer = null;
@@ -253,7 +253,7 @@ ScrollView.prototype.registerScrollShortcuts = function() {
 
 	function updateDirection() {
 		scrollDirection = new Size(0, 0);
-		bt.map(scrollDirectionByKeyCode, function(direction) {
+		bt.map(scrollDirectionByKey, function(direction) {
 			scrollDirection.w += direction.w;
 			scrollDirection.h += direction.h;
 		});
@@ -263,28 +263,28 @@ ScrollView.prototype.registerScrollShortcuts = function() {
 	function scrollKeyDown(event, direction) {
 		if(event.shiftKey) return;
 		if(!scrollView.active) return;
-		if(bt.hasOwnProperty(scrollDirectionByKeyCode, event.keyCode)) return;
-		scrollDirectionByKeyCode[event.keyCode] = direction;
+		if(bt.hasOwnProperty(scrollDirectionByKey, event.key)) return;
+		scrollDirectionByKey[event.key] = direction;
 		updateDirection();
 		if(!scrollCount++) scrollTimer = animation.start(function(scale) {
 			var velocity = scrollView.scrollBy(scrollDirection.scale(scale * 10));
 			setAnimating(velocity.w || velocity.h);
 		});
 	}
-	function bind(char, keyCode, direction) {
-		KBD.bind(char, keyCode, function(event) {
+	function bind(key, direction) {
+		KBD.bind({key: key}, function(event) {
 			scrollKeyDown(event, direction);
 		});
 	}
 	(function() { var
-	d = new Size( 0,  1); bind(null, 87, d); bind(null, 38, d); // w, up
-	d = new Size( 1,  0); bind(null, 65, d); bind(null, 37, d); // a, left
-	d = new Size( 0, -1); bind(null, 83, d); bind(null, 40, d); // s, down
-	d = new Size(-1,  0); bind(null, 68, d); bind(null, 39, d); // d, right
+	d = new Size( 0,  1); bind(87, d); bind(38, d); // w, up
+	d = new Size( 1,  0); bind(65, d); bind(37, d); // a, left
+	d = new Size( 0, -1); bind(83, d); bind(40, d); // s, down
+	d = new Size(-1,  0); bind(68, d); bind(39, d); // d, right
 	})();
 	KBD.addEventListener("keyup", function(e) {
-		if(!bt.hasOwnProperty(scrollDirectionByKeyCode, e.keyCode)) return;
-		delete scrollDirectionByKeyCode[e.keyCode];
+		if(!bt.hasOwnProperty(scrollDirectionByKey, e.key)) return;
+		delete scrollDirectionByKey[e.key];
 		updateDirection();
 		if(--scrollCount) return;
 		animation.clear(scrollTimer);
