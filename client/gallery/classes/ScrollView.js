@@ -69,7 +69,7 @@ function ScrollView() {
 	scrollView.scaler = new AlmostFitScaler(scrollView);
 	scrollView.readingDirection = new ReadingDirection(true);
 	scrollView.animationCount = 0;
-	scrollView.onPageChange = function(dir){};
+	scrollView.onPageChange = function(dir){}; // `dir` is in logical coordinates (normalized for reading direction).
 
 	DOM.addListener(window, "resize", function() {
 		scrollView.reflow();
