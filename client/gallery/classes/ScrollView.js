@@ -150,10 +150,21 @@ ScrollView.prototype.scrollByPage = function(dir) {
 ScrollView.prototype.smartScroll = function(d1, d2) {
 	var scrollView = this;
 	var dir = scrollView.readingDirection.size;
-	var x = scrollView.pageDistanceInDirection(d1.product(dir));
+
+	var scrollable = scrollView.scrollableRect.s;
+	if(scrollable.w || scrollable.h) {
+		var bounds = scrollView.bounds.s.difference(scrollView.page.borderSize);
+		var size = Size.fromElement(scrollView.page.element).difference(scrollView.page.borderSize);
+		var skippable = AlmostFitScaler.skipScale(bounds, size) >= 1;
+		if(skippable) return scrollView.scrollByPage(d1.sum(d2).product(dir))
+	}
+
+	var a = d1.product(dir);
+	var x = scrollView.pageDistanceInDirection(a);
 	if(x.w || x.h) return scrollView.scrollBy(x);
-	var y = scrollView.pageDistanceInDirection(d2.product(dir));
-	if(y.w || y.h) return scrollView.scrollBy(y.sum(d1.product(dir).scale(-9e9)));
+	var b = d2.product(dir);
+	var y = scrollView.pageDistanceInDirection(b);
+	if(y.w || y.h) return scrollView.scrollBy(y.sum(a.scale(-9e9)));
 	// TODO: Switch pages.
 };
 

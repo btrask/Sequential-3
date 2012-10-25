@@ -22,6 +22,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 function GenericPage(element) {
 	var page = this;
 	page.element = element;
+	page.borderSize = Size.zero;
 }
 GenericPage.prototype.rescale = function(scaler) {};
 
@@ -31,6 +32,7 @@ function ImagePage(node) {
 	page.element = null;
 	page.cancel = function(){};
 	page.originalSize = null;
+	page.borderSize = Size.zero;
 }
 ImagePage.prototype.load = function(callback) {
 	var page = this;
@@ -80,8 +82,8 @@ ImagePage.prototype.rescale = function(scaler) {
 	if(!page.originalSize) return;
 	var imageSize = Size.fromElement(page.element);
 	var areaSize = Size.fromElement(page["area"]);
-	var border = imageSize.difference(areaSize);
-	var size = scaler.scaledSize(page.originalSize, border);
+	page.borderSize = imageSize.difference(areaSize);
+	var size = scaler.scaledSize(page).roundToZero();
 	page["image"].width = size.w;
 	page["image"].height = size.h;
 };

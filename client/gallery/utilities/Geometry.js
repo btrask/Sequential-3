@@ -42,10 +42,18 @@ Geometry.clampMin = function(min, val, max) {
 	if(val > max) return max;
 	return val;
 };
-Geometry.roundFromZero = function(x) { // <https://en.wikipedia.org/wiki/Rounding>
-	var y = Math.ceil(x);
-	if(x >= 0 || y === x) return y;
-	return y - 1;
+// <https://en.wikipedia.org/wiki/Rounding#Rounding_to_integer>
+// Because we use the >> operator, these functions are constrained to 32-bit integer results.
+// Check if the value equals itself to detect and preserve NaNs.
+Geometry.roundToZero = function(x) {
+	if(x !== x) return x;
+	return x >> 0;
+};
+Geometry.roundFromZero = function(x) {
+	if(x !== x) return x;
+	var y = x >> 0;
+	if(x === y) return y;
+	return x > 0 ? y+1 : y-1;
 };
 Geometry.TAU = Math.PI * 2;
 
@@ -106,6 +114,9 @@ Size.prototype.clamp = function(rect) {
 };
 Size.prototype.round = function() {
 	return new Size(Math.round(this.w), Math.round(this.h));
+};
+Size.prototype.roundToZero = function() {
+	return new Size(Geometry.roundToZero(this.w), Geometry.roundToZero(this.h));
 };
 Size.prototype.roundFromZero = function() {
 	return new Size(Geometry.roundFromZero(this.w), Geometry.roundFromZero(this.h));

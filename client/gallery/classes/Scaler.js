@@ -24,11 +24,12 @@ function Scaler(scrollView) {
 	scaler.scrollView = scrollView;
 	scaler.lastScale = null;
 }
-Scaler.prototype.scaledSize = function(size, border) {
-	var scale = this.computedScale(size, border);
-	var minimum = Math.min(1, new Size(32, 32).quotient(size).min());
+Scaler.prototype.scaledSize = function(page) {
+	var bounds = this.scrollView.bounds.s.difference(page.borderSize);
+	var scale = this.computedScale(bounds, page.originalSize);
+	var minimum = Math.min(1, new Size(32, 32).quotient(page.originalSize).min());
 	var limitedScale = this.lastScale = Math.max(scale, minimum);
-	return size.scale(limitedScale);
+	return page.originalSize.scale(limitedScale);
 };
 Scaler.prototype.relativeScaler = function(scale) {
 	return new ProportionalScaler(this.scrollView, this.lastScale * scale);
@@ -51,7 +52,7 @@ function ProportionalScaler(scrollView, scale) {
 	scaler.lastScale = scaler.scale = scale;
 }
 ProportionalScaler.prototype = new Scaler();
-ProportionalScaler.prototype.computedScale = function(size, border) {
+ProportionalScaler.prototype.computedScale = function(bounds, size) {
 	return this.scale;
 };
 ProportionalScaler.prototype.stringify = function() {
@@ -68,8 +69,7 @@ function FitScaler(scrollView, type) {
 	}
 }
 FitScaler.prototype = new Scaler();
-FitScaler.prototype.computedScale = function(size, border) {
-	var bounds = Size.fromElement(this.scrollView.element).difference(border || Size.zero);
+FitScaler.prototype.computedScale = function(bounds, size) {
 	return bounds.quotient(size)[this.type]();
 };
 FitScaler.prototype.stringify = function() {
@@ -80,16 +80,19 @@ function AlmostFitScaler(scrollView) {
 	Scaler.call(scaler, scrollView);
 }
 AlmostFitScaler.prototype = new Scaler();
-AlmostFitScaler.prototype.computedScale = function(size, border) {
+AlmostFitScaler.prototype.computedScale = function(bounds, size) {
 	var chunks = 2;
 	var overlap = 0.5;
 
-	var bounds = Size.fromElement(this.scrollView.element).difference(border || Size.zero);
-	var skipScale = bounds.scale(1 / ScrollView.pageDistanceRatio).quotient(size).min();
+	var skipScale = AlmostFitScaler.skipScale(bounds, size);
 	var almostFitScale = bounds.scale(1 + (1 - overlap) * (chunks - 1)).quotient(size).min();
 	var maxOneWayScrollScale = bounds.quotient(size).max();
 	return Geometry.clampMin(skipScale, almostFitScale, maxOneWayScrollScale);
 };
 AlmostFitScaler.prototype.stringify = function() {
 	return JSON.stringify({"name": "AlmostFit"});
+};
+AlmostFitScaler.skipScale = function(bounds, size) {
+	var skip = 1 / ScrollView.pageDistanceRatio;
+	return bounds.scale(skip).quotient(size).min();
 };
