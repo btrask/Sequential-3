@@ -257,10 +257,10 @@ ScrollView.prototype.registerShortcuts = function() {
 		scrollToEnd(false);
 	});
 	bind({key: 33}, function(e) { // Page Up
-		scrollByPage(new Size(0, -1));
+		smartScroll(false, new Size(0, 1), new Size(1, 0));
 	});
 	bind({key: 34}, function(e) { // Page Down
-		scrollByPage(new Size(0, 1));
+		smartScroll(true, new Size(0, 1), new Size(1, 0));
 	});
 	bind({key: 35}, function(e) { // End
 		scrollToEnd(true);
