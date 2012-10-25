@@ -234,7 +234,7 @@ ScrollView.prototype.registerShortcuts = function() {
 	}
 	function scrollByPage(dir) {
 		var d = scrollView.scrollByPage(dir);
-		if(!d.max()) scrollView.onPageChange(dir);
+		if(!d.max()) scrollView.onPageChange(scrollView.readingDirection.size.product(dir));
 	}
 
 	bind({char: " ", key: 32, shift: null}, function(e) {
