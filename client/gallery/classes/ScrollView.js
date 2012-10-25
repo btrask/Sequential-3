@@ -159,9 +159,9 @@ ScrollView.prototype.smartScroll = function(d1, d2) {
 	scrollView.onPageChange(d1.sum(d2));
 };
 
-ScrollView.prototype.homePosition = function(home) {
+ScrollView.prototype.endPosition = function(end) {
 	var scrollView = this;
-	return scrollView.readingDirection.size.scale(home ? -9e9 : 9e9).pointFromOrigin();
+	return scrollView.readingDirection.size.scale(end ? 9e9 : -9e9).pointFromOrigin();
 };
 ScrollView.prototype.scrollDistanceInDirection = function(direction) {
 	var scrollView = this;
@@ -219,7 +219,6 @@ ScrollView.prototype.animator = function() {
 
 ScrollView.prototype.registerShortcuts = function() {
 	var scrollView = this;
-
 	function bind(event, listener) {
 		KBD.bind(event, function(e) {
 			if(scrollView.active) listener(e);
@@ -229,6 +228,11 @@ ScrollView.prototype.registerShortcuts = function() {
 		var mag = forward ? 1 : -1;
 		scrollView.smartScroll(d1.scale(mag), d2.scale(mag));
 	}
+	function scrollToEnd(forward) {
+		var d = scrollView.scrollTo(scrollView.endPosition(forward));
+		if(!d.max()) scrollView.onPageChange(forward ? new Size(1, 1) : new Size(-1, -1));
+	}
+
 	bind({char: " ", key: 32, shift: null}, function(e) {
 		smartScroll(!e.shift, new Size(0, 1), new Size(1, 0));
 	});
@@ -246,7 +250,7 @@ ScrollView.prototype.registerShortcuts = function() {
 	});
 
 	bind({key: 36}, function(e) { // Home
-		scrollView.scrollTo(scrollView.homePosition(true));
+		scrollToEnd(false);
 	});
 	bind({key: 33}, function(e) { // Page Up
 		scrollView.scrollByPage(new Size(0, -1));
@@ -255,7 +259,7 @@ ScrollView.prototype.registerShortcuts = function() {
 		scrollView.scrollByPage(new Size(0, 1));
 	});
 	bind({key: 35}, function(e) { // End
-		scrollView.scrollTo(scrollView.homePosition(false));
+		scrollToEnd(true);
 	});
 
 	bind({char: "1", key: 97, numberPad: true}, function(e) {

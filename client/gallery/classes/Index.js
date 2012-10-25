@@ -97,7 +97,7 @@ Index.prototype._setCurrentNode = function(node, callback) {
 		index.cache.page = null;
 
 		index.page.load(function() {
-			if(index.page.element) index.scrollView.setPage(index.page, node.position || index.scrollView.homePosition(true));
+			if(index.page.element) index.scrollView.setPage(index.page, node.position || index.scrollView.endPosition(false));
 			callback();
 
 			index._next(true, index.node, function(result) {
@@ -185,7 +185,7 @@ Index.prototype.setScaler = function(scaler) {
 Index.prototype.setReadingDirection = function(readingDirection) {
 	var index = this;
 	index.scrollView.setReadingDirection(readingDirection);
-	index.scrollView.scrollTo(index.scrollView.homePosition(true));
+	index.scrollView.scrollTo(index.scrollView.endPosition(false));
 	localStorage.setItem("readingDirection", readingDirection.stringify());
 	// FIXME: This needs to update the menu too.
 };

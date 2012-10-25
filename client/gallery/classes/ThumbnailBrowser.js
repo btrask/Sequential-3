@@ -111,7 +111,7 @@ ThumbnailFolder.prototype.show = function(node) {
 		}
 	}
 	folder.browser.scrollView.reflow();
-	folder.browser.scrollView.scrollTo(folder.browser.scrollView.homePosition(true));
+	folder.browser.scrollView.scrollTo(folder.browser.scrollView.endPosition(false));
 };
 ThumbnailFolder.prototype.itemForNode = function(node, create) {
 	var folder = this;
