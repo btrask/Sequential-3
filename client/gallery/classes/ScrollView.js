@@ -69,6 +69,7 @@ function ScrollView() {
 	scrollView.scaler = new AlmostFitScaler(scrollView);
 	scrollView.readingDirection = new ReadingDirection(true);
 	scrollView.animationCount = 0;
+	scrollView.onPageChange = function(dir){};
 
 	DOM.addListener(window, "resize", function() {
 		scrollView.reflow();
@@ -143,9 +144,9 @@ ScrollView.prototype.scrollBy = function(size) { // Returns the clamped size.
 	var oldPos = scrollView.position;
 	return scrollView.scrollTo(scrollView.position.offset(size)).distance(oldPos);
 };
-ScrollView.prototype.scrollByPage = function(dir) {
+ScrollView.prototype.scrollByPage = function(dir) { // Returns the clamped size.
 	var scrollView = this;
-	scrollView.scrollBy(scrollView.pageDistanceInDirection(dir));
+	return scrollView.scrollBy(scrollView.pageDistanceInDirection(dir));
 };
 ScrollView.prototype.smartScroll = function(d1, d2) {
 	var scrollView = this;
@@ -156,7 +157,7 @@ ScrollView.prototype.smartScroll = function(d1, d2) {
 		var bounds = scrollView.bounds.s.difference(scrollView.page.borderSize);
 		var size = Size.fromElement(scrollView.page.element).difference(scrollView.page.borderSize);
 		var skippable = AlmostFitScaler.skipScale(bounds, size) >= 1;
-		if(skippable) return scrollView.scrollByPage(d1.sum(d2).product(dir))
+		if(skippable && scrollView.scrollByPage(d1.sum(d2).product(dir)).max()) return;
 	}
 
 	var a = d1.product(dir);
@@ -165,7 +166,7 @@ ScrollView.prototype.smartScroll = function(d1, d2) {
 	var b = d2.product(dir);
 	var y = scrollView.pageDistanceInDirection(b);
 	if(y.w || y.h) return scrollView.scrollBy(y.sum(a.scale(-9e9)));
-	// TODO: Switch pages.
+	scrollView.onPageChange(d1.sum(d2));
 };
 
 ScrollView.prototype.homePosition = function(home) {

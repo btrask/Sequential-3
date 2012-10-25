@@ -41,6 +41,11 @@ function Index(indexURL) {
 		var forward = event.shiftKey === rightClick;
 		index.next(forward);
 	};
+	index.scrollView.onPageChange = function(dir) {
+		var d = index.scrollView.readingDirection.size.product(dir);
+		if(d.w < 0) index.next(false); else
+		if(d.w > 0) index.next(true);
+	};
 	index.element.appendChild(index.scrollView.element);
 	index.registerShortcuts();
 	index.registerScalingShortcuts();

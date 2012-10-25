@@ -103,10 +103,12 @@ Size.prototype.scale = function(s) {
 	return new Size(this.w * s, this.h * s);
 };
 Size.prototype.min = function() {
-	return Math.min(this.w, this.h);
+	var w = this.w, h = this.h;
+	return Math.abs(w) < Math.abs(h) ? w : h;
 };
 Size.prototype.max = function() {
-	return Math.max(this.w, this.h);
+	var w = this.w, h = this.h;
+	return Math.abs(w) > Math.abs(h) ? w : h;
 };
 Size.prototype.clamp = function(rect) {
 	var x = rect.o.x, y = rect.o.y;
