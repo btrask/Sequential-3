@@ -81,18 +81,15 @@ function AlmostFitScaler(scrollView) {
 }
 AlmostFitScaler.prototype = new Scaler();
 AlmostFitScaler.prototype.computedScale = function(bounds, size) {
+	var min = 1.75;
 	var chunks = 2;
 	var overlap = 0.5;
 
-	var skipScale = AlmostFitScaler.skipScale(bounds, size);
+	var minScale = bounds.scale(min).quotient(size).min();
 	var almostFitScale = bounds.scale(1 + (1 - overlap) * (chunks - 1)).quotient(size).min();
 	var maxOneWayScrollScale = bounds.quotient(size).max();
-	return Geometry.clampMin(skipScale, almostFitScale, maxOneWayScrollScale);
+	return Geometry.clampMin(minScale, almostFitScale, maxOneWayScrollScale);
 };
 AlmostFitScaler.prototype.stringify = function() {
 	return JSON.stringify({"name": "AlmostFit"});
-};
-AlmostFitScaler.skipScale = function(bounds, size) {
-	var skip = 1.15;
-	return bounds.scale(skip).quotient(size).min();
 };

@@ -150,15 +150,6 @@ ScrollView.prototype.scrollByPage = function(dir) { // Returns the clamped size.
 ScrollView.prototype.smartScroll = function(d1, d2) {
 	var scrollView = this;
 	var dir = scrollView.readingDirection.size;
-
-	var scrollable = scrollView.scrollableRect.s;
-	if(scrollable.w || scrollable.h) {
-		var bounds = scrollView.bounds.s.difference(scrollView.page.borderSize);
-		var size = Size.fromElement(scrollView.page.element).difference(scrollView.page.borderSize);
-		var skippable = AlmostFitScaler.skipScale(bounds, size) >= 1;
-		if(skippable && scrollView.scrollByPage(d1.sum(d2).product(dir)).max()) return;
-	}
-
 	var a = d1.product(dir);
 	var x = scrollView.pageDistanceInDirection(a);
 	if(x.w || x.h) return scrollView.scrollBy(x);
