@@ -232,6 +232,10 @@ ScrollView.prototype.registerShortcuts = function() {
 		var d = scrollView.scrollTo(scrollView.endPosition(forward));
 		if(!d.max()) scrollView.onPageChange(forward ? new Size(1, 1) : new Size(-1, -1));
 	}
+	function scrollByPage(dir) {
+		var d = scrollView.scrollByPage(dir);
+		if(!d.max()) scrollView.onPageChange(dir);
+	}
 
 	bind({char: " ", key: 32, shift: null}, function(e) {
 		smartScroll(!e.shift, new Size(0, 1), new Size(1, 0));
@@ -253,41 +257,41 @@ ScrollView.prototype.registerShortcuts = function() {
 		scrollToEnd(false);
 	});
 	bind({key: 33}, function(e) { // Page Up
-		scrollView.scrollByPage(new Size(0, -1));
+		scrollByPage(new Size(0, -1));
 	});
 	bind({key: 34}, function(e) { // Page Down
-		scrollView.scrollByPage(new Size(0, 1));
+		scrollByPage(new Size(0, 1));
 	});
 	bind({key: 35}, function(e) { // End
 		scrollToEnd(true);
 	});
 
 	bind({char: "1", key: 97, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(-1, 1));
+		scrollByPage(new Size(-1, 1));
 	});
 	bind({char: "2", key: 98, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(0, 1));
+		scrollByPage(new Size(0, 1));
 	});
 	bind({char: "3", key: 99, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(1, 1));
+		scrollByPage(new Size(1, 1));
 	});
 	bind({char: "4", key: 100, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(-1, 0));
+		scrollByPage(new Size(-1, 0));
 	});
 	bind({char: "5", key: 101, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(0, 1));
+		scrollByPage(new Size(0, 1));
 	});
 	bind({char: "6", key: 102, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(1, 0));
+		scrollByPage(new Size(1, 0));
 	});
 	bind({char: "7", key: 103, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(-1, -1));
+		scrollByPage(new Size(-1, -1));
 	});
 	bind({char: "8", key: 104, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(0, -1));
+		scrollByPage(new Size(0, -1));
 	});
 	bind({char: "9", key: 105, numberPad: true}, function(e) {
-		scrollView.scrollByPage(new Size(1, -1));
+		scrollByPage(new Size(1, -1));
 	});
 };
 ScrollView.prototype.registerScrollShortcuts = function() {
