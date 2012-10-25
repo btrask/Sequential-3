@@ -119,7 +119,7 @@ ScrollView.prototype.reflow = function() {
 	var pageLocation = center.difference(pageSize.scale(1 / 2)).pointFromOrigin().clamp(scrollView.bounds);
 	scrollView.scrollableRect.s = pageSize.difference(scrollView.bounds.s).clamp(Rect.make(0, 0, 9e9, 9e9));
 	scrollView.scrollableRect.o = pageLocation.offset(scrollView.scrollableRect.s.scale(-1));
-	scrollView.setPosition(scrollView.position.clamp(scrollView.scrollableRect)); // Reclamp.
+	scrollView.setPosition(scrollView.position.clamp(scrollView.scrollableRect), true); // Reclamp.
 };
 
 ScrollView.prototype.setPosition = function(position, reset) {
@@ -192,7 +192,7 @@ ScrollView.prototype.setPage = function(page, position) {
 	var scrollView = this;
 	var old = scrollView.page;
 	scrollView.page = page || null;
-	scrollView.setPosition(position, true); // We don't need to clamp because we clamp when we reflow().
+	scrollView.position = position;
 	DOM.fill(scrollView.element, page.element);
 	scrollView.reflow();
 };
