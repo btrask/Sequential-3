@@ -133,17 +133,18 @@ ScrollView.prototype.setPosition = function(position, reset) {
 	scrollView.page.element.style.left = String(Math.round(flippedPosition.x)) + "px";
 	scrollView.page.element.style.top = String(Math.round(flippedPosition.y)) + "px";
 }
-ScrollView.prototype.scrollTo = function(position) { // Returns the clamped position.
+ScrollView.prototype.scrollTo = function(position) { // Returns the difference due to clamping.
 	var scrollView = this;
-	scrollView.setPosition(position.clamp(scrollView.scrollableRect));
-	return scrollView.position;
+	var clamped = position.clamp(scrollView.scrollableRect);
+	scrollView.setPosition(clamped);
+	return position.distance(clamped);
 };
-ScrollView.prototype.scrollBy = function(size) { // Returns the clamped size.
+ScrollView.prototype.scrollBy = function(size) { // Returns the difference due to clamping.
 	var scrollView = this;
 	var oldPos = scrollView.position;
 	return scrollView.scrollTo(scrollView.position.offset(size)).distance(oldPos);
 };
-ScrollView.prototype.scrollByPage = function(dir) { // Returns the clamped size.
+ScrollView.prototype.scrollByPage = function(dir) { // Returns the difference due to clamping.
 	var scrollView = this;
 	return scrollView.scrollBy(scrollView.pageDistanceInDirection(dir));
 };
