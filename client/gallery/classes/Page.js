@@ -80,10 +80,10 @@ ImagePage.prototype.load = function(callback) {
 ImagePage.prototype.rescale = function(scaler) {
 	var page = this;
 	if(!page.originalSize) return;
-	var imageSize = Size.fromElement(page.element);
+	var elementSize = Size.fromElement(page.element);
 	var areaSize = Size.fromElement(page["area"]);
-	page.borderSize = imageSize.difference(areaSize);
-	var size = scaler.scaledSize(page).roundToZero();
+	page.borderSize = elementSize.difference(areaSize);
+	var size = scaler.scaledSize(page).roundToZero(); // It would be nice to use round(), but making the image a pixel larger might mess up scrolling...
 	page["image"].width = size.w;
 	page["image"].height = size.h;
 };
