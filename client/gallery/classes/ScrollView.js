@@ -47,10 +47,10 @@ var animation = {};
 		}
 		next(undefined);
 		return obj;
-	}
+	};
 	animation.clear = function(obj) {
 		if(obj) obj.go = false;
-	}
+	};
 })();
 
 
@@ -132,7 +132,7 @@ ScrollView.prototype.setPosition = function(position, reset) {
 	var flippedPosition = maximum.offset(position.scale(-1));
 	scrollView.page.element.style.left = String(Math.round(flippedPosition.x)) + "px";
 	scrollView.page.element.style.top = String(Math.round(flippedPosition.y)) + "px";
-}
+};
 ScrollView.prototype.scrollTo = function(position) { // Returns the distance scrolled.
 	var scrollView = this;
 	var oldPos = scrollView.position;
