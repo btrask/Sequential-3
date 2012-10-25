@@ -108,7 +108,6 @@ function ScrollView() {
 	scrollView.registerScrollShortcuts();
 	scrollView.registerScrollWheel();
 }
-ScrollView.pageDistanceRatio = 0.85;
 
 ScrollView.prototype.reflow = function() {
 	var scrollView = this;
@@ -182,7 +181,7 @@ ScrollView.prototype.scrollDistanceInDirection = function(direction) {
 ScrollView.prototype.pageDistanceInDirection = function(direction) {
 	var scrollView = this;
 	var scrollDistance = scrollView.scrollDistanceInDirection(direction);
-	var maxPageDistance = scrollView.bounds.s.product(direction).scale(ScrollView.pageDistanceRatio);
+	var maxPageDistance = scrollView.bounds.s.product(direction).scale(0.85);
 	var steps = scrollDistance.quotient(maxPageDistance).roundFromZero();
 	var evenDistance = scrollDistance.quotient(steps).roundFromZero(); // These also produce NaNs...
 	if(isNaN(evenDistance.w)) evenDistance.w = 0;

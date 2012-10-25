@@ -93,6 +93,6 @@ AlmostFitScaler.prototype.stringify = function() {
 	return JSON.stringify({"name": "AlmostFit"});
 };
 AlmostFitScaler.skipScale = function(bounds, size) {
-	var skip = 1 / ScrollView.pageDistanceRatio;
+	var skip = 1.15;
 	return bounds.scale(skip).quotient(size).min();
 };
