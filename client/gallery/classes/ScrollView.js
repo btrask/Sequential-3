@@ -112,9 +112,9 @@ ScrollView.pageDistanceRatio = 0.85;
 ScrollView.prototype.reflow = function() {
 	var scrollView = this;
 	if(!scrollView.page || !scrollView.page.element) return;
+	scrollView.bounds.s = Size.fromElement(scrollView.element);
 	scrollView.page.rescale(scrollView.scaler);
 	var pageSize = Size.fromElement(scrollView.page.element);
-	scrollView.bounds.s = Size.fromElement(scrollView.element);
 	var center = scrollView.bounds.s.scale(1 / 2);
 	var pageLocation = center.difference(pageSize.scale(1 / 2)).pointFromOrigin().clamp(scrollView.bounds);
 	scrollView.scrollableRect.s = pageSize.difference(scrollView.bounds.s).clamp(Rect.make(0, 0, 9e9, 9e9));
