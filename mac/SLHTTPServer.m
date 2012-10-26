@@ -233,7 +233,7 @@ static NSDictionary *SLMIMETypes = nil;
 - (void)_writeHeaders
 {
 	if(_sentHeaders) return;
-	[self writeHeader:@"Connection" value:@"keep-alive"];
+	[self writeHeader:@"Connection" value:@"close"];
 	[self _writeString:@"\r\n"];
 	_sentHeaders = YES;
 }
@@ -322,7 +322,8 @@ static void SLAccept(CFSocketRef const s, CFSocketCallBackType const type, NSDat
 {
 	int const yes = YES;
 	BTErrno(setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &yes, sizeof(yes)));
-	BTErrno(setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &yes, sizeof(yes)));
+//	BTErrno(setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &yes, sizeof(yes)));
+	// TODO: Implement keep-alive.
 
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, kNilOptions), ^ {
 		CFHTTPMessageRef const msg = (CFHTTPMessageRef)[(id)CFHTTPMessageCreateEmpty(kCFAllocatorDefault, true) autorelease];
