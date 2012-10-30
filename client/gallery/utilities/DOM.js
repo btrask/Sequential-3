@@ -74,9 +74,7 @@ var DOM = {
     },
     addListener: function(elem, name, func) {
         if(elem.addEventListener) elem.addEventListener(name, func);
-        else if(elem.attachEvent) elem.attachEvent(name, function(event) {
-            return func(event || window.event);
-        });
+        else if(elem.attachEvent) elem.attachEvent(name, func);
     },
     removeListener: function(elem, name, func) {
 	if(elem.removeEventListener) elem.removeEventListener(name, func);
