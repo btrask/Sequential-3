@@ -147,6 +147,9 @@ Rect.prototype.toString = function() {
 Rect.prototype.inset = function(size) {
 	return new Rect(this.o.offset(size), this.s.difference(size));
 };
+Rect.prototype.offset = function(size) {
+	return new Rect(this.o.offset(size), this.s);
+};
 Rect.prototype.extent = function() {
 	return this.o.offset(this.s);
 };
@@ -154,6 +157,11 @@ Rect.prototype.intersect = function(rect) {
 	var o = this.o.clamp(rect);
 	var s = this.extent().clamp(rect).distance(o);
 	return new Rect(o, s);
+};
+Rect.prototype.point = function(dir) {
+	var r = this;
+	var d = dir || Size.zero;
+	return new Point(r.o.x + r.s.w*(d.w+1)/2, r.o.y + r.s.h*(d.h+1)/2);
 };
 Rect.make = function(x, y, w, h) {
 	return new Rect(new Point(x, y), new Size(w, h));
