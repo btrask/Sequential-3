@@ -116,9 +116,8 @@ ScrollView.prototype.reflow = function() {
 	scrollView.page.rescale(scrollView.scaler);
 	var pageSize = Size.fromElement(scrollView.page.element);
 	var center = scrollView.bounds.s.scale(1 / 2);
-	var pageLocation = center.difference(pageSize.scale(1 / 2)).pointFromOrigin().clamp(scrollView.bounds);
+	scrollView.scrollableRect.o = center.difference(pageSize.scale(1 / 2)).pointFromOrigin().clamp(scrollView.bounds);
 	scrollView.scrollableRect.s = pageSize.difference(scrollView.bounds.s).clamp(Rect.make(0, 0, 9e9, 9e9));
-	scrollView.scrollableRect.o = pageLocation.offset(scrollView.scrollableRect.s.scale(-1));
 	scrollView.setPosition(scrollView.position.clamp(scrollView.scrollableRect), true); // Reclamp.
 };
 
@@ -127,9 +126,8 @@ ScrollView.prototype.setPosition = function(position, reset) {
 	if(position.x === scrollView.position.x && position.y === scrollView.position.y && !reset) return;
 	scrollView.position = position;
 	if(!scrollView.page || !scrollView.page.element) return;
-	var maximum = scrollView.scrollableRect.extent();
 	var position = scrollView.position.distance(scrollView.scrollableRect.o);
-	var flippedPosition = maximum.offset(position.scale(-1));
+	var flippedPosition = scrollView.scrollableRect.o.offset(position.scale(-1));
 	scrollView.page.element.style.left = String(Math.round(flippedPosition.x)) + "px";
 	scrollView.page.element.style.top = String(Math.round(flippedPosition.y)) + "px";
 };
