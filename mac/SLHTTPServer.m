@@ -200,7 +200,13 @@ static NSDictionary *SLMIMETypes = nil;
 	NSString *const fullpath = gz ? gzPath : path;
 
 	[self writeStatus:200 message:@"OK"];
-	[self writeHeader:@"Content-Type" value:[SLMIMETypes objectForKey:[[path pathExtension] lowercaseString]] ?: @"application/octet-stream"];
+	NSString *const ext = [path pathExtension];
+	if(BTEqualObjects(@"", ext)) { // Hack for our LICENSE files.
+		[self writeHeader:@"Content-Disposition" value:@"inline"];
+		[self writeHeader:@"Content-Type" value:@"text/plain; charset=utf-8"];
+	} else {
+		[self writeHeader:@"Content-Type" value:[SLMIMETypes objectForKey:[ext lowercaseString]] ?: @"application/octet-stream"];
+	}
 	NSNumber *const contentLength = [[fileManager attributesOfItemAtPath:fullpath error:NULL] objectForKey:NSFileSize];
 	if(contentLength) [self writeContentLength:[contentLength unsignedLongLongValue]];
 	if(gz) [self writeHeader:@"Content-Encoding" value:@"gzip"];

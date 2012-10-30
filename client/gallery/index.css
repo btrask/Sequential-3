@@ -39,6 +39,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 .full { left: 0; right: 0; top: 0; bottom: 0; }
 .inlineBlock { display: inline-block; }
 .center { text-align: center; }
+.cursor-arrow { cursor: default; }
 .cursor-pointer { cursor: pointer; }
 .cursor-hidden { cursor: none; }
 .overflow { overflow: hidden; text-overflow: ellipsis; }
@@ -265,6 +266,27 @@ body {
 }
 .menu > .submenu > .items > .item:hover > .shortcut {
 	color: rgba(255, 255, 255, 0.33);
+}
+
+.about {
+	width: 20em;
+	height: 8em;
+	padding: 10px;
+
+	/* Common */
+	background: rgba(0, 0, 0, 0.5);
+	border-radius: 6px;
+	color: white;
+
+	/* Common */
+	font-size: 13px;
+	text-shadow: 0 1px 2px black;
+}
+.about a:link, .about a:visited {
+	color: white;
+}
+.about a:hover {
+	color: #ddd;
 }
 
 .index > .loading {

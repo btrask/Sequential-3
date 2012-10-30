@@ -21,11 +21,14 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 function About() {
 	var about = this;
-	var scrollView = new ScrollView();
-	about.element = scrollView.element;
+	about.scrollView = new ScrollView();
+	about.element = about.scrollView.element;
 	about.onclose = null;
-	scrollView.setPage(new GenericPage(DOM.clone("about", about)));
-	scrollView.element._onclick = function() {
+	about.content = new GenericPage(DOM.clone("about", about));
+	about.scrollView.setPage(about.content);
+	about.content.element._onclick = function(){};
+	about.scrollView.element._onclick = function() {
 		if(about.onclose) about.onclose();
 	};
+	
 }

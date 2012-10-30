@@ -243,6 +243,7 @@ Index.prototype.showAbout = function() {
 	var about = new About();
 	index.scrollView.setActive(false);
 	index.element.appendChild(about.element);
+	about.scrollView.reflow(); // FIXME: Hack.
 	about.onclose = function(event) {
 		if(event && event.shiftKey) return;
 		index.cancel();

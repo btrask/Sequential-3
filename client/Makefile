@@ -35,7 +35,8 @@ CLIENT_FILES := \
 	gallery/index.js \
 	gallery/folder.png \
 	gallery/error.png \
-	gallery/background.png
+	gallery/background.png \
+	gallery/LICENSE
 
 CLIENT_GZIPS := $(addsuffix .gz,$(CLIENT_FILES))
 
