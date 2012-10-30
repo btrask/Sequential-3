@@ -49,22 +49,31 @@ function emit(obj, prop, event) {
 	return !!l;
 }
 
+var pendingCount = 0;
+var pendingKeyups = [];
 var pendingKey = null;
 var listeners = {};
 listen("keydown", function(event) {
 	var key = pendingKey = keyEvent(event);
-	setTimeout(function() {
+	++pendingCount;
+	setZeroTimeout(function() {
 		pendingKey = null;
 		console.log(key.char, key.key);
 		emit(listeners, "keydown", key);
-	}, 0);
+		if(--pendingCount) return;
+		var a = pendingKeyups, l = a.length;
+		for(var i = 0; i < l; ++i) emit(listeners, "keyup", a[i]);
+		pendingKeyups = [];
+	});
 });
 listen("keypress", function(event) {
 	if(pendingKey) pendingKey.char = String.fromCharCode(event.charCode).toLowerCase();
 	pendingKey = null;
 });
 listen("keyup", function(event) {
-	emit(listeners, "keyup", keyEvent(event));
+	var key = keyEvent(event);
+	if(pendingCount) pendingKeyups.push(key);
+	else emit(listeners, "keyup", key);
 });
 KBD.addEventListener = function(event, listener) {
 	if(!has(listeners, event)) listeners[event] = [];
