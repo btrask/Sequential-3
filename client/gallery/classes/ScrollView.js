@@ -72,7 +72,9 @@ function ScrollView() {
 	scrollView.onPageChange = function(dir){}; // `dir` is in logical coordinates (normalized for reading direction).
 
 	DOM.addListener(window, "resize", function() {
+		var s = scrollView.offset();
 		scrollView.reflow();
+		scrollView.scrollToOffset(s);
 	});
 	DOM.addListener(scrollView.element, "contextmenu", function(event) {
 //		var props = [];
@@ -119,6 +121,20 @@ ScrollView.prototype.reflow = function() {
 	scrollView.scrollableRect.o = center.difference(pageSize.scale(1 / 2)).pointFromOrigin().clamp(scrollView.bounds);
 	scrollView.scrollableRect.s = pageSize.difference(scrollView.bounds.s).clamp(Rect.make(0, 0, 9e9, 9e9));
 	scrollView.setPosition(scrollView.position.clamp(scrollView.scrollableRect), true); // Reclamp.
+};
+ScrollView.prototype.offset = function(dir) {
+	var scrollView = this;
+	if(!scrollView.page || !scrollView.page.borderSize) return Size.zero;
+	var d = dir || scrollView.readingDirection.size.scale(-1);
+	var document = new Rect(scrollView.scrollableRect.o, Size.fromElement(scrollView.page.element));
+	var bounds = new Rect(scrollView.position, scrollView.bounds.s);
+	return bounds.point(d).distance(document.point(d)).quotient(document.s);
+};
+ScrollView.prototype.scrollToOffset = function(offset, dir) {
+	var scrollView = this;
+	var current = scrollView.offset(dir);
+	var docSize = Size.fromElement(scrollView.page.element);
+	scrollView.scrollBy(offset.difference(current).product(docSize));
 };
 
 ScrollView.prototype.setPosition = function(position, reset) {
