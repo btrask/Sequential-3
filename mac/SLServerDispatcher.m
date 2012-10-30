@@ -305,6 +305,12 @@ static void SLDicSetKeyObject(NSMutableDictionary *const dic, id const key, id c
 	if(cachePath) return [res sendFile:cachePath compressed:NO fileManager:fileManager];
 	[res sendStatus:500 message:@"Internal Server Error"];
 }
+- (void)serveReq:(Req)req res:(Res)res root:(Dic)root LICENSE:(Dic)LICENSE
+{
+	BTFileManager *const fileManager = [root objectForKey:@"fileManager"];
+	Str const licensePath = [[NSBundle mainBundle] pathForResource:@"LICENSE" ofType:@""];
+	[res sendFile:licensePath compressed:NO fileManager:fileManager];
+}
 - (void)serveUnknownReq:(Req)req res:(Res)res
 {
 	[res sendStatus:400 message:@"Bad Request"];

@@ -44,6 +44,8 @@ static NSString *SLHostName(void)
 
 @interface SLDocumentController(Private)
 
+- (NSURL *)_URLWithRelativeString:(NSString *const)rel;
+- (BOOL)_openURL:(NSURL *const)URL;
 - (void)_restartServer;
 
 @end
@@ -83,7 +85,7 @@ static NSString *SLHostName(void)
 }
 - (IBAction)openLicense:(id)sender
 {
-	(void)[[NSWorkspace sharedWorkspace] openFile:[[NSBundle mainBundle] pathForResource:@"LICENSE" ofType:@""]]; // TODO: Better display method than opening TextEdit or the default editor?
+	if(![self _openURL:[self _URLWithRelativeString:@"/LICENSE"]]) NSBeep();
 }
 
 #pragma mark -
@@ -112,14 +114,23 @@ static NSString *SLHostName(void)
 {
 	NSString *const hash = [_dispatcher hashForPath:path persistent:YES];
 	if(!hash) return NO;
-	NSURL *const URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:%lu/id/%@/", (unsigned long)[[[NSUserDefaults standardUserDefaults] objectForKey:SLPortKey] unsignedShortValue], hash]];
-	if(!URL) return NO;
-	[self noteNewRecentDocumentURL:[NSURL fileURLWithPath:path]];
-	return [[NSWorkspace sharedWorkspace] openURLs:[NSArray arrayWithObject:URL] withAppBundleIdentifier:[[NSUserDefaults standardUserDefaults] objectForKey:SLPreferredBrowserBundleIdentifierKey] options:NSWorkspaceLaunchDefault additionalEventParamDescriptor:nil launchIdentifiers:NULL];
+	NSURL *const URL = [self _URLWithRelativeString:[NSString stringWithFormat:@"/id/%@/", hash]];
+	BOOL const opened = [self _openURL:URL];
+	if(opened) [self noteNewRecentDocumentURL:[NSURL fileURLWithPath:path]];
+	return opened;
 }
 
 #pragma mark -SLDocumentController(Private)
 
+- (NSURL *)_URLWithRelativeString:(NSString *const)rel
+{
+	return [NSURL URLWithString:rel relativeToURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:%lu/", (unsigned long)[[[NSUserDefaults standardUserDefaults] objectForKey:SLPortKey] unsignedShortValue]]]];
+}
+- (BOOL)_openURL:(NSURL *const)URL
+{
+	if(!URL) return NO;
+	return [[NSWorkspace sharedWorkspace] openURLs:[NSArray arrayWithObject:URL] withAppBundleIdentifier:[[NSUserDefaults standardUserDefaults] objectForKey:SLPreferredBrowserBundleIdentifierKey] options:NSWorkspaceLaunchDefault additionalEventParamDescriptor:nil launchIdentifiers:NULL];
+}
 - (void)_restartServer
 {
 	NSUserDefaults *const d = [NSUserDefaults standardUserDefaults];

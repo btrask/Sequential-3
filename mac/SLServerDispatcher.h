@@ -61,6 +61,7 @@ typedef SLHTTPResponse *const Res;
 - (void)serveReq:(Req)req res:(Res)res root:(Dic)root id:(Dic)ident hash:(Dic)hash index:(Dic)index;
 - (void)serveReq:(Req)req res:(Res)res root:(Dic)root id:(Dic)ident hash:(Dic)hash image:(Dic)image;
 - (void)serveReq:(Req)req res:(Res)res root:(Dic)root id:(Dic)ident hash:(Dic)hash thumb:(Dic)thumb;
+- (void)serveReq:(Req)req res:(Res)res root:(Dic)root LICENSE:(Dic)LICENSE;
 - (void)serveUnknownReq:(Req)req res:(Res)res;
 
 - (void)performAction:(Str)action;
