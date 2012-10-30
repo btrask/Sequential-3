@@ -22,6 +22,7 @@ CLIENT_SCRIPTS := \
 	gallery/classes/Page.js \
 	gallery/classes/Node.js \
 	gallery/classes/ThumbnailBrowser.js \
+	gallery/classes/About.js \
 	gallery/classes/Index.js \
 	$(CONFIG_PATH) \
 	gallery/index.js

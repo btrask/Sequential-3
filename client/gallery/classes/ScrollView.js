@@ -197,7 +197,7 @@ ScrollView.prototype.setPage = function(page, position) {
 	var scrollView = this;
 	var old = scrollView.page;
 	scrollView.page = page || null;
-	scrollView.position = position;
+	scrollView.position = position || new Point(0, 0);
 	DOM.fill(scrollView.element, page.element);
 	scrollView.reflow();
 };

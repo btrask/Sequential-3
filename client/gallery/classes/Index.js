@@ -32,6 +32,7 @@ function Index(indexURL) {
 	};
 	index.thumbnailBrowser = null;
 	index.menu = null;
+	index.cancel = function(){};
 	index.scrollView = new ScrollView();
 	index.scrollView.setScaler(Scaler.parse(localStorage.getItem("scaler"), index.scrollView));
 	index.scrollView.setReadingDirection(ReadingDirection.parse(localStorage.getItem("readingDirection")));
@@ -200,18 +201,19 @@ Index.prototype.showThumbnailBrowser = function() {
 				index.thumbnailBrowser = null;
 				return;
 			}
-			if(index.menu) {
-				DOM.remove(index.menu.element); // TODO: How exactly should this work?
-				index.menu = null;
-			}
+			index.cancel();
 			index.scrollView.setActive(false);
 			index.element.appendChild(index.thumbnailBrowser.element);
 			index.thumbnailBrowser.show(index.node);
 			index.thumbnailBrowser.onclose = function(event) {
 				if(event && event.shiftKey) return;
+				index.cancel();
+			};
+			index.cancel = function() {
 				DOM.remove(index.thumbnailBrowser.element);
 				index.scrollView.setActive(true);
 				index.thumbnailBrowser = null;
+				index.cancel = function(){};
 			};
 		});
 	});
@@ -219,19 +221,36 @@ Index.prototype.showThumbnailBrowser = function() {
 Index.prototype.showOptions = function() {
 	var index = this;
 	if(index.menu) return;
+	index.cancel();
 	index.menu = new Menu(index);
-	if(index.thumbnailBrowser) {
-		DOM.remove(index.thumbnailBrowser.element); // FIXME: This is a mess.
-		index.thumbnailBrowser = null;
-	}
 	index.scrollView.setActive(false);
 	index.element.appendChild(index.menu.element);
 	index.menu.scrollView.reflow(); // FIXME: Hack.
 	index.menu.onclose = function(event) {
 		if(event && event.shiftKey) return;
+		index.cancel();
+	};
+	index.cancel = function() {
 		DOM.remove(index.menu.element);
 		index.scrollView.setActive(true);
 		index.menu = null;
+		index.cancel = function(){};
+	};
+};
+Index.prototype.showAbout = function() {
+	var index = this;
+	index.cancel();
+	var about = new About();
+	index.scrollView.setActive(false);
+	index.element.appendChild(about.element);
+	about.onclose = function(event) {
+		if(event && event.shiftKey) return;
+		index.cancel();
+	};
+	index.cancel = function() {
+		DOM.remove(about.element);
+		index.scrollView.setActive(true);
+		index.cancel = function(){};
 	};
 };
 Index.prototype.registerShortcuts = function() {
@@ -303,6 +322,10 @@ Index.prototype.registerShortcuts = function() {
 	});
 	KBD.bind({char: "l", key: 76, shift: null}, function(e) {
 		index.folderLast(!e.shift);
+	});
+
+	KBD.bind({key: 27}, function(e) { // Esc
+		index.cancel();
 	});
 };
 Index.prototype.registerScalingShortcuts = function() {

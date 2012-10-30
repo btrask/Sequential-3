@@ -46,7 +46,9 @@ function Menu(index) {
 	if(config.open) menu.commands.addItem("Open", "Shift-O", function(event) {
 		config.open();
 	});
-	menu.commands.addItem("About", "", function() {});
+	menu.commands.addItem("About", "", function() {
+		index.showAbout();
+	});
 
 	menu.navigation["previous"]._onclick = function(event) {
 		if(menu.onclose) menu.onclose(event);
@@ -132,7 +134,7 @@ function Menu(index) {
 	menu.repeat.addItem("Repeat All", "", changeRepeat(null));
 	menu.repeat.addItem("Repeat None", "", changeRepeat(null));
 
-	menu.scrollView.setPage(new GenericPage(menu.content), new Point(0, 0));
+	menu.scrollView.setPage(new GenericPage(menu.content));
 }
 
 function Submenu(menu, title) {
