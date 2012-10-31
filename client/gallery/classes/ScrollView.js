@@ -227,7 +227,7 @@ ScrollView.prototype.animator = function() {
 		animating = flag;
 		scrollView.animationCount += flag ? 1 : -1;
 		if(old === flag) return;
-		DOM.classify(scrollView.page.element, "optimize-speed", flag);
+		DOM.classify(document.body, "performance", flag);
 	};
 };
 

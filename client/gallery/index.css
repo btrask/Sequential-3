@@ -57,7 +57,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 ul > li  { list-style: none; }
 ul > li:before { content: "• "; }
 
-.optimize-speed { image-rendering: -moz-crisp-edges; }
+.performance {
+	image-rendering: -webkit-optimize-contrast;
+	image-rendering: -moz-crisp-edges;
+	image-rendering: crisp-edges;
+}
 
 body {
 	font-family: "Lucida Grande", sans-serif;

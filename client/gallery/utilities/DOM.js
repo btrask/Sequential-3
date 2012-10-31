@@ -37,21 +37,18 @@ var DOM = {
         return element;
     },
     classify: function(elem, className, add) {
+        if (add || undefined === add) {
+            elem.className += " "+className;
+            return;
+        }
         var classes = (elem.className || "").split(" "), 
         changed = (className || "").split(" "), 
         length = changed.length, i = 0, index;
-        if (add || undefined === add)
-            for (; i < length; ++i) {
-                index = classes.indexOf(changed[i]);
-                if (index < 0)
-                    classes.push(changed[i]);
-            }
-        else
-            for (; i < length; ++i) {
-                index = classes.indexOf(changed[i]);
-                if (index >= 0)
-                    classes.splice(index, 1);
-            }
+        for (; i < length; ++i) {
+            index = classes.indexOf(changed[i]);
+            if (index >= 0)
+                classes.splice(index, 1);
+        }
         elem.className = classes.join(" ");
     },
     fill: function(elem, child1, child2, etc) {
@@ -77,7 +74,7 @@ var DOM = {
         else if(elem.attachEvent) elem.attachEvent(name, func);
     },
     removeListener: function(elem, name, func) {
-	if(elem.removeEventListener) elem.removeEventListener(name, func);
-	else if(elem.detachEvent) elem.detachEvent(name, func);
+        if(elem.removeEventListener) elem.removeEventListener(name, func);
+        else if(elem.detachEvent) elem.detachEvent(name, func);
     }
 };
