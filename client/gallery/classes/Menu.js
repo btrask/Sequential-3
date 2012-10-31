@@ -31,11 +31,11 @@ function Menu(index) {
 
 	menu.commands = new Submenu(menu, "Commands");
 	menu.navigation = new NavigationSubmenu(menu);
-	menu.readingDirection = new Submenu(menu, "Reading Direction");
-	menu.scalingMode = new Submenu(menu, "Scaling Mode");
-	menu.sortOrder = new Submenu(menu, "Sort Order");
-	menu.sortDirection = new Submenu(menu, "Sort Direction");
-	menu.repeat = new Submenu(menu, "Repeat");
+	menu.readingDirection = new Submenu(menu, "Reading Direction", true);
+	menu.scalingMode = new Submenu(menu, "Scaling Mode", true);
+	menu.sortOrder = new Submenu(menu, "Sort Order", true);
+	menu.sortDirection = new Submenu(menu, "Sort Direction", true);
+	menu.repeat = new Submenu(menu, "Repeat", true);
 
 	menu.commands.addItem("Browse", "T", function(event) {
 		index.showThumbnailBrowser();
@@ -85,7 +85,6 @@ function Menu(index) {
 
 	function addReadingDirection(title, shortcut, readingDirection) {
 		var item = menu.readingDirection.addItem(title, shortcut, function(event) {
-			menu.readingDirection.selectItem(item);
 			index.setReadingDirection(readingDirection);
 		});
 		if(index.scrollView.readingDirection.stringify() === readingDirection.stringify()) menu.readingDirection.selectItem(item);
@@ -95,7 +94,6 @@ function Menu(index) {
 
 	function addScalingMode(title, shortcut, scaler) {
 		var item = menu.scalingMode.addItem(title, shortcut, function(event) {
-			menu.scalingMode.selectItem(item);
 			index.setScaler(scaler);
 		});
 		if(index.scrollView.scaler.stringify() === scaler.stringify()) menu.scalingMode.selectItem(item);
@@ -109,7 +107,6 @@ function Menu(index) {
 
 	function addSortOrder(title, shortcut, order) {
 		var item = menu.sortOrder.addItem(title, shortcut, function(event) {
-			menu.sortOrder.selectItem(item);
 			index.setSortOrder(order);
 		});
 		if(index.sortOrder === order) menu.sortOrder.selectItem(item);
@@ -122,7 +119,6 @@ function Menu(index) {
 
 	function addSortDirection(title, shortcut, reversed) {
 		var item = menu.sortDirection.addItem(title, shortcut, function(event) {
-			menu.sortDirection.selectItem(item);
 			index.setSortOrder(undefined, reversed);
 		});
 		if(index.reversed === reversed) menu.sortDirection.selectItem(item);
@@ -132,7 +128,6 @@ function Menu(index) {
 
 	function addRepeat(title, shortcut, repeat) {
 		var item = menu.repeat.addItem(title, shortcut, function(event) {
-			menu.repeat.selectItem(item);
 			// TODO: Implement.
 		});
 		if(index.repeat === repeat) menu.repeat.selectItem(item);
@@ -143,9 +138,10 @@ function Menu(index) {
 	menu.scrollView.setPage(new GenericPage(menu.content));
 }
 
-function Submenu(menu, title) {
+function Submenu(menu, title, selects) {
 	var submenu = this;
 	submenu.menu = menu;
+	submenu.selects = !!selects;
 	submenu.selection = null;
 	submenu.element = DOM.clone("submenu", submenu);
 	DOM.fill(submenu["title"], title);
@@ -159,6 +155,7 @@ Submenu.prototype.addItem = function(title, shortcut, func/* (event) */) {
 	DOM.fill(elems["shortcut"], shortcut);
 	item._onclick = function(event) {
 		if(submenu.menu.onclose) submenu.menu.onclose(event);
+		if(submenu.selects) submenu.selectItem(item);
 		func(event);
 	};
 	submenu["items"].appendChild(item);
@@ -166,6 +163,7 @@ Submenu.prototype.addItem = function(title, shortcut, func/* (event) */) {
 };
 Submenu.prototype.selectItem = function(item) {
 	var submenu = this;
+	if(!submenu.selects) throw new Error("Submenu does not support selection");
 	if(submenu.selection) DOM.classify(submenu.selection, "selected", false);
 	submenu.selection = item;
 	if(submenu.selection) DOM.classify(submenu.selection, "selected", true);
