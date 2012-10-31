@@ -85,7 +85,7 @@ function Menu(index) {
 
 	function addReadingDirection(title, shortcut, readingDirection) {
 		var item = menu.readingDirection.addItem(title, shortcut, function(event) {
-			menu.readingDirection.selectItem(item); // FIXME: We won't need the `item` argument because calling index.setReadingDirection() should select the item for us (so that keyboard shortcuts update us too).
+			menu.readingDirection.selectItem(item);
 			index.setReadingDirection(readingDirection);
 		});
 		if(index.scrollView.readingDirection.stringify() === readingDirection.stringify()) menu.readingDirection.selectItem(item);
