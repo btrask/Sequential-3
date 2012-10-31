@@ -38,10 +38,11 @@ ImagePage.prototype.load = function(callback) {
 	var page = this;
 	if(page.element) return (callback || function(){})();
 	var element = DOM.clone("image", page);
-	var image = page["image"];
+	var area = page["area"];
 	var title = page["title"];
 	var options = page["options"];
 	var browse = page["browse"];
+	var image = new Image();
 	function finished() {
 		page.cancel = function(){};
 		image.onload = null;
@@ -54,6 +55,7 @@ ImagePage.prototype.load = function(callback) {
 		finished();
 	};
 	image.onload = function() {
+		page.image = image;
 		page.element = element;
 		page.originalSize = new Size(image.width, image.height);
 		finished();
@@ -63,6 +65,7 @@ ImagePage.prototype.load = function(callback) {
 		finished();
 	};
 
+	DOM.fill(area, image);
 	image.src = page.node.imageURL;
 	options._onclick = function(event) {
 		page.node.index.showOptions();
@@ -84,6 +87,85 @@ ImagePage.prototype.rescale = function(scaler) {
 	var areaSize = Size.fromElement(page["area"]);
 	page.borderSize = elementSize.difference(areaSize);
 	var size = scaler.scaledSize(page).roundToZero(); // It would be nice to use round(), but making the image a pixel larger might mess up scrolling...
-	page["image"].width = size.w;
-	page["image"].height = size.h;
+	page.image.width = size.w;
+	page.image.height = size.h;
+};
+
+/*
+FIXME: Serious problems with rendering to canvas:
+- Only one frame of animated GIFs gets drawn, and we probably have no way to read the other frames/durations.
+- Scaling looks bad; {moz,webkit}imageSmoothingEnabled defaults to `true` but does not seem to use high quality scaling on any browser (Chromium, Firefox, or Safari 5). Worse yet, the frame changes in the background so everytime we rescale() we get a different frame.
+- I can't even get imageSmoothingEnabled=false to work (again, in any browser).
+*/
+function CanvasPage(node) {
+	var page = this;
+	page.node = node;
+	page.element = null;
+	page.cancel = function(){};
+	page.originalSize = null;
+	page.borderSize = Size.zero;
+}
+CanvasPage.prototype.load = function(callback) {
+	var page = this;
+	var element = DOM.clone("image", page);
+	var area = page["area"];
+	var title = page["title"];
+	var options = page["options"];
+	var browse = page["browse"];
+	var image = new Image();
+	var canvas = document.createElement("canvas");
+	function finished() {
+		page.cancel = function(){};
+		image.onload = null;
+		image.onerror = null;
+		if(callback) callback();
+	};
+
+	page.cancel = function() {
+		image.src = null;
+		finished();
+	};
+	image.onload = function() {
+		page.image = image;
+		page.element = element;
+		page.originalSize = new Size(image.width, image.height);
+		page.canvas = canvas;
+		page.context = canvas.getContext("2d");
+		page.context.globalCompositeOperation = "copy";
+/*		page.context.webkitImageSmoothingEnabled = true;
+		page.context.mozImageSmoothingEnabled = true;
+		page.context.imageSmoothingEnabled = true;*/
+		finished();
+	};
+	image.onerror = function() {
+		// TODO: Some kind of error.
+		finished();
+	};
+
+	DOM.fill(area, canvas);
+	image.src = page.node.imageURL;
+	options._onclick = function(event) {
+		page.node.index.showOptions();
+	};
+	browse._onclick = function(event) {
+		page.node.index.showThumbnailBrowser();
+	};
+	DOM.fill(title, page.node.name);
+	DOM.fill(options, "Options");
+	DOM.fill(browse, "Browse"); // TODO: Localize.
+	page.node.index.root.pageCount(1, function(count) {
+		DOM.classify(browse, "disabled", count <= 1);
+	});
+};
+CanvasPage.prototype.rescale = function(scaler) {
+	var page = this;
+	var orig = page.originalSize;
+	if(!orig) return;
+	var elementSize = Size.fromElement(page.element);
+	var areaSize = Size.fromElement(page["area"]);
+	page.borderSize = elementSize.difference(areaSize);
+	var size = scaler.scaledSize(page).roundToZero(); // It would be nice to use round(), but making the image a pixel larger might mess up scrolling...
+	page.canvas.width = size.w;
+	page.canvas.height = size.h;
+	page.context.drawImage(page.image, 0, 0, size.w, size.h);
 };
