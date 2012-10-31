@@ -125,9 +125,10 @@ body {
 	text-shadow: 0 1px 2px black;
 }
 .page.content > .header.clickable:hover {
-	color: rgba(255, 255, 255, 0.67);
+	background: rgba(79, 98, 253, .8);
 }
 .page.content > .header.clickable.disabled {
+	background: rgba(0, 0, 0, 0.5); /* Prevent hover from overriding. */
 	color: rgba(255, 255, 255, 0.5);
 }
 .page.content > .area > * {
@@ -242,27 +243,32 @@ body {
 	font-size: 13px;
 	text-shadow: 0 1px 2px black;
 }
+.menu > .submenu > .items > .item:hover {
+	background: rgba(79, 98, 253, .8);
+}
+.menu > .submenu > .items > .item > .title {
+	margin-left: 1.5em;
+}
 .menu > .submenu > .items > .item > .shortcut {
 	color: rgba(255, 255, 255, 0.67);
 	float: right;
 }
-.menu > .submenu > .items > .item.selected {
-	background: rgba(79, 98, 253, .8);
+.menu > .submenu > .items > .item.selected > .title::before {
+	content: "➤";
+	display: inline-block;
+	width: 1.5em;
+	margin-left: -1.5em;
 }
 
 .menu > .submenu.navigation > .items > .item {
 	display: inline-block;
 	width: 50%;
 }
+.menu > .submenu.navigation > .items > .item > .title {
+	margin-left: 0;
+}
 .menu > .submenu.navigation > .items > .item > .shortcut {
 	float: none;
-}
-
-.menu > .submenu > .items > .item:hover > .title {
-	color: rgba(255, 255, 255, 0.67);
-}
-.menu > .submenu > .items > .item:hover > .shortcut {
-	color: rgba(255, 255, 255, 0.33);
 }
 
 .about {
