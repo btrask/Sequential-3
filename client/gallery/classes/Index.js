@@ -33,9 +33,13 @@ function Index(indexURL) {
 	index.thumbnailBrowser = null;
 	index.menu = null;
 	index.cancel = function(){};
+	index.sortOrder = "name";
+	index.reversed = false;
+	index.repeat = true;
 	index.scrollView = new ScrollView();
 	index.scrollView.setScaler(Scaler.parse(localStorage.getItem("scaler"), index.scrollView));
 	index.scrollView.setReadingDirection(ReadingDirection.parse(localStorage.getItem("readingDirection")));
+	index.setSortOrder(localStorage.getItem("sortOrder"));
 	// TODO: Shouldn't we use the regular index.setXXX() system for loading these?
 	index.scrollView.element._onclick = function(event) {
 		var rightClick = 2 == event.button;
@@ -177,6 +181,30 @@ Index.prototype.jumpToNode = function(node) {
 		callback(node);
 	});
 };
+Index.prototype.sort = function(items) {
+	var index = this;
+	var order = index.sortOrder;
+	if("random" === order) {
+		// TODO: Implement.
+	} else {
+		var sort = Node.compare[order];
+		var factor = index.reversed ? -1 : 1;
+		items.sort(function(a, b) {
+			return sort(a, b) * factor;
+		});
+	}
+};
+Index.prototype.setSortOrder = function(order, reversed) {
+	var index = this;
+	var o = bt.hasOwnProperty(Node.compare, order) ? order : index.sortOrder;
+	var r = Boolean(reversed) === reversed ? reversed : index.reversed;
+	if(o === index.sortOrder && r === index.reversed) return;
+	index.sortOrder = o;
+	index.reversed = r;
+	index.root.sort();
+	// TODO: Update thumbnailBrowser if shown.
+	// TODO: Update menu selection if shown.
+};
 Index.prototype.setScaler = function(scaler) {
 	var index = this;
 	index.scrollView.setScaler(scaler);
@@ -283,6 +311,22 @@ Index.prototype.registerShortcuts = function() {
 	});
 	KBD.bind({char: "r", key: 82, shift: true}, function(e) {
 		if(config.showOriginal) config.showOriginal(index.node);
+	});
+
+	KBD.bind({char: "1", key: 49, shift: true}, function(e) {
+		index.setSortOrder("name");
+	});
+	KBD.bind({char: "2", key: 50, shift: true}, function(e) {
+		index.setSortOrder("size");
+	});
+	KBD.bind({char: "3", key: 51, shift: true}, function(e) {
+		index.setSortOrder("mtime");
+	});
+	KBD.bind({char: "4", key: 52, shift: true}, function(e) {
+		index.setSortOrder("ctime");
+	});
+	KBD.bind({char: "`", key: 192, shift: true}, function(e) {
+		index.setSortOrder("random");
 	});
 
 	KBD.bind({char: "`", key: 192}, function(e) {

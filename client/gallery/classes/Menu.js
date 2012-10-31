@@ -107,24 +107,28 @@ function Menu(index) {
 	addScalingMode("½× Size", "0", new ProportionalScaler(index.scrollView, 0.5));
 	addScalingMode("2× Size", "2", new ProportionalScaler(index.scrollView, 2));
 
-	function changeSortOrder(obj) {
-		return function(event, item) {
+	function addSortOrder(title, shortcut, order) {
+		var item = menu.sortOrder.addItem(title, shortcut, function(event) {
 			menu.sortOrder.selectItem(item);
-		};
+			index.setSortOrder(order);
+		});
+		if(index.sortOrder === order) menu.sortOrder.selectItem(item);
 	}
-	menu.sortOrder.addItem("By Name", "Shift-1", changeSortOrder(null));
-	menu.sortOrder.addItem("By Size", "Shift-2", changeSortOrder(null));
-	menu.sortOrder.addItem("By Date Modified", "Shift-3", changeSortOrder(null));
-	menu.sortOrder.addItem("By Date Created", "Shift-4", changeSortOrder(null));
-	menu.sortOrder.addItem("Shuffle", "Shift-`", changeSortOrder(null));
+	addSortOrder("By Name", "Shift-1", "name");
+	addSortOrder("By Size", "Shift-2", "size");
+	addSortOrder("By Date Modified", "Shift-3", "mtime");
+	addSortOrder("By Date Created", "Shift-4", "ctime");
+	addSortOrder("Shuffle", "Shift-`", "random");
 
-	function changeSortDirection(obj) {
-		return function(event, item) {
+	function addSortDirection(title, shortcut, reversed) {
+		var item = menu.sortDirection.addItem(title, shortcut, function(event) {
 			menu.sortDirection.selectItem(item);
-		};
+			index.setSortOrder(undefined, reversed);
+		});
+		if(index.reversed === reversed) menu.sortDirection.selectItem(item);
 	}
-	menu.sortDirection.addItem("Ascending", "", changeSortDirection(null));
-	menu.sortDirection.addItem("Descending", "", changeSortDirection(null));
+	addSortDirection("Ascending", "", false);
+	addSortDirection("Descending", "", true);
 
 	function changeRepeat(obj) {
 		return function(event, item) {

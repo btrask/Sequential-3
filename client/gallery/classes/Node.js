@@ -52,8 +52,8 @@ function Node(index, parent, name) {
 	node.items = [];
 	node.itemByName = {};
 	node.size = 0;
-	node.created = 0;
-	node.modified = 0;
+	node.ctime = 0;
+	node.mtime = 0;
 }
 Node.prototype.toString = function() {
 	return this.displayablePath();
@@ -93,6 +93,9 @@ Node.prototype.load = function(callback) {
 Node.prototype._update = function(obj) {
 	var node = this;
 	node.name = obj["name"];
+	node.size = obj["size"];
+	node.ctime = obj["ctime"];
+	node.mtime = obj["mtime"];
 	node.imageURL = obj["imageURL"];
 	node.thumbURL = obj["thumbURL"];
 	node.indexURL = obj["indexURL"];
@@ -114,7 +117,13 @@ Node.prototype._updateItems = function(items) {
 		node.items.push(item);
 		node.itemByName[item["name"]] = item;
 	}
-	node.items.sort(Node.compare);
+	node.index.sort(node.items);
+};
+Node.prototype.sort = function() {
+	var node = this;
+	var a = node.items, l = a.length;
+	node.index.sort(a);
+	for(var i = 0; i < l; ++i) a[i].sort();
 };
 Node.prototype.descendant = function(components, callback/* (descendant) */) {
 	var node = this;
@@ -127,9 +136,6 @@ Node.prototype.descendant = function(components, callback/* (descendant) */) {
 Node.prototype.page = function() {
 	var node = this;
 	return new ImagePage(node);
-};
-Node.compare = function(a, b) {
-	return sort.numericStringCompare(a.name || "", b.name || ""); // TODO: Support sort options.
 };
 
 Node.prototype.pageCount = function(goal, callback/* (count) */) {
@@ -258,4 +264,21 @@ Node.prototype.ancestorChildOf = function(other) {
 	if(!node.parent) return null;
 	if(node.parent === other) return node;
 	return node.parent.ancestorChildOf(other);
+};
+
+Node.compare = {};
+Node.compare["name"] = function(a, b) {
+	return sort.numericStringCompare(a.name || "", b.name || "");
+};
+Node.compare["size"] = function(a, b) {
+	return a.size - b.size;
+};
+Node.compare["ctime"] = function(a, b) {
+	return a.ctime - b.ctime;
+};
+Node.compare["mtime"] = function(a, b) {
+	return a.mtime - b.mtime;
+};
+Node.compare["random"] = function(a, b) {
+	return 0; // Use a real shuffle algorithm instead.
 };
