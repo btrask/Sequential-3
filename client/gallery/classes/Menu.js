@@ -84,7 +84,7 @@ function Menu(index) {
 	};
 
 	function addReadingDirection(title, shortcut, readingDirection) {
-		var item = menu.readingDirection.addItem(title, shortcut, function(event, item) {
+		var item = menu.readingDirection.addItem(title, shortcut, function(event) {
 			menu.readingDirection.selectItem(item); // FIXME: We won't need the `item` argument because calling index.setReadingDirection() should select the item for us (so that keyboard shortcuts update us too).
 			index.setReadingDirection(readingDirection);
 		});
@@ -94,7 +94,7 @@ function Menu(index) {
 	addReadingDirection("Right to Left", "O", new ReadingDirection(false));
 
 	function addScalingMode(title, shortcut, scaler) {
-		var item = menu.scalingMode.addItem(title, shortcut, function(event, item) {
+		var item = menu.scalingMode.addItem(title, shortcut, function(event) {
 			menu.scalingMode.selectItem(item);
 			index.setScaler(scaler);
 		});
@@ -130,13 +130,15 @@ function Menu(index) {
 	addSortDirection("Ascending", "", false);
 	addSortDirection("Descending", "", true);
 
-	function changeRepeat(obj) {
-		return function(event, item) {
+	function addRepeat(title, shortcut, repeat) {
+		var item = menu.repeat.addItem(title, shortcut, function(event) {
 			menu.repeat.selectItem(item);
-		};
+			// TODO: Implement.
+		});
+		if(index.repeat === repeat) menu.repeat.selectItem(item);
 	}
-	menu.repeat.addItem("Repeat All", "", changeRepeat(null));
-	menu.repeat.addItem("Repeat None", "", changeRepeat(null));
+	addRepeat("Repeat All", "", true);
+	addRepeat("Repeat None", "", false);
 
 	menu.scrollView.setPage(new GenericPage(menu.content));
 }
@@ -149,7 +151,7 @@ function Submenu(menu, title) {
 	DOM.fill(submenu["title"], title);
 	menu.content.appendChild(submenu.element);
 }
-Submenu.prototype.addItem = function(title, shortcut, func/* (event, item) */) {
+Submenu.prototype.addItem = function(title, shortcut, func/* (event) */) {
 	var submenu = this;
 	var elems = {};
 	var item = DOM.clone("menuItem", elems);
@@ -157,7 +159,7 @@ Submenu.prototype.addItem = function(title, shortcut, func/* (event, item) */) {
 	DOM.fill(elems["shortcut"], shortcut);
 	item._onclick = function(event) {
 		if(submenu.menu.onclose) submenu.menu.onclose(event);
-		func(event, item);
+		func(event);
 	};
 	submenu["items"].appendChild(item);
 	return item;
