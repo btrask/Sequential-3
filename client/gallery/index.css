@@ -204,6 +204,9 @@ body {
 	display: none;
 }
 
+.menu {
+	padding: 2em 0;
+}
 .menu > .submenu {
 	margin: 1em;
 }
