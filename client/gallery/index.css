@@ -204,20 +204,14 @@ body {
 	display: none;
 }
 
-.menu {
-	padding: 16px;	
-}
 .menu > .submenu {
-	vertical-align: top;
-	margin: 6px;
-	width: 12em;
+	margin: 1em;
 }
 .menu > .submenu > .title {
-	margin-bottom: 12px;
-	padding: 12px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	width: 16em;
+	vertical-align: top;
+	padding: 1em;
+	margin-right: 1em;
 
 	/* Common */
 	background: rgba(0, 0, 0, 0.5);
@@ -231,10 +225,10 @@ body {
 .menu > .submenu > .items {
 	border-radius: 6px;
 	overflow: hidden;
+	width: 24em;
 }
 .menu > .submenu > .items > .item {
-	padding: 6px 12px;
-	white-space: nowrap;
+	padding: 0.5em 1em;
 
 	/* Common */
 	background: rgba(0, 0, 0, 0.5);
@@ -246,19 +240,18 @@ body {
 }
 .menu > .submenu > .items > .item > .shortcut {
 	color: rgba(255, 255, 255, 0.67);
+	float: right;
 }
 .menu > .submenu > .items > .item.selected {
 	background: rgba(79, 98, 253, .8);
 }
 
-.menu > .submenu.navigation {
-	width: 24em;
-}
-.menu > .submenu.navigation > .items {
-	white-space: normal;
-}
 .menu > .submenu.navigation > .items > .item {
+	display: inline-block;
 	width: 50%;
+}
+.menu > .submenu.navigation > .items > .item > .shortcut {
+	float: none;
 }
 
 .menu > .submenu > .items > .item:hover > .title {
