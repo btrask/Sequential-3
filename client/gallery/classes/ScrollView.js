@@ -222,6 +222,7 @@ ScrollView.prototype.animator = function() {
 	var scrollView = this;
 	var animating = false;
 	return function(flag) {
+		flag = !!flag;
 		if(flag === animating) return;
 		var old = !!scrollView.animationCount;
 		animating = flag;
