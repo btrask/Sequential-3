@@ -171,6 +171,7 @@ static BOOL BTIsArchivePath(NSString *const path)
 	BTFileNode *node = [BTNodeByArchivePath objectForKey:path];
 	if(node) return node;
 	XADArchiveParser *const parser = [XADArchiveParser archiveParserForPath:path error:NULL];
+	if(!parser) return nil;
 	node = [BTNodeLoader fileNodeWithParser:parser error:NULL];
 	[BTNodeByArchivePath setObject:node forKey:path];
 	return node;
