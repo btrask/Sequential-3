@@ -71,10 +71,10 @@ var DOM = {
     },
     addListener: function(elem, name, func) {
         if(elem.addEventListener) elem.addEventListener(name, func);
-        else if(elem.attachEvent) elem.attachEvent(name, func);
+        else elem.attachEvent("on"+name, func);
     },
     removeListener: function(elem, name, func) {
         if(elem.removeEventListener) elem.removeEventListener(name, func);
-        else if(elem.detachEvent) elem.detachEvent(name, func);
+        else elem.detachEvent("on"+name, func);
     }
 };
