@@ -19,13 +19,6 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
-function AJAXRequest() { // TODO: Put this somewhere.
-	if(window.ActiveXObject) {
-		try { return new ActiveXObject("Msxml2.XMLHTTP"); } catch(e) {}
-		try { return new ActiveXObject("Microsoft.XMLHTTP"); } catch(e) {}
-	}
-	try { return new XMLHttpRequest(); } catch(e) {}
-}
 function asyncLoop(func/* (next) */) { // TODO: Put this somewhere too.
 	var called, finished;
 	for(;;) {
@@ -69,30 +62,45 @@ Node.prototype.viewable = function() {
 Node.prototype.load = function(callback) {
 	var node = this;
 	if(!node.indexURL) return callback();
-	var req = AJAXRequest();
-	req.open("GET", node.indexURL, true);
-	req.onreadystatechange = function() {
-		if(4 !== req.readyState) return;
-		if(200 === req.status) {
-			node.encrypted = false;
-			node._update(JSON.parse(req.responseText));
-			if(node.parent) {
-				delete node.parent.itemByName[node.name];
-				node.parent.itemByName[node.name] = node;
-			}
-			callback();
-		} else if(401 === req.status) {
-			node.encrypted = true;
-			callback();
-		} else {
-			callback();
+	function update(str) {
+		node._update(JSON.parse(str));
+		callback();
+	}
+	var req;
+	try {
+		if(window.XMLHttpRequest) req = new XMLHttpRequest();
+		else {
+			try { req = new ActiveXObject("Msxml2.XMLHTTP"); }
+			catch(e) { req = new ActiveXObject("Microsoft.XMLHTTP"); }
 		}
-	};
-	req.send("");
+		req.open("GET", node.indexURL, true);
+		req.onreadystatechange = function() {
+			if(4 !== req.readyState) return;
+			if(200 !== req.status) return callback();
+			update(req.responseText);
+		};
+		req.send("");
+		return;
+	} catch(e) {}
+	try {
+		req = new XDomainRequest();
+		req.onerror = req.ontimeout = callback;
+		req.onload = function() {
+			update(req.responseText);
+		};
+		req.open("GET", node.indexURL);
+		req.send();
+		return;
+	} catch(e) {}
 };
 Node.prototype._update = function(obj) {
 	var node = this;
-	node.name = obj["name"];
+	var name = obj["name"];
+	if(node.name !== name && node.parent) {
+		delete node.parent.itemByName[node.name];
+		node.parent.itemByName[name] = node;
+	}
+	node.name = name;
 	node.size = obj["size"];
 	node.ctime = obj["ctime"];
 	node.mtime = obj["mtime"];
