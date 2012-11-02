@@ -24,7 +24,7 @@ function RelativeScroller(scrollView, event) {
 	var setAnimating = scrollView.animator();
 	var clicked = true;
 	var velocity = new Size(0, 0);
-	var element = event.target;
+	var element = event.target || event.srcElement;
 	var firstPoint = Point.fromEvent(event);
 	var latestPoint;
 	function recalculateVelocity() {
