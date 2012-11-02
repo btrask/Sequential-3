@@ -53,7 +53,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 .left { text-align: left; }
 .right { text-align: right; }
 .small { font-size: small; }
-.light { color: rgba(0, 0, 0, 0.67); }
+.light { color: #333; color: rgba(0, 0, 0, 0.67); }
 ul > li  { list-style: none; }
 ul > li:before { content: "• "; }
 
@@ -69,12 +69,12 @@ body {
 }
 
 .background {
-/*	background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 800, from(#8d8d8d), to(#0d0d0d)), url("/background.png"); /|* OmniWeb *|/
-	background: -moz-radial-gradient(50% 50%, circle closest-corner, #8d8d8d, #0d0d0d), url("/background.png");
-	background: -webkit-radial-gradient(50% 50%, circle closest-corner, #8d8d8d, #0d0d0d), url("/background.png");*/
+	background: url("/gallery/background.png");
 	background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 800, from(rgba(0, 0, 0, 0.0)), to(rgba(0, 0, 0, 0.8))), url("/gallery/background.png"); /* OmniWeb */
-	background: -moz-radial-gradient(50% 50%, circle closest-corner, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.8)), url("/gallery/background.png");
 	background: -webkit-radial-gradient(50% 50%, circle closest-corner, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.8)), url("/gallery/background.png");
+	background: -moz-radial-gradient(50% 50%, circle closest-corner, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.8)), url("/gallery/background.png");
+	background: -ms-radial-gradient(50% 50%, circle closest-corner, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.8)), url("/gallery/background.png");
+	background: -o-radial-gradient(50% 50%, circle closest-corner, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.8)), url("/gallery/background.png");
 }
 		
 .index > .scrollView > .content {
@@ -87,11 +87,20 @@ body {
 .index > .scrollView.inactive > .content {
 	opacity: 0.2;
 }
+.scrollView {
+	background: url("/gallery/background.png"); /* For IE8 */
+	background: rgba(0, 0, 0, 0.0);
+}
 .content.empty {
 	padding: 3px 8px;
 
 	/* Common */
+	background: #333;
 	background: rgba(0, 0, 0, 0.5);
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-ms-border-radius: 6px;
+	-o-border-radius: 6px;
 	border-radius: 6px;
 	color: white;
 
@@ -120,7 +129,12 @@ body {
 	white-space: nowrap;
 
 	/* Common */
+	background: #333;
 	background: rgba(0, 0, 0, 0.5);
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-ms-border-radius: 6px;
+	-o-border-radius: 6px;
 	border-radius: 6px;
 	color: white;
 
@@ -129,16 +143,23 @@ body {
 	text-shadow: 0 1px 2px black;
 }
 .page.content > .header.clickable:hover {
+	background: #7373fc;
 	background: rgba(79, 98, 253, .8);
 }
 .page.content > .header.clickable.disabled {
+	background: #333;
 	background: rgba(0, 0, 0, 0.5); /* Prevent hover from overriding. */
+	color: #bbb;
 	color: rgba(255, 255, 255, 0.5);
 }
 .page.content > .area > * {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-ms-border-radius: 3px;
+	-o-border-radius: 3px;
 	border-radius: 3px;
 
 	-webkit-box-shadow: 0 0 48px #000;
@@ -148,6 +169,9 @@ body {
 	box-shadow: 0 0 48px #000;
 }
 
+.thumbnailBrowser {
+	max-width: 100%; /* For IE8 */
+}
 .thumbnailFolder > .title {
 	padding: 12px;
 	margin: 32px 24px 16px 24px;
@@ -156,7 +180,12 @@ body {
 	word-wrap: break-word; /* Experimental, might not work. */
 
 	/* Common */
+	background: #333;
 	background: rgba(0, 0, 0, 0.5);
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-ms-border-radius: 6px;
+	-o-border-radius: 6px;
 	border-radius: 6px;
 	color: white;
 
@@ -170,12 +199,17 @@ body {
 	margin: 8px;
 }
 .thumbnailFolder > .thumbnails > .thumbnailItem.selected {
+	background: #7373fc;
 	background: rgba(79, 98, 253, .6);
 	-webkit-box-shadow: 0 0 8px rgb(79, 98, 253);
 	-moz-box-shadow: 0 0 8px rgb(79, 98, 253);
 	-ms-box-shadow: 0 0 8px rgb(79, 98, 253);
 	-o-box-shadow: 0 0 8px rgb(79, 98, 253);
 	box-shadow: 0 0 8px rgb(79, 98, 253);
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-ms-border-radius: 6px;
+	-o-border-radius: 6px;
 	border-radius: 6px;
 }
 .thumbnailFolder > .thumbnails > .thumbnailItem > .image.table > .cell {
@@ -197,7 +231,12 @@ body {
 	word-wrap: break-word;
 
 	/* Common */
+	background: #333;
 	background: rgba(0, 0, 0, 0.5);
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-ms-border-radius: 6px;
+	-o-border-radius: 6px;
 	border-radius: 6px;
 	color: white;
 
@@ -223,7 +262,12 @@ body {
 	margin-bottom: 1em;
 
 	/* Common */
+	background: #333;
 	background: rgba(0, 0, 0, 0.5);
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-ms-border-radius: 6px;
+	-o-border-radius: 6px;
 	border-radius: 6px;
 	color: white;
 
@@ -232,6 +276,10 @@ body {
 	text-shadow: 0 1px 2px black;
 }
 .menu > .submenu > .items {
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-ms-border-radius: 6px;
+	-o-border-radius: 6px;
 	border-radius: 6px;
 	overflow: hidden;
 	width: 24em;
@@ -240,6 +288,7 @@ body {
 	padding: 0.5em 1em;
 
 	/* Common */
+	background: #333;
 	background: rgba(0, 0, 0, 0.5);
 	color: white;
 
@@ -248,12 +297,14 @@ body {
 	text-shadow: 0 1px 2px black;
 }
 .menu > .submenu > .items > .item:hover {
+	background: #7373fc;
 	background: rgba(79, 98, 253, .8);
 }
 .menu > .submenu > .items > .item > .title {
 	margin-left: 1.5em;
 }
 .menu > .submenu > .items > .item > .shortcut {
+	color: #bbb;
 	color: rgba(255, 255, 255, 0.67);
 	float: right;
 }
@@ -262,6 +313,10 @@ body {
 	display: inline-block;
 	width: 1.5em;
 	margin-left: -1.5em;
+}
+.menu > .submenu > .items > .item.selected > .title {
+	color: #999; /* IE8 ignores ::before, so change the color too. */
+	color: rgba(255, 255, 255, 1.0); /* And reset it for modern browsers. */
 }
 
 .menu > .submenu.navigation > .items > .item {
@@ -281,7 +336,12 @@ body {
 	padding: 10px;
 
 	/* Common */
+	background: #333;
 	background: rgba(0, 0, 0, 0.5);
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-ms-border-radius: 6px;
+	-o-border-radius: 6px;
 	border-radius: 6px;
 	color: white;
 
@@ -297,12 +357,17 @@ body {
 }
 
 .index > .loading {
+	background: #333;
 	background: rgba(0, 0, 0, 0.5);
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 25px;
+	-ms-border-radius: 25px;
+	-o-border-radius: 25px;
+	border-radius: 25px;
 	left: 50%;
 	top: 66%;
 	margin-left: -50px;
 	margin-top: -50px;
 	width: 100px;
 	height: 100px;
-	border-radius: 25px;
 }
