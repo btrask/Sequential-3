@@ -76,5 +76,9 @@ var DOM = {
     removeListener: function(elem, name, func) {
         if(elem.removeEventListener) elem.removeEventListener(name, func);
         else elem.detachEvent("on"+name, func);
+    },
+    preventDefault: function(event) {
+        if(event.preventDefault) event.preventDefault();
+        event.returnValue = false;
     }
 };

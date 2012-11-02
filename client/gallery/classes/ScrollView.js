@@ -80,29 +80,29 @@ function ScrollView() {
 //		var props = [];
 //		for(var x in event) props.push(x+"="+event[x]);
 //		console.log(props.join(", "));
-		event.preventDefault();
+		DOM.preventDefault(event);
 		return false;
 	});
 	DOM.addListener(scrollView.element, "mousedown", function(firstEvent) {
 		if(!scrollView.active) {
-			event.preventDefault();
+			DOM.preventDefault(event);
 			return false;
 		}
 		var scroller = new scrollView.scroller(scrollView, firstEvent);
 		var onmousemove, onmouseup;
 		DOM.addListener(document, "mousemove", onmousemove = function(event) {
 			scroller.update(Point.fromEvent(event));
-			event.preventDefault();
+			DOM.preventDefault(event);
 			return false;
 		});
 		DOM.addListener(document, "mouseup", onmouseup = function(event) {
 			DOM.removeListener(document, "mousemove", onmousemove);
 			DOM.removeListener(document, "mouseup", onmouseup);
 			scroller.end();
-			event.preventDefault();
+			DOM.preventDefault(event);
 			return false;
 		});
-		firstEvent.preventDefault();
+		DOM.preventDefault(firstEvent);
 		return false;
 	});
 

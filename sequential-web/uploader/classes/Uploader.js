@@ -32,14 +32,14 @@ function Uploader() {
 	});
 	DOM.addListener(uploader["target"], "dragover", function(event) {
 		event.dataTransfer.dropEffect = uploading ? "none" : "copy";
-		event.preventDefault();
+		DOM.preventDefault(event);
 		return false;
 	});
 	DOM.addListener(uploader["target"], "drop", function(event) {
 		function bail(message) {
 			if(message) alert(message); // TODO: Don't use alert().
 			DOM.classify(uploader["droppable"], "dragging", false);
-			event.preventDefault();
+			DOM.preventDefault(event);
 			return false;
 		}
 		function stringFromTimeRemaining(t) {
@@ -149,7 +149,7 @@ function Uploader() {
 		req.send(form);
 		DOM.classify(uploader["droppable"], "dragging", false);
 		DOM.classify(uploader.element, "uploading", true);
-		event.preventDefault();
+		DOM.preventDefault(event);
 		return false;
 	});
 }
