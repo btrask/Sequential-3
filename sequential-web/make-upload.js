@@ -68,6 +68,7 @@ function upload(root, subpath) {
 				signer.sign(opts);
 				var req = https.request(opts, function(res) {
 					console.log(subpath, res.statusCode);
+					if(200 !== res.statusCode) res.pipe(process.stderr);
 				});
 				fs.createReadStream(fullpath).pipe(req);
 			});
