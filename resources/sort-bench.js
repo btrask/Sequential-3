@@ -12,6 +12,10 @@ compare4 29811
 compare5 1474
 compareMine 1131
 compareOld 1383
+
+Other algorithms:
+- <https://github.com/overset/javascript-natural-sort/> Disqualified as overkill, ridiculously slow.
+
 */
 var data = require("./sort-data"); // Should be a JSON array.
 console.log("Items: "+data.length);
