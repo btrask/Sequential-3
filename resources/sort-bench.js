@@ -4,14 +4,15 @@ Some have bugs or disagree on exact order.
 
 Sample output (using real-life filenames from my desktop):
 
-Items: 171
-compare1 2930
-compare2 8363
-compare3 3961
-compare4 29811
-compare5 1474
-compareMine 1131
-compareOld 1383
+Items: 172
+compare1 3016
+compare2 8236
+compare3 4109
+compare4 28870
+compare5 1508
+compare6 1527
+compareMine 1150
+compareOld 1442
 
 Other algorithms:
 - <https://github.com/overset/javascript-natural-sort/> Disqualified as overkill, ridiculously slow.
@@ -145,6 +146,11 @@ function compare5(a, b){
     return a> b? 1: -1;
 }
 
+// <http://sourcefrog.net/projects/natsort/>
+// Long with many helper functions, so I left it in its own file.
+// Has at least one bug.
+var compare6 = require("./sort-compare6");
+
 // Mine.
 function compareMine(a1, b1) {
 	var ra = /(\D*)(\d*)/g;
@@ -194,5 +200,6 @@ test(compare2);
 test(compare3);
 //test(compare4); // Slowest by far.
 test(compare5);
+test(compare6);
 test(compareMine);
 test(compareOld);
