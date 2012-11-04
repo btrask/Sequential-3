@@ -154,7 +154,7 @@ function compareMine(a1, b1) {
 		r = a2[1].localeCompare(b2[1]) || (+a2[2]-b2[2]);
 		if(r) return r;
 	}
-};
+}
 
 // Mine (old).
 function compareOld(a, b) {
@@ -177,7 +177,7 @@ function compareOld(a, b) {
 		if(diff) return diff;
 	}
 	return (a.length - i) - (b.length - j);
-};
+}
 
 function test(func) {
 	var a = +new Date;
