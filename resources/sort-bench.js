@@ -111,7 +111,7 @@ function compare4(a, b) {
 }
 
 // <http://stackoverflow.com/a/2802804>
-// Has at least one bug.
+// Uses floating point for numbers and seems to recognize exponential notation like 5e10.
 function compare5(a, b){
     var cnt= 0, tem;
     //a= String(a).toLowerCase();
