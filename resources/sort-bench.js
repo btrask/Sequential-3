@@ -5,14 +5,14 @@ Some have bugs or disagree on exact order.
 Sample output (using real-life filenames from my desktop):
 
 Items: 172
-compare1 3016
-compare2 8236
-compare3 4109
-compare4 28870
-compare5 1508
-compare6 1527
-compareMine 1150
-compareOld 1442
+compare1 2977
+compare2 8567
+compare3 4053
+compare4 29298
+compare5 1471
+compare6 1256
+compareMine 1148
+compareOld 1443
 
 Other algorithms:
 - <https://github.com/overset/javascript-natural-sort/> Disqualified as overkill, ridiculously slow.
@@ -146,9 +146,9 @@ function compare5(a, b){
     return a> b? 1: -1;
 }
 
-// <http://sourcefrog.net/projects/natsort/>
+// <http://blog.coomanskristof.be/2006/08/01/javascript-natural-order-string-comparison/>
+// <http://sourcefrog.net/projects/natsort/> Buggy old version.
 // Long with many helper functions, so I left it in its own file.
-// Has at least one bug.
 var compare6 = require("./sort-compare6");
 
 // Mine.

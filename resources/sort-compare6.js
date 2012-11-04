@@ -88,8 +88,6 @@ function compareRight(a,b)
         } else if (ca > cb) {
             if (bias == 0)
                 bias = +1;
-        } else if (ca == 0 && cb == 0) {
-            return bias;
         }
     }
 }
@@ -97,9 +95,9 @@ function compareRight(a,b)
 function compare6(a,b) {
 
     var ia = 0, ib = 0;
-	var nza = 0, nzb = 0;
-	var ca, cb;
-	var result;
+    var nza = 0, nzb = 0;
+    var ca, cb;
+    var result;
 
     while (true)
     {
