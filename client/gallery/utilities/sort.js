@@ -29,7 +29,7 @@ sort.numericStringCompare = function(a1, b1) {
 	for(;;) {
 		a2 = ra.exec(a1);
 		b2 = rb.exec(b1);
-		if(!a2[0].length && !b2[0].length) return 0;
+		if(!a2[0] && !b2[0]) return 0;
 		if(a2[1].length !== b2[1].length) return a2[0].localeCompare(b2[0]);
 		r = a2[1].localeCompare(b2[1]) || (+a2[2]-b2[2]);
 		if(r) return r;
