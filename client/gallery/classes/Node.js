@@ -276,7 +276,7 @@ Node.prototype.ancestorChildOf = function(other) {
 
 Node.compare = {};
 Node.compare["name"] = function(a, b) {
-	return sort.numericStringCompare(a.name || "", b.name || "");
+	return sort.numericStringCompare(a.name.toLowerCase(), b.name.toLowerCase()); // TODO: Perhaps we should lowercase the strings AOT for better performance.
 };
 Node.compare["size"] = function(a, b) {
 	return a.size - b.size;
