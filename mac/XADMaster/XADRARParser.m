@@ -125,9 +125,9 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 		NSArray *matches;
 		if((matches=[name substringsCapturedByPattern:@"^(.*[^0-9])([0-9]+)(.*)\\.rar$" options:REG_ICASE]))
 		return [self scanForVolumesWithFilename:name
-		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@[0-9]{%d}%@.rar$",
+		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@[0-9]{%ld}%@.rar$",
 			[[matches objectAtIndex:1] escapedPattern],
-			[(NSString *)[matches objectAtIndex:2] length],
+			(long)[(NSString *)[matches objectAtIndex:2] length],
 			[[matches objectAtIndex:3] escapedPattern]] options:REG_ICASE]
 		firstFileExtension:@"rar"];
 	}
@@ -147,9 +147,9 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 
 
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+-(id)init
 {
-	if((self=[super initWithHandle:handle name:name]))
+	if((self=[super init]))
 	{
 		keys=nil;
 	}
@@ -621,8 +621,8 @@ isCorrupted:(BOOL)iscorrupted
 				flagbits-=2;
 				switch((flagbyte>>flagbits)&3)
 				{
-					case 0: [str appendFormat:@"%C",[fh readUInt8]]; break;
-					case 1: [str appendFormat:@"%C",highbyte+[fh readUInt8]]; break;
+					case 0: [str appendFormat:@"%C",(unichar)[fh readUInt8]]; break;
+					case 1: [str appendFormat:@"%C",(unichar)(highbyte+[fh readUInt8])]; break;
 					case 2: [str appendFormat:@"%C",[fh readUInt16LE]]; break;
 					case 3:
 					{
@@ -631,10 +631,10 @@ isCorrupted:(BOOL)iscorrupted
 						{
 							int correction=[fh readUInt8];
 							for(int i=0;i<(len&0x7f)+2;i++)
-							[str appendFormat:@"%C",highbyte+(bytes[[str length]]+correction&0xff)];
+							[str appendFormat:@"%C",(unichar)(highbyte+(bytes[[str length]]+correction&0xff))];
 						}
 						else for(int i=0;i<(len&0x7f)+2;i++)
-						[str appendFormat:@"%C",bytes[[str length]]];
+						[str appendFormat:@"%C",(unichar)(bytes[[str length]])];
 					}
 					break;
 				}
@@ -840,9 +840,9 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	NSArray *matches;
 	if((matches=[name substringsCapturedByPattern:@"^(.*[^0-9])([0-9]+)(.*)\\.exe$" options:REG_ICASE]))
 	return [self scanForVolumesWithFilename:name
-	regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@[0-9]{%d}%@.(rar|exe)$",
+	regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@[0-9]{%ld}%@.(rar|exe)$",
 		[[matches objectAtIndex:1] escapedPattern],
-		[(NSString *)[matches objectAtIndex:2] length],
+		(long)[(NSString *)[matches objectAtIndex:2] length],
 		[[matches objectAtIndex:3] escapedPattern]] options:REG_ICASE]
 	firstFileExtension:@"exe"];
 

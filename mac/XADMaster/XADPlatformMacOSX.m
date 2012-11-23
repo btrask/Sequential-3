@@ -1,5 +1,5 @@
 #import "XADPlatform.h"
-#import "CSFileHandle.h"
+#import "CSMemoryHandle.h"
 #import "NSDateXAD.h"
 
 #import <fcntl.h>
@@ -17,10 +17,6 @@ struct ResourceOutputArguments
 @interface XADPlatform (Private)
 
 +(void)setComment:(NSString *)comment forPath:(NSString *)path;
-+(BOOL)readCatalogInfoForFilename:(NSString *)filename infoBitmap:(FSCatalogInfoBitmap)bitmap
-toCatalogInfo:(FSCatalogInfo *)info;
-+(BOOL)writeCatalogInfoForFilename:(NSString *)filename infoBitmap:(FSCatalogInfoBitmap)bitmap
-fromCatalogInfo:(FSCatalogInfo *)info;
 
 @end
 
@@ -184,6 +180,10 @@ preservePermissions:(BOOL)preservepermissions
 {
 	if(!comment||![comment length]) return;
 
+	// Don't bother if we're sandboxed, as Apple refuses to allow
+	// entitlements for this.
+	if(getenv("APP_SANDBOX_CONTAINER_ID")) return;
+
 	const char *eventformat =
 	"'----': 'obj '{ "         // Direct object is the file comment we want to modify
 	"  form: enum(prop), "     //  ... the comment is an object's property...
@@ -276,37 +276,26 @@ preservePermissions:(BOOL)preservepermissions
 
 +(BOOL)copyDateFromPath:(NSString *)src toPath:(NSString *)dest
 {
-	FSCatalogInfo info;
+	struct stat st;
+	const char *csrc=[src fileSystemRepresentation];
+	if(stat(csrc,&st)!=0) return NO;
 
-	if(![self readCatalogInfoForFilename:src infoBitmap:kFSCatInfoContentMod toCatalogInfo:&info]) return NO;
-	return [self writeCatalogInfoForFilename:dest infoBitmap:kFSCatInfoContentMod fromCatalogInfo:&info];
+	struct timeval times[2]={
+		{st.st_atimespec.tv_sec,st.st_atimespec.tv_nsec/1000},
+		{st.st_mtimespec.tv_sec,st.st_mtimespec.tv_nsec/1000},
+	};
+
+	const char *cdest=[dest fileSystemRepresentation];
+	if(utimes(cdest,times)!=0) return NO;
+
+	return YES;
 }
 
 +(BOOL)resetDateAtPath:(NSString *)path
 {
-	FSCatalogInfo info;
+	const char *cpath=[path fileSystemRepresentation];
+	if(utimes(cpath,NULL)!=0) return NO;
 
-	UCConvertCFAbsoluteTimeToUTCDateTime(CFAbsoluteTimeGetCurrent(),&info.contentModDate);
-	return [self writeCatalogInfoForFilename:path infoBitmap:kFSCatInfoContentMod fromCatalogInfo:&info];
-}
-
-+(BOOL)readCatalogInfoForFilename:(NSString *)filename infoBitmap:(FSCatalogInfoBitmap)bitmap
-toCatalogInfo:(FSCatalogInfo *)info
-{
-	FSRef ref;
-	if(FSPathMakeRefWithOptions((const UInt8 *)[filename fileSystemRepresentation],
-	kFSPathMakeRefDoNotFollowLeafSymlink,&ref,NULL)!=noErr) return NO;
-	if(FSGetCatalogInfo(&ref,bitmap,info,NULL,NULL,NULL)!=noErr) return NO;
-	return YES;
-}
-
-+(BOOL)writeCatalogInfoForFilename:(NSString *)filename infoBitmap:(FSCatalogInfoBitmap)bitmap
-fromCatalogInfo:(FSCatalogInfo *)info
-{
-	FSRef ref;
-	if(FSPathMakeRefWithOptions((const UInt8 *)[filename fileSystemRepresentation],
-	kFSPathMakeRefDoNotFollowLeafSymlink,&ref,NULL)!=noErr) return NO;
-	if(FSSetCatalogInfo(&ref,bitmap,info)!=noErr) return NO;
 	return YES;
 }
 
@@ -368,6 +357,56 @@ fromCatalogInfo:(FSCatalogInfo *)info
 	#endif
 }
 
++(BOOL)moveItemAtPath:(NSString *)src toPath:(NSString *)dest
+{
+	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
+	return [[NSFileManager defaultManager] moveItemAtPath:src toPath:dest error:NULL];
+	#else
+	return [[NSFileManager defaultManager] movePath:src toPath:dest handler:nil];
+	#endif
+}
+
++(BOOL)removeItemAtPath:(NSString *)path
+{
+	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
+	return [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
+	#else
+	return [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
+	#endif
+}
+
+
+
+//
+// Resource forks
+//
+
++(CSHandle *)handleForReadingResourceForkAtPath:(NSString *)path
+{
+	// TODO: Make an actual CSHandle subclass? Possible but sort of useless.
+	NSMutableData *data=[NSMutableData data];
+
+	const char *cpath=[path fileSystemRepresentation];
+	int fd=open(cpath,O_RDONLY);
+	if(fd==-1) return nil;
+
+	uint32_t pos=0;
+	for(;;)
+	{
+		uint8_t buffer[16384];
+
+		ssize_t actual=fgetxattr(fd,XATTR_RESOURCEFORK_NAME,buffer,sizeof(buffer),pos,0);
+		if(actual<0) return nil;
+		if(actual==0) break;
+
+		[data appendBytes:buffer length:actual];
+		pos+=actual;
+	}
+
+	close(fd);
+
+	return [CSMemoryHandle memoryHandleForReadingData:data];
+}
 
 
 

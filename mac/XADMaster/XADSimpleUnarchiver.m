@@ -309,7 +309,7 @@
 			NSDictionary *entry=[entries objectAtIndex:0];
 			NSNumber *archnum=[entry objectForKey:XADIsArchiveKey];
 			BOOL isarc=archnum&&[archnum boolValue];
-			if(isarc) return [self _setupSubArchiveForEntryWithDictionary:entry];
+			if(isarc) return [self _setupSubArchiveForEntryWithDataFork:entry resourceFork:nil];
 		}
 
 		// Check if we have two entries, which are data and resource forks
@@ -342,7 +342,7 @@
 
 				// TODO: Handle resource forks for archives that require them.
 				NSNumber *archnum=[datafork objectForKey:XADIsArchiveKey];
-				if(archnum&&[archnum boolValue]) return [self _setupSubArchiveForEntryWithDictionary:datafork];
+				if(archnum&&[archnum boolValue]) return [self _setupSubArchiveForEntryWithDataFork:datafork resourceFork:resourcefork];
 			}
 		}
 	}
@@ -350,12 +350,12 @@
 	return XADNoError;
 }
 
--(XADError)_setupSubArchiveForEntryWithDictionary:(NSDictionary *)dict
+-(XADError)_setupSubArchiveForEntryWithDataFork:(NSDictionary *)datadict resourceFork:(NSDictionary *)resourcedict
 {
 	// Create unarchiver.
 	XADError error;
-	subunarchiver=[[unarchiver unarchiverForEntryWithDictionary:dict
-	wantChecksum:YES error:&error] retain];
+	subunarchiver=[[unarchiver unarchiverForEntryWithDictionary:datadict
+	resourceForkDictionary:resourcedict wantChecksum:YES error:&error] retain];
 	if(!subunarchiver)
 	{
 		if(error) return error;
@@ -385,9 +385,12 @@
 	enumerator=[entries objectEnumerator];
 	while((entry=[enumerator nextObject]))
 	{
-		// If we have not given up on calculating a total size, add the size
-		// of the current item.
-		if(totalsize>=0)
+		NSNumber *dirnum=[entry objectForKey:XADIsDirectoryKey];
+		BOOL isdir=dirnum && [dirnum boolValue];
+
+		// If we have not given up on calculating a total size, and this
+		// is not a directory, add the size of the current item.
+		if(totalsize>=0 && !isdir)
 		{
 			NSNumber *size=[entry objectForKey:XADFileSizeKey];
 
@@ -395,6 +398,7 @@
 			if(size) totalsize+=[size longLongValue];
 			else totalsize=-1;
 		}
+		
 
 		// Run test for single top-level items.
 		[self _testForSoloItems:entry];
@@ -518,7 +522,7 @@
 			// to something unique.
 			NSString *enclosingpath=destpath;
 			NSString *newenclosingpath=[XADPlatform uniqueDirectoryPathWithParentDirectory:destination];
-			[XADSimpleUnarchiver _moveItemAtPath:enclosingpath toPath:newenclosingpath];
+			[XADPlatform moveItemAtPath:enclosingpath toPath:newenclosingpath];
 
 			NSString *newitempath=[newenclosingpath stringByAppendingPathComponent:itemname];
 
@@ -531,7 +535,7 @@
 			if(!finalitempath)
 			{
 				// In case skipping was requested, delete everything and give up.
-				[XADSimpleUnarchiver _removeItemAtPath:newenclosingpath];
+				[XADPlatform removeItemAtPath:newenclosingpath];
 				numextracted=0;
 				return error;
 			}
@@ -540,7 +544,7 @@
 			if(![self _recursivelyMoveItemAtPath:newitempath toPath:finalitempath overwrite:YES])
 			error=XADFileExistsError; // TODO: Better error handling.
 
-			[XADSimpleUnarchiver _removeItemAtPath:newenclosingpath];
+			[XADPlatform removeItemAtPath:newenclosingpath];
 
 			// Remember where the item ended up.
 			finaldestination=[[finalitempath stringByDeletingLastPathComponent] retain];
@@ -559,7 +563,7 @@
 				if(!newenclosingpath)
 				{
 					// In case skipping was requested, delete everything and give up.
-					[XADSimpleUnarchiver _removeItemAtPath:enclosingpath];
+					[XADPlatform removeItemAtPath:enclosingpath];
 					numextracted=0;
 					return error;
 				}
@@ -815,6 +819,20 @@
 	[delegate simpleUnarchiver:self didExtractEntryWithDictionary:dict to:path error:error];
 }
 
+-(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldCreateDirectory:(NSString *)directory
+{
+	return YES;
+}
+
+-(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldDeleteFileAndCreateDirectory:(NSString *)directory
+{
+	// If a resource fork entry for a directory was accidentally extracted
+	// as a file, which can sometimes happen with particularly broken Zip files,
+	// overwrite it.
+	if([resourceforks containsObject:directory]) return YES;
+	else return NO;
+}
+
 -(NSString *)unarchiver:(XADUnarchiver *)unarchiver destinationForLink:(XADString *)link from:(NSString *)path
 {
 	if(!delegate) return nil;
@@ -973,8 +991,8 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 		else if(!issrcdir&&!isdestdir)
 		{
 			// If both are files, remove any existing file, then move.
-			[XADSimpleUnarchiver _removeItemAtPath:dest];
-			return [XADSimpleUnarchiver _moveItemAtPath:src toPath:dest];
+			[XADPlatform removeItemAtPath:dest];
+			return [XADPlatform moveItemAtPath:src toPath:dest];
 		}
 		else
 		{
@@ -984,7 +1002,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	}
 	else
 	{
-		return [XADSimpleUnarchiver _moveItemAtPath:src toPath:dest];
+		return [XADPlatform moveItemAtPath:src toPath:dest];
 	}
 }
 
@@ -1007,26 +1025,6 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 
 	return dest;
 }
-
-+(BOOL)_moveItemAtPath:(NSString *)src toPath:(NSString *)dest
-{
-	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
-	return [[NSFileManager defaultManager] moveItemAtPath:src toPath:dest error:NULL];
-	#else
-	return [[NSFileManager defaultManager] movePath:src toPath:dest handler:nil];
-	#endif
-}
-
-+(BOOL)_removeItemAtPath:(NSString *)path
-{
-	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
-	return [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
-	#else
-	return [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
-	#endif
-}
-
-
 
 @end
 

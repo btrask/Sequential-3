@@ -268,9 +268,9 @@ static void DumpElement(StuffItXElement *element)
 	&&bytes[5]=='I'&&bytes[6]=='t'&&(bytes[7]=='!'||bytes[7]=='?');
 }
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+-(id)init
 {
-	if((self=[super initWithHandle:handle name:name]))
+	if((self=[super init]))
 	{
 		repeatedentrydata=nil;
 		repeatedentries=nil;
@@ -403,12 +403,7 @@ static void DumpElement(StuffItXElement *element)
 
 					if((id)fork==[NSNull null]) [XADException raiseIllegalDataException];
 
-					NSArray *entries=[fork objectForKey:@"Entries"];
 					NSNumber *lengthnum=[fork objectForKey:@"Length"];
-					NSNumber *offsnum=[NSNumber numberWithLongLong:offs];
-
-					off_t currcompsize=[lengthnum longLongValue]*compsize/uncompsize;
-					NSNumber *currcompsizenum=[NSNumber numberWithLongLong:currcompsize];
 
 					// Type 0 is a data fork, type 1 is a resource fork. There are
 					// furhter types, but these are not understood so ignore them.
@@ -417,6 +412,13 @@ static void DumpElement(StuffItXElement *element)
 					if(type==0||type==1)
 					{
 						BOOL isresfork=(type==1);
+
+						NSArray *entries=[fork objectForKey:@"Entries"];
+						NSNumber *offsnum=[NSNumber numberWithLongLong:offs];
+
+						off_t currcompsize=0;
+						if(uncompsize) currcompsize=[lengthnum longLongValue]*compsize/uncompsize;
+						NSNumber *currcompsizenum=[NSNumber numberWithLongLong:currcompsize];
 
 						NSEnumerator *entryenumerator=[entries objectEnumerator];
 						NSNumber *entrynum;

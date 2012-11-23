@@ -71,9 +71,9 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+-(id)init
 {
-	if((self=[super initWithHandle:handle name:name]))
+	if((self=[super init]))
 	{
 		prevdict=nil;
 		prevname=nil;
@@ -692,7 +692,7 @@ uncompressedSizePointer:(off_t *)uncompsizeptr compressedSizePointer:(off_t *)co
 		}
 		else
 		{
-			NSLog(@"unknown extension: %x %d %@",extid,size,[fh readDataOfLength:size]);
+			//NSLog(@"unknown extension: %x %d %@",extid,size,[fh readDataOfLength:size]);
 		}
 
 		[fh seekToFileOffset:next];

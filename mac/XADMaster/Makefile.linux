@@ -39,7 +39,6 @@ ALL_CXXFLAGS = $(CXX_OPTS) $(GCC_OPTS) $(CXXFLAGS)
 
 LIBS =	-Wl,--no-whole-archive \
 	-lgnustep-base \
-	-lcrypto \
 	-lz \
 	-lbz2 \
 	-licuuc \
@@ -98,6 +97,8 @@ lsar: $(LSAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniver
 clean:
 	rm -rf $(BUILD_DIR) $(EXECUTABLE_FILES) $(LIBRARY_FILES)
 	make -C ../UniversalDetector -f Makefile.linux clean
+
+.PHONY: ../UniversalDetector/libUniversalDetector.a clean
 
 # Suffix rules
 

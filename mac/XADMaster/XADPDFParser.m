@@ -34,30 +34,14 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 	return YES;
 }
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
-{
-	if((self=[super initWithHandle:handle name:name]))
-	{
-	}
-	return self;
-}
-
--(void)dealloc
-{
-	[super dealloc];
-}
-
 -(void)parse
 {
 	PDFParser *parser=[PDFParser parserWithHandle:[self handle]];
+	[parser setPasswordRequestAction:@selector(needsPassword:) target:self];
 
 	[parser parse];
 
 	BOOL isencrypted=[parser needsPassword];
-	if(isencrypted)
-	{
-		if(![parser setPassword:[self password]]) [XADException raisePasswordException];
-	}
 
 	// Find image objects in object list
 	NSMutableArray *images=[NSMutableArray array];
@@ -337,6 +321,11 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 
 		[self addEntryWithDictionary:dict];
 	}
+}
+
+-(void)needsPassword:(PDFParser *)parser
+{
+	if(![parser setPassword:[self password]]) [XADException raisePasswordException];
 }
 
 -(NSString *)compressionNameForStream:(PDFStream *)stream excludingLast:(BOOL)excludelast

@@ -33,6 +33,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		B5028F46165F506F00CB8CAB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B5BB005315C7CBD200A901EC /* UniversalDetector.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1B467B2615CD9B1F001AB1DD /* libUniversalDetector.ios.a */;
+			remoteInfo = libUniversalDetector.ios.a;
+		};
+		B5028F6F165F508300CB8CAB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B5BB000615C7CB8500A901EC /* XADMaster.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1B467B0115CD9A73001AB1DD /* libXADMaster.ios.a */;
+			remoteInfo = libXADMaster.ios.a;
+		};
 		B59C3E7B15A24FBE00E08EEB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
@@ -353,16 +367,17 @@
 			isa = PBXGroup;
 			children = (
 				B5BB001815C7CB8500A901EC /* XADMaster.framework */,
+				B5BB002615C7CB8500A901EC /* libXADMaster.a */,
+				B5BB002C15C7CB8500A901EC /* libXADMaster.win.a */,
+				B5028F70165F508300CB8CAB /* libXADMaster.ios.a */,
 				B5BB001A15C7CB8500A901EC /* XADTest */,
 				B5BB001C15C7CB8500A901EC /* XADTest2 */,
 				B5BB001E15C7CB8500A901EC /* XADTest3 */,
 				B5BB002015C7CB8500A901EC /* XADTest4 */,
 				B5BB002215C7CB8500A901EC /* XADTest5 */,
 				B5BB002415C7CB8500A901EC /* XADTest6 */,
-				B5BB002615C7CB8500A901EC /* libXADMaster.a */,
 				B5BB002815C7CB8500A901EC /* unar */,
 				B5BB002A15C7CB8500A901EC /* lsar */,
-				B5BB002C15C7CB8500A901EC /* libXADMaster.win.a */,
 				B5BB002E15C7CB8500A901EC /* unar.exe */,
 				B5BB003015C7CB8500A901EC /* lsar.exe */,
 			);
@@ -375,6 +390,7 @@
 				B5BB005B15C7CBD200A901EC /* UniversalDetector.framework */,
 				B5BB005D15C7CBD200A901EC /* libUniversalDetector.a */,
 				B5BB005F15C7CBD200A901EC /* libUniversalDetector.win.a */,
+				B5028F47165F506F00CB8CAB /* libUniversalDetector.ios.a */,
 				B5BB006115C7CBD200A901EC /* DetectorTest */,
 			);
 			name = Products;
@@ -457,6 +473,20 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		B5028F47165F506F00CB8CAB /* libUniversalDetector.ios.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libUniversalDetector.ios.a;
+			remoteRef = B5028F46165F506F00CB8CAB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B5028F70165F508300CB8CAB /* libXADMaster.ios.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libXADMaster.ios.a;
+			remoteRef = B5028F6F165F508300CB8CAB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		B5BB001815C7CB8500A901EC /* XADMaster.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;

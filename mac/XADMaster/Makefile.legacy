@@ -35,7 +35,6 @@ ALL_CXXFLAGS = $(CXX_OPTS) $(GCC_OPTS) $(CXXFLAGS)
 
 LIBS =	-framework Foundation \
 	-framework Carbon \
-	-lcrypto \
 	-lz \
 	-lbz2 \
 	-lobjc \
@@ -148,6 +147,8 @@ lsar: $(LSAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniver
 clean:
 	rm -rf $(BUILD_DIR) $(FRAMEWORK_FILES) $(EXECUTABLE_FILES) $(LIBRARY_FILES)
 	make -C ../UniversalDetector -f Makefile.legacy clean
+
+.PHONY: ../UniversalDetector/UniversalDetector.framework clean
 
 # Suffix rules
 

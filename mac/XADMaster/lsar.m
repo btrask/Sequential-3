@@ -5,15 +5,16 @@
 #import "CSJSONPrinter.h"
 #import "CommandLineCommon.h"
 
-#define VERSION_STRING @"v1.2"
+#define VERSION_STRING @"v1.4"
 
 #define EntryDoesNotNeedTestingResult 0
 #define EntryIsNotSupportedResult 1
-#define EntryFailsWhileUnpackingResult 2
-#define EntrySizeIsWrongResult 3
-#define EntryHasNoChecksumResult 4
-#define EntryChecksumIsIncorrectResult 5
-#define EntryIsOkResult 6
+#define EntryHasWrongPasswordResult 2
+#define EntryFailsWhileUnpackingResult 3
+#define EntrySizeIsWrongResult 4
+#define EntryHasNoChecksumResult 5
+#define EntryChecksumIsIncorrectResult 6
+#define EntryIsOkResult 7
 
 static int TestEntry(XADSimpleUnarchiver *unarchiver,NSDictionary *dict);
 
@@ -294,7 +295,7 @@ int main(int argc,const char **argv)
 		}
 
 		NSArray *volumes=[[unarchiver outerArchiveParser] volumes];
-		if([volumes count]>1) [[NSString stringWithFormat:@" (%d volumes)",[volumes count]] print];
+		if([volumes count]>1) [[NSString stringWithFormat:@" (%d volumes)",(int)[volumes count]] print];
 
 		[@"\n" print];
 
@@ -439,6 +440,7 @@ int main(int argc,const char **argv)
 		{
 			case EntryDoesNotNeedTestingResult: passed++; break;
 			case EntryIsNotSupportedResult: [@"Unsupported!" print]; failed++; break;
+			case EntryHasWrongPasswordResult: [@"Wrong password!" print]; failed++; break;
 			case EntryFailsWhileUnpackingResult: [@"Unpacking failed!" print]; failed++; break;
 			case EntrySizeIsWrongResult: [@"Wrong size!" print]; failed++; break;
 			case EntryHasNoChecksumResult: [@"Unknown." print]; unknown++; break;
@@ -502,6 +504,7 @@ int main(int argc,const char **argv)
 		{
 			case EntryDoesNotNeedTestingResult: [printer printDictionaryObject:@"not_tested"]; break;
 			case EntryIsNotSupportedResult: [printer printDictionaryObject:@"not_supported"]; break;
+			case EntryHasWrongPasswordResult: [printer printDictionaryObject:@"wrong_password"]; break;
 			case EntryFailsWhileUnpackingResult: [printer printDictionaryObject:@"unpacking_failed"]; break;
 			case EntrySizeIsWrongResult: [printer printDictionaryObject:@"wrong_size"]; break;
 			case EntryHasNoChecksumResult: [printer printDictionaryObject:@"no_checksum"]; break;
@@ -530,12 +533,14 @@ static int TestEntry(XADSimpleUnarchiver *unarchiver,NSDictionary *dict)
 	if(isdir||islink) return EntryDoesNotNeedTestingResult;
 
 	XADArchiveParser *parser=[unarchiver archiveParser];
-	CSHandle *handle=[parser handleForEntryWithDictionary:dict wantChecksum:YES error:NULL];
+	XADError error;
+	CSHandle *handle=[parser handleForEntryWithDictionary:dict wantChecksum:YES error:&error];
 
 	if(!handle)
 	{
 		returncode=1;
-		return EntryIsNotSupportedResult;
+		if(error==XADPasswordError) return EntryHasWrongPasswordResult;
+		else return EntryIsNotSupportedResult;
 	}
 
 	@try

@@ -14,7 +14,7 @@
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 +(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
+-(id)init;
 -(void)dealloc;
 
 -(void)parseWithSeparateMacForks;
@@ -46,10 +46,12 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 
 -(int)IDForCoder:(NSDictionary *)coder;
 -(off_t)compressedSizeForFolder:(NSDictionary *)folder;
--(off_t)unCompressedSizeForFolder:(NSDictionary *)folder;
+-(off_t)uncompressedSizeForFolder:(NSDictionary *)folder;
 -(NSString *)compressorNameForFolder:(NSDictionary *)folder;
 -(NSString *)compressorNameForFolder:(NSDictionary *)folder index:(int)index;
 -(NSString *)compressorNameForCoder:(NSDictionary *)coder;
+-(BOOL)isFolderEncrypted:(NSDictionary *)folder;
+-(BOOL)isFolderEncrypted:(NSDictionary *)folder index:(int)index;
 
 -(NSString *)formatName;
 

@@ -42,6 +42,9 @@ static BOOL IsDelimiter(uint8_t c);
 
 		encryption=nil;
 
+		passwordaction=NULL;
+		passwordtarget=nil;
+
 		currchar=0;
 
 		@try
@@ -81,6 +84,12 @@ static BOOL IsDelimiter(uint8_t c);
 -(BOOL)setPassword:(NSString *)password
 {
 	return [encryption setPassword:password];
+}
+
+-(void)setPasswordRequestAction:(SEL)action target:(id)target
+{
+	passwordaction=action;
+	passwordtarget=target;
 }
 
 
@@ -164,6 +173,12 @@ static BOOL IsDelimiter(uint8_t c);
 	[self proceed];
 }
 
+-(void)proceedWithoutCommentHandlingAssumingCharacter:(uint8_t)c errorMessage:(NSString *)error
+{
+	if(currchar!=c) [self _raiseParserException:error];
+	[self proceedWithoutCommentHandling];
+}
+
 
 
 
@@ -177,7 +192,10 @@ static BOOL IsDelimiter(uint8_t c);
 	NSString *startxref=[[end substringsCapturedByPattern:@"startxref[\n\r ]+([0-9]+)[\n\r ]+%%EOF"] objectAtIndex:1];
 	if(!startxref) [NSException raise:PDFInvalidFormatException format:@"Missing PDF trailer."];
 
-	[self startParsingFromHandle:mainhandle atOffset:[startxref longLongValue]];
+	NSScanner *scanner=[NSScanner scannerWithString:startxref];
+	long long offset=0;
+	[scanner scanLongLong:&offset];
+	[self startParsingFromHandle:mainhandle atOffset:offset];
 
 	// Read newest xrefs and trailer.
 	trailerdict=[[self parsePDFXref] retain];
@@ -192,12 +210,6 @@ static BOOL IsDelimiter(uint8_t c);
 	}
 
 	[self resolveIndirectObjects];
-
-	if([trailerdict objectForKey:@"Encrypt"])
-	{
-		[encryption release];
-		encryption=[[PDFEncryptionHandler alloc] initWithParser:self];
-	}
 }
 
 -(NSDictionary *)parsePDFXref
@@ -234,11 +246,13 @@ static BOOL IsDelimiter(uint8_t c);
 			if(![trailer isKindOfClass:[NSDictionary class]])
 			[self _raiseParserException:@"Error parsing xref trailer"];
 
+			[self setupEncryptionIfNeededForTrailerDictionary:trailer];
+
 			return trailer;
 		}
 		else if(currchar>='0' && currchar<='9')
 		{
-			int first=[self parseSimpleInteger];
+			/*int first=*/[self parseSimpleInteger];
 			int num=[self parseSimpleInteger];
 
 			[self skipWhitespace];
@@ -257,15 +271,18 @@ static BOOL IsDelimiter(uint8_t c);
 				if(entry[17]!='n') continue;
 
 				off_t objoffs=atoll(entry);
-				int objgen=atol(entry+11);
+				//int objgen=atol(entry+11);
 
 				if(!objoffs) continue; // Kludge to handle broken Apple PDF files.
 				if(objoffs>totalsize) continue; // Kludge to handle some other broken files.
 
 				[self startParsingFromHandle:mainhandle atOffset:objoffs];
-				id obj=[self parsePDFObject];
 
-				PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:first+i generation:objgen];
+				PDFObjectReference *ref;
+				id obj=[self parsePDFObjectWithReferencePointer:&ref];
+
+				// Some PDF files are so broken than the object numbers don't actually match.
+				//PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:first+i generation:objgen];
 				if(obj && ![objdict objectForKey:ref]) [objdict setObject:obj forKey:ref];
 
 				[pool release];
@@ -283,8 +300,7 @@ static BOOL IsDelimiter(uint8_t c);
 
 -(NSDictionary *)parsePDFXrefStream
 {
-	PDFStream *stream=[self parsePDFObject];
-
+	PDFStream *stream=[self parsePDFObjectWithReferencePointer:NULL];
 	if(![stream isKindOfClass:[PDFStream class]]) [self _raiseParserException:@"Error parsing xref stream"];
 
 	NSDictionary *dict=[stream dictionary];
@@ -313,8 +329,10 @@ static BOOL IsDelimiter(uint8_t c);
 		index=[NSArray arrayWithObjects:[NSNumber numberWithInt:0],size,nil];
 	}
 
-	CSHandle *handle=[stream handle];
+	CSHandle *handle=[stream handleExcludingLast:NO decrypted:NO];
 	if(!handle) [self _raiseParserException:@"Error decoding xref stream"];
+
+	NSMutableArray *objstreams=[NSMutableArray array];
 
 	for(int i=0;i<[index count];i+=2)
 	{
@@ -331,7 +349,7 @@ static BOOL IsDelimiter(uint8_t c);
 		{
 			int type=[self parseIntegerOfSize:typesize fromHandle:handle default:1];
 			uint64_t value1=[self parseIntegerOfSize:value1size fromHandle:handle default:0];
-			uint64_t value2=[self parseIntegerOfSize:value2size fromHandle:handle default:0];
+			/*uint64_t value2=*/[self parseIntegerOfSize:value2size fromHandle:handle default:0];
 
 			if(type!=1) continue;
 			if(!value1) continue; // Kludge to handle broken Apple PDF files. TODO: Is this actually needed here?
@@ -340,19 +358,23 @@ static BOOL IsDelimiter(uint8_t c);
 
 			off_t curroffs=[mainhandle offsetInFile];
 			[self startParsingFromHandle:mainhandle atOffset:value1];
-			id obj=[self parsePDFObject];
+
+			PDFObjectReference *ref;
+			id obj=[self parsePDFObjectWithReferencePointer:&ref];
+
 			[mainhandle seekToFileOffset:curroffs];
 
-			PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:n generation:value2];
+			// Some PDF files are so broken than the object numbers don't actually match.
+			//PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:n generation:value2];
 			if(obj && ![objdict objectForKey:ref]) [objdict setObject:obj forKey:ref];
 
 			if([obj isKindOfClass:[PDFStream class]])
 			{
 				if([[[obj dictionary] objectForKey:@"Type"] isEqual:@"ObjStm"])
 				{
-					off_t curroffs=[mainhandle offsetInFile];
-					[self parsePDFCompressedObjectStream:obj];
-					[mainhandle seekToFileOffset:curroffs];
+					// This is an object stream, but we can't parse it until encryption has
+					// been set up, so cache it for later.
+					[objstreams addObject:obj];
 				}
 			}
 
@@ -360,14 +382,56 @@ static BOOL IsDelimiter(uint8_t c);
 		}
 	}
 
+	[self setupEncryptionIfNeededForTrailerDictionary:dict];
+
+	// Parse any object streams that were encountered earlier, now that encryption
+	// should be properly set up.
+	NSEnumerator *enumerator=[objstreams objectEnumerator];
+	PDFStream *objstream;
+	while((objstream=[enumerator nextObject]))
+	{
+		off_t curroffs=[mainhandle offsetInFile];
+		[self parsePDFCompressedObjectStream:objstream];
+		[mainhandle seekToFileOffset:curroffs];
+	}
+
 	return dict;
 }
 
--(id)parsePDFObject
+
+-(void)setupEncryptionIfNeededForTrailerDictionary:(NSDictionary *)trailer
+{
+	if(encryption) return;
+
+	id encryptdict=[trailer objectForKey:@"Encrypt"];
+	if(!encryptdict) return;
+
+	if([encryptdict isKindOfClass:[PDFObjectReference class]])
+	{
+		encryptdict=[objdict objectForKey:encryptdict];
+	}
+
+	NSArray *ids=[trailer objectForKey:@"ID"];
+	if(!ids) return;
+	NSData *permanentid=[[ids objectAtIndex:0] rawData];
+
+	encryption=[[PDFEncryptionHandler alloc]
+	initWithEncryptDictionary:encryptdict permanentID:permanentid];
+
+	if([encryption needsPassword] && passwordaction)
+	{
+		[passwordtarget performSelector:passwordaction withObject:self];
+	}
+}
+
+
+
+-(id)parsePDFObjectWithReferencePointer:(PDFObjectReference **)refptr
 {
 	int objnum=[self parseSimpleInteger];
 	int objgen=[self parseSimpleInteger];
 	PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:objnum generation:objgen];
+	if(refptr) *refptr=ref;
 
 	[self skipWhitespace];
 
@@ -392,6 +456,11 @@ static BOOL IsDelimiter(uint8_t c);
 			if(currchar=='\r')
 			{
 				[self proceedWithoutCommentHandling];
+
+				// According to the spec, an \r has to be followed by an \n
+				// following a stream token. However, nobody cares what the
+				// spec says.
+				//[self proceedWithoutCommentHandlingAssumingCharacter:'\n' errorMessage:@"Error parsing stream object"];
 				if(currchar=='\n') [self proceedWithoutCommentHandling];
 			}
 			else if(currchar=='\n')
@@ -489,6 +558,9 @@ static BOOL IsDelimiter(uint8_t c);
 
 		PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:objnums[i] generation:0];
 
+		// TODO: Strings in compressed object streams are apparently
+		// *not* encrypted. There needs to be some kind of flag for this,
+		// but this is not yet implemented.
 		[self startParsingFromHandle:handle atOffset:offsets[i]+startoffset];
 		id value=[self parsePDFTypeWithParent:ref];
 
@@ -905,7 +977,7 @@ static BOOL IsDelimiter(uint8_t c);
 	for(int i=0;i<length;i++) if(bytes[i]=='\n'||bytes[i]=='\r') { length=i; break; }
 	NSString *endstr=[[[NSString alloc] initWithBytes:bytes length:length encoding:NSISOLatin1StringEncoding] autorelease];
 
-	[NSException raise:PDFParserException format:@"%@: \"%@%C%@\"",error,startstr,0x25bc,endstr];
+	[NSException raise:PDFParserException format:@"%@: \"%@%C%@\"",error,startstr,(unichar)0x25bc,endstr];
 }
 
 @end

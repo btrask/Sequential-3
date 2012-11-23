@@ -65,6 +65,8 @@
 
 -(XADUnarchiver *)unarchiverForEntryWithDictionary:(NSDictionary *)dict
 wantChecksum:(BOOL)checksum error:(XADError *)errorptr;
+-(XADUnarchiver *)unarchiverForEntryWithDictionary:(NSDictionary *)dict
+resourceForkDictionary:(NSDictionary *)forkdict wantChecksum:(BOOL)checksum error:(XADError *)errorptr;
 
 -(XADError)_extractFileEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
 -(XADError)_extractDirectoryEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
@@ -98,6 +100,7 @@ outputTarget:(id)target selector:(SEL)sel argument:(id)arg;
 -(void)unarchiver:(XADUnarchiver *)unarchiver didExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error;
 
 -(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldCreateDirectory:(NSString *)directory;
+-(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldDeleteFileAndCreateDirectory:(NSString *)directory;
 
 -(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path;
 -(void)unarchiver:(XADUnarchiver *)unarchiver willExtractArchiveEntryWithDictionary:(NSDictionary *)dict withUnarchiver:(XADUnarchiver *)subunarchiver to:(NSString *)path;

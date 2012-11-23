@@ -118,7 +118,7 @@
 
 
 -(XADError)parse;
--(XADError)_setupSubArchiveForEntryWithDictionary:(NSDictionary *)dict;
+-(XADError)_setupSubArchiveForEntryWithDataFork:(NSDictionary *)datadict resourceFork:(NSDictionary *)resourcedict;
 
 -(XADError)unarchive;
 -(XADError)_unarchiveRegularArchive;
@@ -136,8 +136,6 @@
 
 +(NSString *)_findUniquePathForOriginalPath:(NSString *)path;
 +(NSString *)_findUniquePathForOriginalPath:(NSString *)path reservedPaths:(NSSet *)reserved;
-+(BOOL)_moveItemAtPath:(NSString *)src toPath:(NSString *)dest;
-+(BOOL)_removeItemAtPath:(NSString *)path;
 
 @end
 
