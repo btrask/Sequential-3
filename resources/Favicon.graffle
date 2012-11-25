@@ -21,15 +21,29 @@
 	<array>
 		<dict>
 			<key>Bounds</key>
-			<string>{{409.5, 326.5}, {24, 24}}</string>
+			<string>{{411.5, 326.5}, {24, 24}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
-			<integer>29</integer>
+			<integer>44</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
 			<dict>
+				<key>shadow</key>
+				<dict>
+					<key>Color</key>
+					<dict>
+						<key>b</key>
+						<string>0</string>
+						<key>g</key>
+						<string>0</string>
+						<key>r</key>
+						<string>0</string>
+					</dict>
+					<key>Fuzziness</key>
+					<real>16</real>
+				</dict>
 				<key>stroke</key>
 				<dict>
 					<key>Draws</key>
@@ -43,11 +57,25 @@
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
-			<integer>28</integer>
+			<integer>43</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
 			<dict>
+				<key>shadow</key>
+				<dict>
+					<key>Color</key>
+					<dict>
+						<key>b</key>
+						<string>0</string>
+						<key>g</key>
+						<string>0</string>
+						<key>r</key>
+						<string>0</string>
+					</dict>
+					<key>Fuzziness</key>
+					<real>16</real>
+				</dict>
 				<key>stroke</key>
 				<dict>
 					<key>Draws</key>
@@ -57,15 +85,29 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{347.5, 326.5}, {24, 24}}</string>
+			<string>{{345.5, 326.5}, {24, 24}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
-			<integer>27</integer>
+			<integer>42</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
 			<dict>
+				<key>shadow</key>
+				<dict>
+					<key>Color</key>
+					<dict>
+						<key>b</key>
+						<string>0</string>
+						<key>g</key>
+						<string>0</string>
+						<key>r</key>
+						<string>0</string>
+					</dict>
+					<key>Fuzziness</key>
+					<real>16</real>
+				</dict>
 				<key>stroke</key>
 				<dict>
 					<key>Draws</key>
@@ -75,15 +117,29 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{409.5, 293.5}, {24, 24}}</string>
+			<string>{{411.5, 293.5}, {24, 24}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
-			<integer>26</integer>
+			<integer>41</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
 			<dict>
+				<key>shadow</key>
+				<dict>
+					<key>Color</key>
+					<dict>
+						<key>b</key>
+						<string>0</string>
+						<key>g</key>
+						<string>0</string>
+						<key>r</key>
+						<string>0</string>
+					</dict>
+					<key>Fuzziness</key>
+					<real>16</real>
+				</dict>
 				<key>stroke</key>
 				<dict>
 					<key>Draws</key>
@@ -93,15 +149,29 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{409.5, 260.5}, {24, 24}}</string>
+			<string>{{411.5, 260.5}, {24, 24}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
-			<integer>25</integer>
+			<integer>40</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
 			<dict>
+				<key>shadow</key>
+				<dict>
+					<key>Color</key>
+					<dict>
+						<key>b</key>
+						<string>0</string>
+						<key>g</key>
+						<string>0</string>
+						<key>r</key>
+						<string>0</string>
+					</dict>
+					<key>Fuzziness</key>
+					<real>16</real>
+				</dict>
 				<key>stroke</key>
 				<dict>
 					<key>Draws</key>
@@ -115,11 +185,25 @@
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
-			<integer>24</integer>
+			<integer>39</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
 			<dict>
+				<key>shadow</key>
+				<dict>
+					<key>Color</key>
+					<dict>
+						<key>b</key>
+						<string>0</string>
+						<key>g</key>
+						<string>0</string>
+						<key>r</key>
+						<string>0</string>
+					</dict>
+					<key>Fuzziness</key>
+					<real>16</real>
+				</dict>
 				<key>stroke</key>
 				<dict>
 					<key>Draws</key>
@@ -129,15 +213,29 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{347.5, 293.5}, {24, 24}}</string>
+			<string>{{345.5, 293.5}, {24, 24}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
-			<integer>23</integer>
+			<integer>38</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
 			<dict>
+				<key>shadow</key>
+				<dict>
+					<key>Color</key>
+					<dict>
+						<key>b</key>
+						<string>0</string>
+						<key>g</key>
+						<string>0</string>
+						<key>r</key>
+						<string>0</string>
+					</dict>
+					<key>Fuzziness</key>
+					<real>16</real>
+				</dict>
 				<key>stroke</key>
 				<dict>
 					<key>Draws</key>
@@ -151,11 +249,25 @@
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
-			<integer>22</integer>
+			<integer>37</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
 			<dict>
+				<key>shadow</key>
+				<dict>
+					<key>Color</key>
+					<dict>
+						<key>b</key>
+						<string>0</string>
+						<key>g</key>
+						<string>0</string>
+						<key>r</key>
+						<string>0</string>
+					</dict>
+					<key>Fuzziness</key>
+					<real>16</real>
+				</dict>
 				<key>stroke</key>
 				<dict>
 					<key>Draws</key>
@@ -165,15 +277,29 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{347.5, 260.5}, {24, 24}}</string>
+			<string>{{345.5, 260.5}, {24, 24}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
-			<integer>21</integer>
+			<integer>36</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
 			<dict>
+				<key>shadow</key>
+				<dict>
+					<key>Color</key>
+					<dict>
+						<key>b</key>
+						<string>0</string>
+						<key>g</key>
+						<string>0</string>
+						<key>r</key>
+						<string>0</string>
+					</dict>
+					<key>Fuzziness</key>
+					<real>16</real>
+				</dict>
 				<key>stroke</key>
 				<dict>
 					<key>Draws</key>
@@ -194,7 +320,7 @@
 				<real>96</real>
 			</dict>
 			<key>ID</key>
-			<integer>20</integer>
+			<integer>35</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Shape</key>
@@ -234,7 +360,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{182, 240}, {128, 128}}</string>
+			<string>{{182.5, 240.5}, {128, 128}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -242,10 +368,10 @@
 				<key>Font</key>
 				<string>Cochin-Bold</string>
 				<key>Size</key>
-				<real>96</real>
+				<real>110</real>
 			</dict>
 			<key>ID</key>
-			<integer>19</integer>
+			<integer>34</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Shape</key>
@@ -290,7 +416,7 @@
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
 
-\f0\b\fs192 \cf1 \shad\shadx0\shady-52\shadr200\shado255 \shadc0 S}</string>
+\f0\b\fs220 \cf1 \shad\shadx0\shady-52\shadr200\shado255 \shadc0 S}</string>
 			</dict>
 		</dict>
 		<dict>
@@ -306,7 +432,7 @@
 				<real>96</real>
 			</dict>
 			<key>ID</key>
-			<integer>18</integer>
+			<integer>33</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Shape</key>
@@ -367,7 +493,7 @@
 				<real>96</real>
 			</dict>
 			<key>ID</key>
-			<integer>17</integer>
+			<integer>32</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Shape</key>
@@ -428,7 +554,7 @@
 				<real>96</real>
 			</dict>
 			<key>ID</key>
-			<integer>16</integer>
+			<integer>31</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Shape</key>
@@ -491,7 +617,7 @@
 				<real>96</real>
 			</dict>
 			<key>ID</key>
-			<integer>15</integer>
+			<integer>30</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Shape</key>
@@ -585,7 +711,7 @@
 	<key>MagnetsVisible</key>
 	<string>NO</string>
 	<key>ModificationDate</key>
-	<string>2012-11-21 10:02:24 -0500</string>
+	<string>2012-11-25 06:45:22 -0500</string>
 	<key>Modifier</key>
 	<string>ben</string>
 	<key>Orientation</key>
