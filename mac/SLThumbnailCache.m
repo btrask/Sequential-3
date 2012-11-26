@@ -119,8 +119,13 @@ static NSOperationQueue *SLThumbnailQueue = nil;
 	NSOperation *const op = [NSBlockOperation blockOperationWithBlock:^ {
 		NSAutoreleasePool *const pool = [[NSAutoreleasePool alloc] init];
 		NSImage *const image = [self imageForPath:path fileManager:fileManager];
-		if(!image) return;
+		if(!image) {
+			return;
+		}
 		NSImageRep *const srcRep = [image bestRepresentationForRect:NSZeroRect context:nil hints:nil];
+		if(!srcRep) {
+			return;
+		}
 		NSSize const src = NSMakeSize([srcRep pixelsWide], [srcRep pixelsHigh]);
 		CGFloat const scale = MIN(1.0, MIN((CGFloat)_thumbnailSize.width / src.width, (CGFloat)_thumbnailSize.height / src.height));
 		NSSize const dst = NSMakeSize(round(src.width * scale), round(src.height * scale));
