@@ -93,8 +93,8 @@ ImagePage.prototype.rescale = function(scaler) {
 
 /*
 FIXME: Serious problems with rendering to canvas:
-- Only one frame of animated GIFs gets drawn, and we probably have no way to read the other frames/durations.
-- Scaling looks bad; {moz,webkit}imageSmoothingEnabled defaults to `true` but does not seem to use high quality scaling on any browser (Chromium, Firefox, or Safari 5). Worse yet, the frame changes in the background so everytime we rescale() we get a different frame.
+- Only one frame of animated GIFs gets drawn, and we probably have no way to read the other frames/durations. Worse yet, the frame changes in the background so everytime we rescale() we get a different frame.
+- Scaling looks bad; {moz,webkit}imageSmoothingEnabled defaults to `true` but does not seem to use high quality scaling on any browser (Chromium, Firefox, or Safari 5).
 - I can't even get imageSmoothingEnabled=false to work (again, in any browser).
 */
 function CanvasPage(node) {
