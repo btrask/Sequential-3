@@ -83,32 +83,11 @@ function ScrollView() {
 		DOM.preventDefault(event);
 		return false;
 	});
-	DOM.addListener(scrollView.element, "mousedown", function(firstEvent) {
-		if(!scrollView.active) {
-			DOM.preventDefault(firstEvent);
-			return false;
-		}
-		var scroller = new scrollView.scroller(scrollView, firstEvent);
-		var onmousemove, onmouseup;
-		DOM.addListener(document, "mousemove", onmousemove = function(event) {
-			scroller.update(Point.fromEvent(event));
-			DOM.preventDefault(event);
-			return false;
-		});
-		DOM.addListener(document, "mouseup", onmouseup = function(event) {
-			DOM.removeListener(document, "mousemove", onmousemove);
-			DOM.removeListener(document, "mouseup", onmouseup);
-			scroller.end();
-			DOM.preventDefault(event);
-			return false;
-		});
-		DOM.preventDefault(firstEvent);
-		return false;
-	});
 
 	scrollView.registerShortcuts();
 	scrollView.registerScrollShortcuts();
 	scrollView.registerScrollWheel();
+	scrollView.registerMouseAndTouches();
 }
 
 ScrollView.prototype.reflow = function() {
@@ -382,4 +361,33 @@ ScrollView.prototype.registerScrollWheel = function() {
 		animateTemporarily();
 		scrollView.scrollBy(size.scale(5)); // TODO: Check the resulting magnitude before optimizing.
 	});
+};
+ScrollView.prototype.registerMouseAndTouches = function() {
+	var scrollView = this;
+	function addListener(startEvent, moveEvent, endEvent, useTouch) {
+		DOM.addListener(scrollView.element, startEvent, function(firstEvent) {
+			if(!scrollView.active) {
+				DOM.preventDefault(firstEvent);
+				return false;
+			}
+			var scroller = new scrollView.scroller(scrollView, useTouch ? firstEvent.touches[0] : firstEvent);
+			var move, end;
+			DOM.addListener(document, moveEvent, move = function(event) {
+				scroller.update(Point.fromEvent(useTouch ? event.touches[0] : event));
+				DOM.preventDefault(event);
+				return false;
+			});
+			DOM.addListener(document, endEvent, end = function(event) {
+				DOM.removeListener(document, moveEvent, move);
+				DOM.removeListener(document, endEvent, end);
+				scroller.end();
+				DOM.preventDefault(event);
+				return false;
+			});
+			DOM.preventDefault(firstEvent);
+			return false;
+		});
+	}
+	addListener("mousedown", "mousemove", "mouseup", false);
+	addListener("touchstart", "touchmove", "touchend", true);
 };
