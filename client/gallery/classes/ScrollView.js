@@ -85,7 +85,7 @@ function ScrollView() {
 	});
 	DOM.addListener(scrollView.element, "mousedown", function(firstEvent) {
 		if(!scrollView.active) {
-			DOM.preventDefault(event);
+			DOM.preventDefault(firstEvent);
 			return false;
 		}
 		var scroller = new scrollView.scroller(scrollView, firstEvent);
