@@ -36,6 +36,7 @@ function Menu(index) {
 	menu.sortOrder = new Submenu(menu, "Sort Order", true);
 	menu.sortDirection = new Submenu(menu, "Sort Direction", true);
 	menu.repeat = new Submenu(menu, "Repeat", true);
+	menu.clickAction = new Submenu(menu, env.touch ? "Tap Action" : "Click Action", true);
 
 	menu.commands.addItem("Browse", "T", function(event) {
 		index.showThumbnailBrowser();
@@ -134,6 +135,15 @@ function Menu(index) {
 	}
 	addRepeat("Repeat All", "", true);
 	addRepeat("Repeat None", "", false);
+
+	function addClickAction(title, shortcut, action) {
+		var item = menu.clickAction.addItem(title, shortcut, function(event) {
+			index.setClickAction(action);
+		});
+		if(index.clickAction === action) menu.clickAction.selectItem(item);
+	}
+	addClickAction("Change Pages", "", "pageChange");
+	addClickAction("Scroll", "", "scroll");
 
 	menu.scrollView.setPage(new GenericPage(menu.content));
 }

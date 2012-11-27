@@ -15,6 +15,7 @@ CLIENT_SCRIPTS := \
 	gallery/utilities/DOM.js \
 	gallery/utilities/Geometry.js \
 	gallery/utilities/KBD.js \
+	gallery/utilities/env.js \
 	gallery/classes/Menu.js \
 	gallery/classes/ReadingDirection.js \
 	gallery/classes/Scaler.js \

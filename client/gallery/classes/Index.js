@@ -36,15 +36,22 @@ function Index(indexURL) {
 	index.sortOrder = "name";
 	index.reversed = false;
 	index.repeat = true;
+	index.clickAction = null;
+
 	index.scrollView = new ScrollView();
 	index.scrollView.setScaler(Scaler.parse(localStorage.getItem("scaler"), index.scrollView));
 	index.scrollView.setReadingDirection(ReadingDirection.parse(localStorage.getItem("readingDirection")));
-	index.setSortOrder(localStorage.getItem("sortOrder"));
 	// TODO: Shouldn't we use the regular index.setXXX() system for loading these?
+
+	index.setSortOrder(localStorage.getItem("sortOrder"));
+	index.setClickAction(localStorage.getItem("clickAction"));
+
 	index.scrollView.element._onclick = function(event) {
-		var rightClick = 2 == event.button;
-		var forward = event.shiftKey === rightClick;
-		index.next(forward);
+		var primaryClick = 2 != event.button;
+		var noShift = !event.shiftKey;
+		var singleFinger = true; // TODO: Detect this.
+		var forward = primaryClick === noShift === singleFinger;
+		Index.clickAction[index.clickAction](index, forward);
 	};
 	index.scrollView.onPageChange = function(dir) { // `dir` is in logical coordinates.
 		if(dir.w < 0) index.next(false); else
@@ -204,6 +211,12 @@ Index.prototype.setSortOrder = function(order, reversed) {
 	index.root.sort();
 	// TODO: Update thumbnailBrowser if shown.
 	// TODO: Update menu selection if shown.
+};
+Index.prototype.setClickAction = function(action) {
+	var index = this;
+	var defaultAction = env.touch ? "scroll" : "pageChange";
+	index.clickAction = bt.hasOwnProperty(Index.clickAction, action) ? action : defaultAction;
+	localStorage.setItem("clickAction", index.clickAction);
 };
 Index.prototype.setScaler = function(scaler) {
 	var index = this;
@@ -391,4 +404,13 @@ Index.prototype.registerScalingShortcuts = function() {
 	KBD.addEventListener("keyup", function(e) {
 		
 	});
+};
+
+Index.clickAction = {};
+Index.clickAction["pageChange"] = function(index, forward) {
+	index.next(forward);
+};
+Index.clickAction["scroll"] = function(index, forward) {
+	var mag = forward ? 1 : -1;
+	index.scrollView.smartScroll(new Size(0, 1).scale(mag), new Size(1, 0).scale(mag));
 };
