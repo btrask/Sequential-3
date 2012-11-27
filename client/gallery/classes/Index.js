@@ -411,6 +411,5 @@ Index.clickAction["pageChange"] = function(index, forward) {
 	index.next(forward);
 };
 Index.clickAction["scroll"] = function(index, forward) {
-	var mag = forward ? 1 : -1;
-	index.scrollView.smartScroll(new Size(0, 1).scale(mag), new Size(1, 0).scale(mag));
+	index.scrollView.smarterScroll(forward);
 };

@@ -151,6 +151,14 @@ ScrollView.prototype.smartScroll = function(d1, d2) {
 	if(y.w || y.h) return scrollView.scrollBy(y.sum(a.scale(-9e9)));
 	scrollView.onPageChange(d1.sum(d2));
 };
+ScrollView.prototype.smarterScroll = function(forward) {
+	var scrollView = this;
+	var mag = forward ? 1 : -1;
+	var v = new Size(0, mag), h = new Size(mag, 0);
+	var s = scrollView.page.originalSize;
+	if(s.w > s.h) scrollView.smartScroll(v, h);
+	else scrollView.smartScroll(h, v);
+};
 
 ScrollView.prototype.endPosition = function(end) {
 	var scrollView = this;
@@ -232,7 +240,7 @@ ScrollView.prototype.registerShortcuts = function() {
 	}
 
 	bind({char: " ", key: 32, shift: null}, function(e) {
-		smartScroll(!e.shift, new Size(0, 1), new Size(1, 0));
+		scrollView.smarterScroll(!e.shift);
 	});
 	bind({char: "c", key: 67, shift: null}, function(e) {
 		smartScroll(e.shift, new Size(0, 1), new Size(1, 0));
