@@ -9,6 +9,7 @@ CLIENT_SCRIPTS := \
 	gallery/external/json2.js \
 	gallery/external/Array.js \
 	gallery/external/setZeroTimeout.js \
+	gallery/external/util.js \
 	gallery/utilities/bt.js \
 	gallery/utilities/sort.js \
 	gallery/utilities/DOM.js \
