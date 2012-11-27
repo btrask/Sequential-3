@@ -47,9 +47,9 @@ function Index(indexURL) {
 	index.setClickAction(localStorage.getItem("clickAction"));
 
 	index.scrollView.element._onclick = function(event) {
-		var primaryClick = 2 != event.button;
+		var primaryClick = 2 !== event.button;
 		var noShift = !event.shiftKey;
-		var singleFinger = true; // TODO: Detect this.
+		var singleFinger = !event.touches || 1 === event.touches.length;
 		var forward = primaryClick === noShift === singleFinger;
 		Index.clickAction[index.clickAction](index, forward);
 	};

@@ -19,13 +19,15 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
-function RelativeScroller(scrollView, event) {
+function RelativeScroller(scrollView, firstEvent) {
 	var scroller = this;
 	var setAnimating = scrollView.animator();
 	var clicked = true;
 	var velocity = new Size(0, 0);
-	var element = event.target || event.srcElement;
-	var firstPoint = Point.fromEvent(event);
+	var touches = firstEvent.touches ? firstEvent.touches.length : 0;
+	var e = touches ? firstEvent.touches[0] : firstEvent;
+	var element = e.target || e.srcElement;
+	var firstPoint = Point.fromEvent(e);
 	var latestPoint;
 	function recalculateVelocity() {
 		var vector = firstPoint.distance(latestPoint).vector();
@@ -55,13 +57,15 @@ function RelativeScroller(scrollView, event) {
 	}, 1000 / 4);
 
 	DOM.classify(scrollView.element, "cursor-hidden"); // This doesn't take effect until the next mouse move, at least in Chrome and Safari, so do it immediately.
-	scroller.update = function(point) {
-		latestPoint = point;
+	scroller.update = function(event) {
+		var touches = event.touches ? event.touches.length : 0;
+		var e = touches ? event.touches[0] : event;
+		latestPoint = Point.fromEvent(e);
 		recalculateVelocity();
 	};
 	scroller.end = function() {
 		DOM.classify(scrollView.element, "cursor-hidden", false);
-		if(clicked) onclick(element)(event);
+		if(clicked) onclick(element)(firstEvent);
 		animation.clear(scrolling);
 		clearTimeout(clickTimeout);
 		setAnimating(false);

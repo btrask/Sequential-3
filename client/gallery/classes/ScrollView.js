@@ -370,10 +370,10 @@ ScrollView.prototype.registerMouseAndTouches = function() {
 				DOM.preventDefault(firstEvent);
 				return false;
 			}
-			var scroller = new scrollView.scroller(scrollView, useTouch ? firstEvent.touches[0] : firstEvent);
+			var scroller = new scrollView.scroller(scrollView, firstEvent);
 			var move, end;
 			DOM.addListener(document, moveEvent, move = function(event) {
-				scroller.update(Point.fromEvent(useTouch ? event.touches[0] : event));
+				scroller.update(event);
 				DOM.preventDefault(event);
 				return false;
 			});
@@ -388,6 +388,6 @@ ScrollView.prototype.registerMouseAndTouches = function() {
 			return false;
 		});
 	}
-	addListener("mousedown", "mousemove", "mouseup", false);
-	addListener("touchstart", "touchmove", "touchend", true);
+	addListener("mousedown", "mousemove", "mouseup");
+	addListener("touchstart", "touchmove", "touchend");
 };
