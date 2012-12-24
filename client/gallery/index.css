@@ -311,7 +311,7 @@ body {
 	float: right;
 }
 .menu > .submenu > .items > .item.selected > .title::before {
-	content: "➤";
+	content: "➜";
 	display: inline-block;
 	width: 1.5em;
 	margin-left: -1.5em;
