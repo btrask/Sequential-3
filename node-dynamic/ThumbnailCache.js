@@ -60,7 +60,7 @@ ThumbnailCache.prototype.isValid = function(cachePath, mainPath, callback/* (val
 			callback(cacheTime > mainTime);
 		});
 	});
-}
+};
 ThumbnailCache.prototype.writeThumbnail = function(cachePath, mainPath, callback/* (success) */) {
 	var tc = this;
 	var size = [tc.thumbnailSize.width, tc.thumbnailSize.height].join("x");

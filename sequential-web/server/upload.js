@@ -74,16 +74,17 @@ function randomString(length, charset) {
 	charset = charset || "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
 	for(i = 0; i < length; ++i) chars.push(charset[Math.floor(Math.random() * charset.length)]);
 	return chars.join("");
-};
+}
 function asyncLoop(func/* (next) */) { // TODO: Put this somewhere too.
 	var called, finished;
+	function next() {
+		called = true;
+		if(finished) asyncLoop(func);
+	}
 	for(;;) {
 		called = false;
 		finished = false;
-		func(function next() {
-			called = true;
-			if(finished) asyncLoop(func);
-		});
+		func(next);
 		finished = true;
 		if(!called) break;
 	}
@@ -259,7 +260,7 @@ function upload(req, res) {
 		fail(err);
 	});
 	form.parse(req, function(err, fields, fileByField) {
-		if(err) return fail(err)
+		if(err) return fail(err);
 		var interval = setInterval(function() {
 			res.write(" ", "utf8"); // Keep the connection alive.
 		}, 1000 * 10);

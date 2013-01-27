@@ -80,9 +80,10 @@ function Uploader() {
 		}
 		if(uploading) return bail();
 
+		var i;
 		var files = event.dataTransfer.files;
 		var size = 0;
-		for(var i = 0; i < files.length; ++i) {
+		for(i = 0; i < files.length; ++i) {
 			if("" === files[i].type || !files[i].size) return bail("Bare folder uploads are not currently supported. Please create an archive instead.");
 			if(!hasValidExtension(files[i].name)) return bail("The file “"+files[i].name+"” is not a supported type.");
 			size += files[i].size;
@@ -91,7 +92,7 @@ function Uploader() {
 
 		var form = new FormData();
 		var req = new XMLHttpRequest();
-		for(var i = 0; i < files.length; ++i) form.append("file-"+i, files[i]);
+		for(i = 0; i < files.length; ++i) form.append("file-"+i, files[i]);
 		uploader["progress"].style.width = "0px";
 		uploading = true;
 

@@ -19,15 +19,18 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
+
+/*global ImagePage sort */
 function asyncLoop(func/* (next) */) { // TODO: Put this somewhere too.
 	var called, finished;
+	function next() {
+		called = true;
+		if(finished) asyncLoop(func);
+	}
 	for(;;) {
 		called = false;
 		finished = false;
-		func(function next() {
-			called = true;
-			if(finished) asyncLoop(func);
-		});
+		func(next);
 		finished = true;
 		if(!called) break;
 	}

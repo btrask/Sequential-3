@@ -19,6 +19,12 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
+
+/*global About ThumbnailBrowser Menu*/
+/*global ScrollView ReadingDirection GenericPage*/
+/*global Scaler ProportionalScaler FitScaler AlmostFitScaler*/
+/*global KBD Point*/
+/*global asyncLoop*/
 function Index(indexURL) {
 	var index = this;
 	index.element = DOM.clone("index", index);
@@ -141,7 +147,7 @@ Index.prototype.async = function(func/* (done) */) {
 		if(loading) DOM.remove(loading);
 		clearTimeout(timeout);
 	});
-}
+};
 Index.prototype._next = function(forward, node, callback) {
 	var index = this;
 	if(forward && node === index.node && index.cache.node) return callback(index.cache.node);

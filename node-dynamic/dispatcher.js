@@ -120,7 +120,7 @@ function fileInfo(hash, root, subpath, callback/* (info) */) {
 			callback(info);
 		}
 	});
-};
+}
 
 var serve = function(req, res) {
 	var path = urlModule.parse(req.url).pathname;

@@ -173,7 +173,7 @@ function formatValue(ctx, value, recurseTimes) {
     base = ' ' + formatError(value);
   }
 
-  if (keys.length === 0 && (!array || value.length == 0)) {
+  if (keys.length === 0 && (!array || value.length === 0)) {
     return braces[0] + base + braces[1];
   }
 
@@ -234,7 +234,7 @@ function formatError(value) {
 function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
   var output = [];
   for (var i = 0, l = value.length; i < l; ++i) {
-    if (hasOwnProperty(value, String(i))) {
+    if (has(value, String(i))) {
       output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
           String(i), true));
     } else {
@@ -265,7 +265,7 @@ function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
       str = ctx.stylize('[Setter]', 'special');
     }
   }
-  if (!hasOwnProperty(visibleKeys, key)) {
+  if (!has(visibleKeys, key)) {
     name = '[' + key + ']';
   }
   if (!str) {
@@ -362,7 +362,7 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 
-function hasOwnProperty(obj, prop) {
+function has(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
