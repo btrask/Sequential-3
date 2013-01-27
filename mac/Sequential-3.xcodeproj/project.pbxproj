@@ -37,14 +37,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = B5BB005315C7CBD200A901EC /* UniversalDetector.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 1B467B2615CD9B1F001AB1DD /* libUniversalDetector.ios.a */;
+			remoteGlobalIDString = 1B467B2615CD9B1F001AB1DD;
 			remoteInfo = libUniversalDetector.ios.a;
 		};
 		B5028F6F165F508300CB8CAB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B5BB000615C7CB8500A901EC /* XADMaster.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 1B467B0115CD9A73001AB1DD /* libXADMaster.ios.a */;
+			remoteGlobalIDString = 1B467B0115CD9A73001AB1DD;
 			remoteInfo = libXADMaster.ios.a;
 		};
 		B59C3E7B15A24FBE00E08EEB /* PBXContainerItemProxy */ = {

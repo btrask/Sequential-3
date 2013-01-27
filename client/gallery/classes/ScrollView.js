@@ -370,7 +370,7 @@ ScrollView.prototype.registerScrollWheel = function() {
 	});
 	DOM.addListener(document, "DOMMouseScroll", function(event) { // Gecko.
 		if(!scrollView.active) return true;
-		var size = 1 === event.axis ? new Size(-event.detail, 0) : new Size(0, -event.detail);
+		var size = 1 === event.axis ? new Size(event.detail, 0) : new Size(0, event.detail);
 		animateTemporarily();
 		scrollView.scrollBy(size.scale(5)); // TODO: Check the resulting magnitude before optimizing.
 	});
