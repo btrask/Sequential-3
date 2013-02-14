@@ -211,7 +211,7 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 	}
 
 	const char *bytes=[data bytes];
-	int length=[data length];
+	long length=[data length];
 	if(length&&bytes[length-1]=='\r') [data setLength:length-1];
 
 	return [NSData dataWithData:data];
@@ -256,7 +256,7 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 	return [[self copyDataOfLength:length] autorelease];
 }
 
--(NSData *)readDataOfLengthAtMost:(int)length;
+-(NSData *)readDataOfLengthAtMost:(int)length
 {
 	return [[self copyDataOfLengthAtMost:length] autorelease];
 }
@@ -292,8 +292,8 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 	uint8_t buf[16384];
 	while(skipped<num)
 	{
-		int numbytes=num-skipped>sizeof(buf)?sizeof(buf):num-skipped;
-		int actual=[self readAtMost:numbytes toBuffer:buf];
+		off_t numbytes=num-skipped>sizeof(buf)?sizeof(buf):num-skipped;
+		int actual=[self readAtMost:(int)numbytes toBuffer:buf];
 		skipped+=actual;
 		if(actual==0) break;
 	}
@@ -423,7 +423,7 @@ CSWriteValueImpl(uint32_t,writeID,CSSetUInt32BE)
 
 -(void)writeData:(NSData *)data
 {
-	[self writeBytes:[data length] fromBuffer:[data bytes]];
+	[self writeBytes:(int)[data length] fromBuffer:[data bytes]];
 }
 
 

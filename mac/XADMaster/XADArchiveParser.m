@@ -6,54 +6,55 @@
 #import "XADCRCHandle.h"
 #import "XADPlatform.h"
 
-#import "XADZipParser.h"
-#import "XADZipSFXParsers.h"
-#import "XADRARParser.h"
 #import "XAD7ZipParser.h"
+#import "XADALZipParser.h"
+#import "XADAppleSingleParser.h"
+#import "XADARCParser.h"
+#import "XADARJParser.h"
+#import "XADArParser.h"
+#import "XADBinHexParser.h"
+#import "XADBzip2Parser.h"
+#import "XADCABParser.h"
+#import "XADCFBFParser.h"
+#import "XADCompactProParser.h"
+#import "XADCompressParser.h"
+#import "XADCpioParser.h"
+#import "XADCrunchParser.h"
+#import "XADDiskDoublerParser.h"
+#import "XADGzipParser.h"
+#import "XADISO9660Parser.h"
+#import "XADLBRParser.h"
+#import "XADLibXADParser.h"
+#import "XADLZHParser.h"
+#import "XADLZHSFXParsers.h"
+#import "XADLZMAAloneParser.h"
+#import "XADLZXParser.h"
+#import "XADMacBinaryParser.h"
+#import "XADNDSParser.h"
+#import "XADNowCompressParser.h"
+#import "XADNSAParser.h"
+#import "XADNSISParser.h"
+#import "XADPackItParser.h"
+#import "XADPDFParser.h"
+#import "XADPowerPackerParser.h"
+#import "XADPPMdParser.h"
+#import "XADRARParser.h"
+#import "XADRPMParser.h"
+#import "XADSARParser.h"
+#import "XADSplitFileParser.h"
+#import "XADSqueezeParser.h"
 #import "XADStuffItParser.h"
 #import "XADStuffIt5Parser.h"
 #import "XADStuffItSplitParser.h"
 #import "XADStuffItXParser.h"
-#import "XADCompactProParser.h"
-#import "XADDiskDoublerParser.h"
-#import "XADBinHexParser.h"
-#import "XADMacBinaryParser.h"
-#import "XADAppleSingleParser.h"
-#import "XADPackItParser.h"
-#import "XADNowCompressParser.h"
-#import "XADGzipParser.h"
-#import "XADBzip2Parser.h"
-#import "XADLZMAAloneParser.h"
-#import "XADXZParser.h"
-#import "XADCompressParser.h"
-#import "XADTarParser.h"
-#import "XADCpioParser.h"
-#import "XADXARParser.h"
-#import "XADArParser.h"
-#import "XADRPMParser.h"
-#import "XADLZXParser.h"
-#import "XADPowerPackerParser.h"
-#import "XADLZHParser.h"
-#import "XADLZHSFXParsers.h"
-#import "XADARJParser.h"
-#import "XADARCParser.h"
-#import "XADSqueezeParser.h"
-#import "XADCrunchParser.h"
-#import "XADLBRParser.h"
-#import "XADZooParser.h"
-#import "XADNSISParser.h"
-#import "XADCABParser.h"
-#import "XADPPMdParser.h"
 #import "XADSWFParser.h"
-#import "XADPDFParser.h"
-#import "XADALZipParser.h"
-#import "XADCFBFParser.h"
-#import "XADNDSParser.h"
-#import "XADNSAParser.h"
-#import "XADSARParser.h"
-#import "XADSplitFileParser.h"
-#import "XADISO9660Parser.h"
-#import "XADLibXADParser.h"
+#import "XADTarParser.h"
+#import "XADWARCParser.h"
+#import "XADXARParser.h"
+#import "XADXZParser.h"
+#import "XADZipParser.h"
+#import "XADZipSFXParsers.h"
+#import "XADZooParser.h"
 
 #include <dirent.h>
 
@@ -175,6 +176,7 @@ static int maxheader=0;
 		[XADNSAParser class],
 		[XADSARParser class],
 		[XADArParser class],
+		[XADWARCParser class],
 
 		// Detectors that require lots of work
 		[XADWinZipSFXParser class],
@@ -305,7 +307,7 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 	NSData *header=[handle readDataOfLengthAtMost:maxheader];
 
 	CSHandle *forkhandle=[XADPlatform handleForReadingResourceForkAtPath:filename];
-	XADResourceFork *fork=[XADResourceFork resourceForkWithHandle:forkhandle];
+	XADResourceFork *fork=[XADResourceFork resourceForkWithHandle:forkhandle error:NULL];
 
 	NSMutableDictionary *props=[NSMutableDictionary dictionary];
 
@@ -385,9 +387,6 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 
 +(XADArchiveParser *)archiveParserForEntryWithDictionary:(NSDictionary *)entry resourceForkDictionary:(NSDictionary *)forkentry archiveParser:(XADArchiveParser *)parser wantChecksum:(BOOL)checksum
 {
-	CSHandle *handle=[parser handleForEntryWithDictionary:entry wantChecksum:checksum];
-	if(!handle) [XADException raiseNotSupportedException];
-
 	XADResourceFork *fork=nil;
 	if(forkentry)
 	{
@@ -402,6 +401,9 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 			}
 		}
 	}
+
+	CSHandle *handle=[parser handleForEntryWithDictionary:entry wantChecksum:checksum];
+	if(!handle) [XADException raiseNotSupportedException];
 
 	NSString *filename=[[entry objectForKey:XADFileNameKey] string];
 	XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:handle resourceFork:fork name:filename];
@@ -971,8 +973,8 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 		if(finderflags) [dict setObject:[NSNumber numberWithInt:finderflags] forKey:XADFinderFlagsKey];
 	}
 
-	// If this is an embedded archive that can't seek, force a solid flag.
-	if(forcesolid) [dict setObject:sourcehandle forKey:XADSolidObjectKey];
+	// If this is an embedded archive that can't seek, force a solid flag if one isn't already present.
+	if(forcesolid && ![dict objectForKey:XADSolidObjectKey]) [dict setObject:sourcehandle forKey:XADSolidObjectKey];
 
 	// Handle solidness - set FirstSolid, NextSolid and IsSolid depending on SolidObject.
 	id solidobj=[dict objectForKey:XADSolidObjectKey];
