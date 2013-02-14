@@ -9,7 +9,6 @@ CLIENT_SCRIPTS := \
 	gallery/external/json2.js \
 	gallery/external/Array.js \
 	gallery/external/setZeroTimeout.js \
-	gallery/external/util.js \
 	gallery/utilities/bt.js \
 	gallery/utilities/sort.js \
 	gallery/utilities/DOM.js \
@@ -49,7 +48,13 @@ clean:
 
 $(BUILD_DIR)/gallery/index.js: gallery/utilities/externs.js $(CLIENT_SCRIPTS)
 	-mkdir -p $(dir $@)
-	java -jar ../deps/compiler-latest/compiler.jar $(addprefix --js=,$(filter-out $<,$^)) --js_output_file=$@ --language_in=ECMASCRIPT5 $(CLOSURE_FLAGS) --compilation_level ADVANCED_OPTIMIZATIONS --externs $<
+	java -jar ../deps/compiler-latest/compiler.jar \
+		$(addprefix --js=,$(filter-out $<,$^)) \
+		--js_output_file=$@ \
+		--language_in=ECMASCRIPT5 \
+		--compilation_level ADVANCED_OPTIMIZATIONS \
+		--externs $< \
+		$(CLOSURE_FLAGS) # $$(CLOSURE_FLAGS)
 
 $(BUILD_DIR)/%.css: %.css
 	-mkdir -p $(dir $@)
