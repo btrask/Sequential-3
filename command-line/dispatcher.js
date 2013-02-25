@@ -27,24 +27,15 @@ var bt = require("../node-shared/bt");
 var fs = require("../node-shared/fsx");
 var http = require("../node-shared/httpx");
 
-var config = require("./config.json");
+var sl = require("./sequential");
 var ThumbnailCache = require("./ThumbnailCache");
 
 var dispatcher = exports;
 
-function expandPath(p) { return p.replace(/^~/, process.env.HOME || "/home"); }
-var APP_SUPPORT_MAC = expandPath("~/Library/Application Support");
-var DATA = 
-	(config.data && expandPath(config.data)) ||
-	(fs.existsSync(APP_SUPPORT_MAC) && APP_SUPPORT_MAC+"/Sequential 3") ||
-	__dirname+"/data";
-var FILES = DATA+"/Files";
-var THUMBNAILS = DATA+"/Thumbnails";
-var ICONS = DATA+"/Icons";
 var CLIENT = __dirname+"/build";
 var GALLERY = CLIENT+"/gallery/index.html";
 
-var thumbnailCache = new ThumbnailCache(THUMBNAILS, {width: 128, height: 128}, "jpg");
+var thumbnailCache = new ThumbnailCache(sl.THUMBNAILS, {width: 128, height: 128}, "jpg");
 
 var IMAGE_EXTS = {
 	".jpeg": true,
@@ -78,28 +69,6 @@ function rest(array) {
 	return array.slice(1);
 }
 
-function pathForHash(hash, callback/* (path) */) {
-	if(!hash) return callback(null);
-	fs.readFile(FILES+"/"+hash.slice(0, 2)+"/"+hash+".seq-path", "utf8", function(err, path) {
-		if(err) return callback(null);
-		callback(path);
-	});
-}
-function hashForPath(path, persistent) {
-	var sha1 = crypto.createHash("sha1");
-	sha1.update(config.salt, "utf8");
-	sha1.update(path, "utf8");
-	var hash = sha1.digest("base64").slice(0, 14).replace(/\+/g, "-").replace(/\//g, "_");
-	if(persistent) save(hash, path);
-	return hash;
-}
-function save(hash, path, callback/* (err) */) {
-	var dirPath = FILES+"/"+hash.slice(0, 2);
-	fs.mkdirRecursive(dirPath, function(err) {
-		if(err) return (callback || function(){})(err);
-		fs.writeFile(dirPath+"/"+hash+".seq-path", path, "utf8", callback);
-	});
-}
 function fileInfo(hash, root, subpath, callback/* (info) */) {
 	var fullpath = root+subpath;
 	fs.stat(fullpath, function(err, stats) {
@@ -158,7 +127,7 @@ serve.root = function(req, res, root) {
 serve.root.id = function(req, res, root, id) {
 	var components = id.components;
 	var hash = first(components);
-	pathForHash(hash, function(rootPath) {
+	sl.pathForHash(hash, function(rootPath) {
 		if(!rootPath) return res.sendMessage(404, "Not Found");
 		var subPath = pathFromComponents(rest(components));
 		serve.root.id.hash(req, res, root, id, {
