@@ -20,7 +20,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 var http = require("http");
-var mime = require("./mime");
+var mime = require("./mime.json");
 var pathModule = require("path");
 var fs = require("fs");
 
@@ -41,9 +41,9 @@ http.ServerResponse.prototype.sendError = function(err) {
 	switch(err.code) {
 		case "ENOENT": return res.sendMessage(404, "Not Found");
 		default:
-			throw new Error(err);
+			throw err;
 //			console.log(err, (new Error()).stack);
-			return res.sendMessage(500, "Internal Server Error");
+//			return res.sendMessage(500, "Internal Server Error");
 	}
 };
 http.ServerResponse.prototype.sendJSON = function(status, message, obj) {

@@ -41,11 +41,11 @@ function fileDataPath(hash) {
 	return sl.FILES+"/"+hash.slice(0, 2).toLowerCase()+"/"+hash+".seq-path";
 }
 
-sl.pathForHash = function(hash, callback/* (path) */) {
-	if(!hash) return callback(null);
+sl.pathForHash = function(hash, callback/* (err, path) */) {
+	if(!hash) return callback(new Error("Invalid hash"), null);
 	fs.readFile(fileDataPath(hash), "utf8", function(err, path) {
-		if(err) return callback(null);
-		callback(path);
+		if(err) return callback(err, null);
+		callback(null, path);
 	});
 };
 sl.hashForPath = function(path) {

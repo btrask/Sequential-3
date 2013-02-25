@@ -127,8 +127,8 @@ serve.root = function(req, res, root) {
 serve.root.id = function(req, res, root, id) {
 	var components = id.components;
 	var hash = first(components);
-	sl.pathForHash(hash, function(rootPath) {
-		if(!rootPath) return res.sendMessage(404, "Not Found");
+	sl.pathForHash(hash, function(err, rootPath) {
+		if(err) return res.sendError(err);
 		var subPath = pathFromComponents(rest(components));
 		serve.root.id.hash(req, res, root, id, {
 			"hash": hash,
