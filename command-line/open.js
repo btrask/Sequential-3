@@ -34,7 +34,10 @@ var stats = fs.statSync(path); // Intentionally throw exception on failure.
 
 function openURL(url) {
 	// TODO: Make this work cross-platform and in a more robust way.
-	cp.exec("xdg-open \""+url+"\"", {stdio: ["ignore", "ignore", process.stderr]});
+	cp.exec("xdg-open \""+url+"\"", {
+		detatch: true,
+		stdio: ["ignore", "ignore", process.stderr]
+	});
 }
 
 sl.persistentHashForPath(path, function(err, hash) {
@@ -44,6 +47,7 @@ sl.persistentHashForPath(path, function(err, hash) {
 	req.on("response", function(res) {
 		if(200 !== res.statusCode) return console.log("Error: "+res.statusCode);
 		openURL(url);
+		process.exit();
 	});
 	req.on("error", function(err) {
 		var server = cp.spawn(__dirname+"/index.js", ["--notify-parent"], {
