@@ -35,8 +35,8 @@ var dispatcher = exports;
 function expandPath(p) { return p.replace(/^~/, process.env.HOME || "/home"); }
 var APP_SUPPORT_MAC = expandPath("~/Library/Application Support");
 var DATA = 
-	(config.data ? expandPath(config.data) : null) ||
-	(fs.existsSync(APP_SUPPORT_MAC) ? APP_SUPPORT_MAC+"/Sequential 3" : null) ||
+	(config.data && expandPath(config.data)) ||
+	(fs.existsSync(APP_SUPPORT_MAC) && APP_SUPPORT_MAC+"/Sequential 3") ||
 	__dirname+"/data";
 var FILES = DATA+"/Files";
 var THUMBNAILS = DATA+"/Thumbnails";
