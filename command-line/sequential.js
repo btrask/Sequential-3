@@ -34,6 +34,8 @@ sl.DATA =
 sl.FILES = sl.DATA+"/Files";
 sl.THUMBNAILS = sl.DATA+"/Thumbnails";
 sl.ICONS = sl.DATA+"/Icons";
+sl.PORT = config.port || 9002;
+sl.ADDRESS = config.address || "127.0.0.1";
 
 var SALT = config.salt || "";
 

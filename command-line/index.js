@@ -22,7 +22,10 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 var http = require("http");
 var dispatcher = require("./dispatcher");
+var sl = require("./sequential");
 
 http.createServer(function(req, res) {
 	dispatcher.serve(req, res);
-}).listen(9002);
+}).listen(sl.PORT, sl.ADDRESS, function() {
+	console.error("Sequential 3 command-line server started");
+});
