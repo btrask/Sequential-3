@@ -29,5 +29,5 @@ process.title = "seq-cli";
 http.createServer(function(req, res) {
 	dispatcher.serve(req, res);
 }).listen(sl.PORT, sl.ADDRESS, function() {
-//	console.log("Sequential 3 command-line server started");
+	if("--notify-parent" === process.argv[2]) console.log("started");
 });

@@ -17,6 +17,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE. */
+var cp = require("child_process");
+var http = require("http");
 var crypto = require("crypto");
 var pathModule = require("path");
 var fs = require("../node-shared/fsx");
@@ -30,9 +32,28 @@ if(process.argv.length < 3) {
 var path = pathModule.resolve(process.cwd(), process.argv[2]);
 var stats = fs.statSync(path); // Intentionally throw exception on failure.
 
-// TODO: Start server if it isn't already running.
+function openURL(url) {
+	// TODO: Make this work cross-platform and in a more robust way.
+	cp.exec("xdg-open \""+url+"\"", {stdio: ["ignore", "ignore", process.stderr]});
+}
 
 sl.persistentHashForPath(path, function(err, hash) {
 	if(err) throw err;
-	console.log(hash); // TODO: Open in browser.
+	var url = "http://localhost:"+sl.PORT+"/id/"+hash;
+	var req = http.get(url);
+	req.on("response", function(res) {
+		if(200 !== res.statusCode) return console.log("Error: "+res.statusCode);
+		openURL(url);
+	});
+	req.on("error", function(err) {
+		var server = cp.spawn(__dirname+"/index.js", ["--notify-parent"], {
+			detatch: true,
+			stdio: ["ignore", "pipe", process.stderr],
+		});
+		server.stdout.setEncoding("utf8");
+		server.stdout.on("data", function(chunk) {
+			openURL(url);
+			process.exit();
+		});
+	});
 });
