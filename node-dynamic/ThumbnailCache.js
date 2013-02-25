@@ -22,7 +22,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 var proc = require("child_process");
 var crypto = require("crypto");
 
-var fs = require("./fs+");
+var fs = require("../node-shared/fsx");
 
 function ThumbnailCache(cachePath, thumbnailSize, extension) {
 	this.cachePath = cachePath;

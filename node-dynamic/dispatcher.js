@@ -24,20 +24,24 @@ var urlModule = require("url");
 var crypto = require("crypto");
 
 var bt = require("../node-shared/bt");
-var fs = require("../node-shared/fs+");
-var http = require("../node-shared/http+");
+var fs = require("../node-shared/fsx");
+var http = require("../node-shared/httpx");
 
-var config = require("./config");
+var config = require("./config.json");
 var ThumbnailCache = require("./ThumbnailCache");
 
 var dispatcher = exports;
 
-var DATA = config.data.replace(/^~/, process.env.HOME || "/home");
+function expandPath(p) { return p.replace(/^~/, process.env.HOME || "/home"); }
+var APP_SUPPORT_MAC = expandPath("~/Library/Application Support");
+var DATA = 
+	(config.data ? expandPath(config.data) : null) ||
+	(fs.existsSync(APP_SUPPORT_MAC) ? APP_SUPPORT_MAC+"/Sequential 3" : null) ||
+	__dirname+"/data";
 var FILES = DATA+"/Files";
 var THUMBNAILS = DATA+"/Thumbnails";
 var ICONS = DATA+"/Icons";
-var UPLOADS = DATA+"/Uploads";
-var CLIENT = __dirname+"/../Mac/build/Debug/Sequential.app/Contents/Resources/client"; // TODO: We should have separate builds that get located in each directory (mac/build, node/client, etc).
+var CLIENT = __dirname+"/build";
 var GALLERY = CLIENT+"/gallery/index.html";
 
 var thumbnailCache = new ThumbnailCache(THUMBNAILS, {width: 128, height: 128}, "jpg");
@@ -83,7 +87,7 @@ function pathForHash(hash, callback/* (path) */) {
 }
 function hashForPath(path, persistent) {
 	var sha1 = crypto.createHash("sha1");
-	sha1.update(config.secret, "utf8");
+	sha1.update(config.salt, "utf8");
 	sha1.update(path, "utf8");
 	var hash = sha1.digest("base64").slice(0, 14).replace(/\+/g, "-").replace(/\//g, "_");
 	if(persistent) save(hash, path);

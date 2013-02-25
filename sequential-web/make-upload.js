@@ -27,10 +27,10 @@ var https = require("https");
 var AwsSign = require("aws-sign");
 
 var bt = require("../node-shared/bt");
-var mime = require("../node-shared/mime");
+var mime = require("../node-shared/mime.json");
 
-var config = require("./server/config");
-var signer = new AwsSign(require("./server/secret").aws);
+var config = require("./server/config.json");
+var signer = new AwsSign(require("./server/secret.json").aws);
 
 upload(__dirname+"/build", "");
 

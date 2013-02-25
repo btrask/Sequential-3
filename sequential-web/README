@@ -3,7 +3,7 @@ sequential-web
 
 Node modules `aws-sign` and `formidable` are required. They can be installed with `npm`.
 
-secret.json:
+./secret.json:
 ```json
 {
 	"aws": {

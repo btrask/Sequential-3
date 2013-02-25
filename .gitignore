@@ -11,4 +11,3 @@ build/
 node_modules/
 secret.json
 resources/sort-data.json
-

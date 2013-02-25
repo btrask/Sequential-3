@@ -25,7 +25,7 @@ var http = require("http");
 var urlModule = require("url");
 
 var upload = require("./upload");
-var config = require("./config");
+var config = require("./config.json");
 
 var CLIENT = __dirname+"/../build";
 var INDEX = CLIENT+"/index.html";

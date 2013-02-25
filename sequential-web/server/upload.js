@@ -30,12 +30,12 @@ var formidable = require("formidable");
 var AwsSign = require("aws-sign");
 
 var bt = require("../../node-shared/bt");
-var fs = require("../../node-shared/fs+");
-var http = require("../../node-shared/http+");
-var mime = require("../../node-shared/mime");
+var fs = require("../../node-shared/fsx");
+var http = require("../../node-shared/httpx");
+var mime = require("../../node-shared/mime.json");
 
-var config = require("./config");
-var secret = require("./secret");
+var config = require("./config.json");
+var secret = require("../secret.json");
 var signer = new AwsSign(secret.aws);
 
 var TMP = (
