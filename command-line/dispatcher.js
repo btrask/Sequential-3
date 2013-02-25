@@ -69,8 +69,9 @@ function rest(array) {
 	return array.slice(1);
 }
 
-function fileInfo(hash, root, subpath, callback/* (info) */) {
+function fileInfo(hash, root, subpath, depth, callback/* (info) */) {
 	var fullpath = root+subpath;
+	if(fullpath.match(/\/\./)) return callback(null); // Skip .hidden files.
 	fs.stat(fullpath, function(err, stats) {
 		if(err) return callback(null);
 		var escaped = encodeURI(subpath);
@@ -80,10 +81,23 @@ function fileInfo(hash, root, subpath, callback/* (info) */) {
 			"modified": stats.mtime,
 		};
 		if(stats.isDirectory()) {
-			info.thumbURL = "/folder.png";
-			info.indexURL = "/id/"+hash+escaped+"?type=index";
-			return callback(info);
-		} else {
+			info.thumbURL = "/gallery/folder.png";
+			if(!depth) {
+				info.indexURL = "/id/"+hash+escaped+"?type=index";
+				return callback(info);
+			}
+			fs.readdir(fullpath, function(err, files) {
+				if(err) return callback(null);
+				var remaining = files.length;
+				info.items = [];
+				for(var i = 0; i < files.length; ++i) {
+					fileInfo(hash, root, subpath+"/"+files[i], depth-1, function(subinfo) {
+						if(subinfo) info.items.push(subinfo);
+						if(!--remaining) callback(info);
+					});
+				}
+			});
+		} else if(stats.isFile()) {
 			if(!stats.size) return callback(null);
 			if(!isImagePath(fullpath)) return callback(null);
 			info.size = stats.size;
@@ -91,6 +105,8 @@ function fileInfo(hash, root, subpath, callback/* (info) */) {
 			info.thumbURL = "/id/"+hash+escaped+"?type=thumb";
 			info.items = [];
 			callback(info);
+		} else {
+			callback(null);
 		}
 	});
 }
