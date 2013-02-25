@@ -79,6 +79,7 @@ ThumbnailCache.prototype.writeThumbnail = function(cachePath, mainPath, callback
 			cachePath
 		], {"stdio": [fd, null, process.stderr]});
 		converter.addListener("exit", function(status) {
+			fs.close(fd);
 			callback(status ? new Error(status) : null);
 		});
 	});
