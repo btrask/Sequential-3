@@ -90,7 +90,8 @@ function fileInfo(hash, root, subpath, depth, callback/* (info) */) {
 				if(err) return callback(null);
 				var remaining = files.length;
 				info.items = [];
-				for(var i = 0; i < files.length; ++i) {
+				if(!remaining) callback(info);
+				else for(var i = 0; i < files.length; ++i) {
 					fileInfo(hash, root, subpath+"/"+files[i], depth-1, function(subinfo) {
 						if(subinfo) info.items.push(subinfo);
 						if(!--remaining) callback(info);
