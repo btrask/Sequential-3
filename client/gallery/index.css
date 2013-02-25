@@ -297,6 +297,10 @@ body {
 	/* Common */
 	font-size: 13px;
 	text-shadow: 0 1px 2px black;
+
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 .menu > .submenu > .items > .item:hover {
 	background: #7373fc;
