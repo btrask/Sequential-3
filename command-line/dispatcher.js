@@ -181,8 +181,8 @@ serve.root.id.hash.image = function(req, res, root, id, hash, image) {
 serve.root.id.hash.thumb = function(req, res, root, id, hash, index) {
 	var path = hash.path;
 	if(!isImagePath(path)) return res.sendMessage(400, "Bad Request");
-	thumbnailCache.cachePathForPath(path, function(cachePath) {
-		if(!cachePath) return res.sendMessage(404, "Not Found");
+	thumbnailCache.cachePathForPath(path, function(err, cachePath) {
+		if(err) return res.sendError(err);
 		res.sendFile(cachePath);
 	});
 };

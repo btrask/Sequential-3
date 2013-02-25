@@ -29,17 +29,18 @@ function ThumbnailCache(cachePath, thumbnailSize, extension) {
 	this.thumbnailSize = {"width": Math.round(thumbnailSize.width), "height": Math.round(thumbnailSize.height)};
 	this.extension = extension;
 }
-ThumbnailCache.prototype.cachePathForPath = function(path, callback/* (cachePath) */) {
+ThumbnailCache.prototype.cachePathForPath = function(path, callback/* (err, cachePath) */) {
 	var tc = this;
 	var hash = tc.hashForPath(path);
 	var dirPath = tc.cachePath+"/"+hash.slice(0, 2);
 	var cachePath = dirPath+"/"+hash+"."+tc.extension;
 	tc.isValid(cachePath, path, function(valid) {
-		if(valid) return callback(cachePath);
+		if(valid) return callback(null, cachePath);
 		fs.mkdirRecursive(dirPath, function(err) {
-			if(err) console.log(err);
-			tc.writeThumbnail(cachePath, path, function(success) {
-				callback(success ? cachePath : null);
+			if(err) return callback(err, null);
+			tc.writeThumbnail(cachePath, path, function(err) {
+				if(err) return callback(err, null);
+				callback(null, cachePath);
 			});
 		});
 	});
@@ -61,22 +62,25 @@ ThumbnailCache.prototype.isValid = function(cachePath, mainPath, callback/* (val
 		});
 	});
 };
-ThumbnailCache.prototype.writeThumbnail = function(cachePath, mainPath, callback/* (success) */) {
+ThumbnailCache.prototype.writeThumbnail = function(cachePath, mainPath, callback/* (err) */) {
 	var tc = this;
-	var size = [tc.thumbnailSize.width, tc.thumbnailSize.height].join("x");
-	var converter = proc.spawn("convert", [
-		"-size", size,
-		mainPath+"[0]",
-		//"-auto-orient",
-		"-coalesce",
-		"-thumbnail", size+">",
-		"-background", "white",
-		"-flatten",
-		"-quality", "70",
-		cachePath
-	]);
-	converter.addListener("exit", function(code) {
-		callback(0 === code);
+	fs.open(mainPath, "r", function(err, fd) {
+		if(err) return callback(err);
+		var size = [tc.thumbnailSize.width, tc.thumbnailSize.height].join("x");
+		var converter = proc.spawn("convert", [
+			"-size", size,
+			"-[0]", // Use stdin so that ImageMagick doesn't try to parse our file names.
+			//"-auto-orient",
+			"-coalesce",
+			"-thumbnail", size+">",
+			"-background", "white",
+			"-flatten",
+			"-quality", "70",
+			cachePath
+		], {"stdio": [fd, null, process.stderr]});
+		converter.addListener("exit", function(status) {
+			callback(status ? new Error(status) : null);
+		});
 	});
 };
 
