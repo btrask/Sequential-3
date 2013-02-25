@@ -301,6 +301,7 @@ body {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	vertical-align: bottom; /* Fix gap between lines in Firefox. <http://stackoverflow.com/a/4243671> */
 }
 .menu > .submenu > .items > .item:hover {
 	background: #7373fc;
