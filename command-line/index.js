@@ -24,8 +24,10 @@ var http = require("http");
 var dispatcher = require("./dispatcher");
 var sl = require("./sequential");
 
+process.title = "seq-cli";
+
 http.createServer(function(req, res) {
 	dispatcher.serve(req, res);
 }).listen(sl.PORT, sl.ADDRESS, function() {
-	console.error("Sequential 3 command-line server started");
+//	console.log("Sequential 3 command-line server started");
 });
