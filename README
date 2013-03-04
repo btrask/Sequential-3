@@ -3,7 +3,7 @@ Sequential 3
 client/: Reusable browser-based image viewer
 mac/: Sequential 3 server in a standalone Mac application
 sequential-web/: Sequential 3 server designed for public hosting with user-uploaded content (Node.js)
-node-dynamic/: Sequential 3 server designed for local hosting (Node.js)
+command-line/: Portable Sequential 3 server designed for local hosting (Node.js)
 
 deps/: Various dependencies
 resources/: Design documents and other files
