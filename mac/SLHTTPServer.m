@@ -91,7 +91,7 @@ static NSDictionary *SLMIMETypes = nil;
 }
 - (NSURL *)URL
 {
-	return [(NSString *)CFHTTPMessageCopyRequestURL(_req) autorelease];
+	return [(NSURL *)CFHTTPMessageCopyRequestURL(_req) autorelease];
 }
 
 #pragma mark -SLHTTPRequest(Private)
