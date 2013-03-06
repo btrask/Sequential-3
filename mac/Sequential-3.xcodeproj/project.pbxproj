@@ -442,6 +442,9 @@
 /* Begin PBXProject section */
 		2A37F4A9FDCFA73011CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0440;
+			};
 			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "Sequential-3" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -675,6 +678,7 @@
 			buildSettings = {
 				CLIENT_BUILD_DIR = "$(CONFIGURATION_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Resources/client";
 				CLOSURE_FLAGS = "--compilation_level WHITESPACE_ONLY --formatting PRETTY_PRINT";
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIG_PATH = "$(PROJECT_DIR)/config.js";
 				CONTENTS_FOLDER_PATH = Sequential.app/Contents;
 				PRODUCT_NAME = Client;
@@ -686,6 +690,7 @@
 			buildSettings = {
 				CLIENT_BUILD_DIR = "$(CONFIGURATION_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Resources/client";
 				CLOSURE_FLAGS = "";
+				COMBINE_HIDPI_IMAGES = YES;
 				CONFIG_PATH = "$(PROJECT_DIR)/config.js";
 				CONTENTS_FOLDER_PATH = Sequential.app/Contents;
 				PRODUCT_NAME = Client;
@@ -696,9 +701,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -713,6 +718,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -739,8 +745,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				SYMROOT = build;
 			};
 			name = Debug;
@@ -759,8 +764,7 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				SYMROOT = build;
 			};
 			name = Release;
