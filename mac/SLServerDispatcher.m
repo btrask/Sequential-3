@@ -378,7 +378,6 @@ static void SLDicSetKeyObject(NSMutableDictionary *const dic, id const key, id c
 		_galleryPath = [[_clientPath stringByAppendingPathComponent:@"gallery/index.html"] copy];
 		SLIntegerSize const thumbnailSize = {128, 128};
 		_thumbnailCache = [[SLContentThumbnailCache alloc] initWithCachePath:SLThumbnailsPath thumbnailSize:thumbnailSize fileType:NSJPEGFileType properties:[NSDictionary dictionaryWithObjectsAndKeys:
-			[NSColor blackColor], NSImageFallbackBackgroundColor,
 			[NSNumber numberWithFloat:0.5f], NSImageCompressionFactor,
 			nil]];
 		_iconCache = [[SLIconThumbnailCache alloc] initWithCachePath:SLIconsPath thumbnailSize:thumbnailSize fileType:NSPNGFileType properties:nil];
