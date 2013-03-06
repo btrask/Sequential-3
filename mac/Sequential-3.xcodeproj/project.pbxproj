@@ -673,7 +673,7 @@
 		B59C3E2015A247CE00E08EEB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUILD_DIR = "$(CONFIGURATION_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Resources/client";
+				CLIENT_BUILD_DIR = "$(CONFIGURATION_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Resources/client";
 				CLOSURE_FLAGS = "--compilation_level WHITESPACE_ONLY --formatting PRETTY_PRINT";
 				CONFIG_PATH = "$(PROJECT_DIR)/config.js";
 				CONTENTS_FOLDER_PATH = Sequential.app/Contents;
@@ -684,7 +684,7 @@
 		B59C3E2115A247CE00E08EEB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUILD_DIR = "$(CONFIGURATION_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Resources/client";
+				CLIENT_BUILD_DIR = "$(CONFIGURATION_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Resources/client";
 				CLOSURE_FLAGS = "";
 				CONFIG_PATH = "$(PROJECT_DIR)/config.js";
 				CONTENTS_FOLDER_PATH = Sequential.app/Contents;
@@ -737,6 +737,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx10.6;
@@ -757,6 +758,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PREBINDING = NO;
 				SDKROOT = macosx10.6;
 				SYMROOT = build;

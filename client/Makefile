@@ -1,5 +1,5 @@
-ifndef BUILD_DIR
-	BUILD_DIR := build
+ifndef CLIENT_BUILD_DIR
+	CLIENT_BUILD_DIR := build
 endif
 ifndef CONFIG_PATH
 	CONFIG_PATH := gallery/config.js
@@ -41,12 +41,12 @@ CLIENT_FILES := \
 
 CLIENT_GZIPS := $(addsuffix .gz,$(CLIENT_FILES))
 
-client: $(addprefix $(BUILD_DIR)/,$(CLIENT_FILES)) $(addprefix $(BUILD_DIR)/,$(CLIENT_GZIPS))
+client: $(addprefix $(CLIENT_BUILD_DIR)/,$(CLIENT_FILES)) $(addprefix $(CLIENT_BUILD_DIR)/,$(CLIENT_GZIPS))
 
 clean:
-	-rm -rf $(BUILD_DIR)
+	-rm -rf $(CLIENT_BUILD_DIR)
 
-$(BUILD_DIR)/gallery/index.js: gallery/utilities/externs.js $(CLIENT_SCRIPTS)
+$(CLIENT_BUILD_DIR)/gallery/index.js: gallery/utilities/externs.js $(CLIENT_SCRIPTS)
 	-mkdir -p $(dir $@)
 	java -jar ../deps/compiler-latest/compiler.jar \
 		$(addprefix --js=,$(filter-out $<,$^)) \
@@ -56,15 +56,15 @@ $(BUILD_DIR)/gallery/index.js: gallery/utilities/externs.js $(CLIENT_SCRIPTS)
 		--externs $< \
 		$(CLOSURE_FLAGS) # $$(CLOSURE_FLAGS)
 
-$(BUILD_DIR)/%.css: %.css
+$(CLIENT_BUILD_DIR)/%.css: %.css
 	-mkdir -p $(dir $@)
 	cat $+ | java -jar ../deps/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar --type css --charset utf-8 -o $@
 
-$(BUILD_DIR)/%: %
+$(CLIENT_BUILD_DIR)/%: %
 	-mkdir -p $(dir $@)
 	cp -R $< $@
 
-$(BUILD_DIR)/%.gz: $(BUILD_DIR)/%
+$(CLIENT_BUILD_DIR)/%.gz: $(CLIENT_BUILD_DIR)/%
 	-mkdir -p $(dir $@)
 	gzip -nc9 $< > $@
 
