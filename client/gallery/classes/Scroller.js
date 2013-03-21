@@ -21,7 +21,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 /*global Size Point*/
-/*global onclick animation*/
+/*global onclick animation DOM*/
 function RelativeScroller(scrollView, firstEvent) {
 	var scroller = this;
 	var setAnimating = scrollView.animator();
