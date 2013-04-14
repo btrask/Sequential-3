@@ -1,3 +1,6 @@
+ifndef ROOT_DIR
+	ROOT_DIR := ..
+endif
 ifndef CLIENT_BUILD_DIR
 	CLIENT_BUILD_DIR := build
 endif
@@ -48,7 +51,7 @@ clean:
 
 $(CLIENT_BUILD_DIR)/gallery/index.js: gallery/utilities/externs.js $(CLIENT_SCRIPTS)
 	-mkdir -p $(dir $@)
-	java -jar ../deps/compiler-latest/compiler.jar \
+	java -jar $(ROOT_DIR)/deps/compiler-latest/compiler.jar \
 		$(addprefix --js=,$(filter-out $<,$^)) \
 		--js_output_file=$@ \
 		--language_in=ECMASCRIPT5 \
@@ -58,7 +61,7 @@ $(CLIENT_BUILD_DIR)/gallery/index.js: gallery/utilities/externs.js $(CLIENT_SCRI
 
 $(CLIENT_BUILD_DIR)/%.css: %.css
 	-mkdir -p $(dir $@)
-	cat $+ | java -jar ../deps/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar --type css --charset utf-8 -o $@
+	cat $+ | java -jar $(ROOT_DIR)/deps/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar --type css --charset utf-8 -o $@
 
 $(CLIENT_BUILD_DIR)/%: %
 	-mkdir -p $(dir $@)
