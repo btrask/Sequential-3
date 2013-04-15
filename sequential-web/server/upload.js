@@ -24,7 +24,7 @@ var proc = require("child_process");
 var zlib = require("zlib");
 var urlModule = require("url");
 var crypto = require("crypto");
-var https = require("https");
+var http = require("http");
 
 var formidable = require("formidable");
 var AwsSign = require("aws-sign");
@@ -142,7 +142,6 @@ function imageInfo(path, time, callback/* (info) */) {
 		info.thumbURL = "//"+config.thumbDomain+"/"+hash+".jpg";
 		fs.stat(path, function(err, stats) {
 			var opts = {
-				"port": 443,
 				"host": config.imageDomain+".s3.amazonaws.com",
 				"path": key,
 				"method": "PUT",
@@ -153,7 +152,7 @@ function imageInfo(path, time, callback/* (info) */) {
 				},
 			};
 			signer.sign(opts);
-			var req = https.request(opts, function(res) {
+			var req = http.request(opts, function(res) {
 				if(200 !== res.statusCode) return callback(null);
 				callback(info);
 			});
@@ -228,7 +227,6 @@ function uploadInfo(info, callback/* (err, hash) */) {
 	zlib.gzip(data, function(err, body) {
 		if(err) return callback(err, null);
 		var opts = {
-			"port": 443,
 			"host": config.dataDomain+".s3.amazonaws.com",
 			"path": "/"+hash+".json",
 			"method": "PUT",
@@ -240,7 +238,7 @@ function uploadInfo(info, callback/* (err, hash) */) {
 			},
 		};
 		signer.sign(opts);
-		var req = https.request(opts, function(res) {
+		var req = http.request(opts, function(res) {
 			console.log("uploaded index", body.length, hash, res.statusCode);
 			if(200 === res.statusCode) return callback(null, hash);
 			callback(new Error("Index upload failed: "+res.statusCode), null);
