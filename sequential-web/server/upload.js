@@ -157,6 +157,9 @@ function imageInfo(path, time, callback/* (info) */) {
 				if(200 !== res.statusCode) return callback(null);
 				callback(info);
 			});
+			req.on("error", function(err) {
+				console.error(opts, err);
+			});
 			fs.createReadStream(path).pipe(req);
 		});
 	});
@@ -241,6 +244,9 @@ function uploadInfo(info, callback/* (err, hash) */) {
 			console.log("uploaded index", body.length, hash, res.statusCode);
 			if(200 === res.statusCode) return callback(null, hash);
 			callback(new Error("Index upload failed: "+res.statusCode), null);
+		});
+		req.on("error", function(err) {
+			console.error(opts, err);
 		});
 		req.end(body);
 	});
