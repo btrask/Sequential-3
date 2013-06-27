@@ -127,9 +127,13 @@ ScrollView.prototype.setPosition = function(position, reset) {
 	scrollView.position = position;
 	if(!scrollView.page || !scrollView.page.element) return;
 	var pos = scrollView.position.distance(scrollView.scrollableRect.o);
-	var flippedPosition = scrollView.scrollableRect.o.offset(pos.scale(-1));
-	scrollView.page.element.style.left = String(Math.round(flippedPosition.x)) + "px";
-	scrollView.page.element.style.top = String(Math.round(flippedPosition.y)) + "px";
+	var flippedPosition = scrollView.scrollableRect.o.offset(pos.scale(-1)).round();
+	// TODO: Detect which method we should use.
+/*	scrollView.page.element.style.left = String(flippedPosition.x) + "px";
+	scrollView.page.element.style.top = String(flippedPosition.y) + "px";*/
+	var args = [flippedPosition.x+"px", flippedPosition.y+"px", "0px"].join(", ");
+	scrollView.page.element["style"]["-webkit-transform"] = "translate3d("+args+")";
+	scrollView.page.element["style"]["transform"] = "translate3d("+args+")";
 };
 ScrollView.prototype.scrollTo = function(position) { // Returns the distance scrolled.
 	var scrollView = this;

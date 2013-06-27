@@ -65,6 +65,9 @@ function Point(x, y) {
 Point.prototype.toString = function() {
 	return "{"+this.x+", "+this.y+"}";
 };
+Point.prototype.round = function() {
+	return new Point(Math.round(this.x), Math.round(this.y));
+};
 Point.prototype.offset = function(size) {
 	return new Point(this.x + size.w, this.y + size.h);
 };
