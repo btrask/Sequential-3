@@ -32,7 +32,7 @@ function onclick(element) { // TODO: Put me somewhere.
 var animation = {};
 (function() {
 	var frameRate = 1000 / 60;
-	var req = window.requestAnimationFrame || 
+	var req = window.requestAnimationFrame ||
 		window.webkitRequestAnimationFrame ||
 		window.mozRequestAnimationFrame ||
 		window.oRequestAnimationFrame ||
@@ -126,8 +126,8 @@ ScrollView.prototype.setPosition = function(position, reset) {
 	if(position.x === scrollView.position.x && position.y === scrollView.position.y && !reset) return;
 	scrollView.position = position;
 	if(!scrollView.page || !scrollView.page.element) return;
-	var position = scrollView.position.distance(scrollView.scrollableRect.o);
-	var flippedPosition = scrollView.scrollableRect.o.offset(position.scale(-1));
+	var pos = scrollView.position.distance(scrollView.scrollableRect.o);
+	var flippedPosition = scrollView.scrollableRect.o.offset(pos.scale(-1));
 	scrollView.page.element.style.left = String(Math.round(flippedPosition.x)) + "px";
 	scrollView.page.element.style.top = String(Math.round(flippedPosition.y)) + "px";
 };
@@ -322,6 +322,7 @@ ScrollView.prototype.registerScrollShortcuts = function() {
 		if(bt.hasOwnProperty(scrollDirectionByKey, event.key)) return;
 		scrollDirectionByKey[event.key] = direction;
 		updateDirection();
+		// TODO: How do I make JSHint accept this without parens? It's perfectly clear.
 		if(!scrollCount++) scrollTimer = animation.start(function(scale) {
 			var velocity = scrollView.scrollBy(scrollDirection.scale(scale * 10));
 			setAnimating(velocity.w || velocity.h);

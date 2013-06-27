@@ -29,7 +29,7 @@ fs.mkdirRecursive = function(filename, callback/* (err) */) {
 		fs.mkdirRecursive(pathModule.dirname(filename), function(err) {
 			if(err) return callback(err);
 			fs.mkdir(filename, callback);
-		})
+		});
 	});
 };
 fs.rmRecursive = function(path, callback/* (err) */) {
@@ -39,7 +39,10 @@ fs.rmRecursive = function(path, callback/* (err) */) {
 			var remaining = files.length;
 			for(var i = 0; i < files.length; ++i) {
 				fs.rmRecursive(path+"/"+files[i], function(err) {
-					if(err) return remaining = 0, callback(err);
+					if(err) {
+						remaining = 0;
+						return callback(err);
+					}
 					if(!--remaining) fs.rmdir(path, callback);
 				});
 			}
