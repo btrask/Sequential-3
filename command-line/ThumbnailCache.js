@@ -21,13 +21,38 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 var proc = require("child_process");
 var crypto = require("crypto");
+var os = require("os");
 
 var fs = require("../node-shared/fsx");
 
+function Queue() { // TODO: Put this somewhere.
+	var queue = this;
+	queue.max = 1;
+	queue._current = 0;
+	queue._items = [];
+}
+Queue.prototype.push = function(func/* (done) */) {
+	var queue = this;
+	queue._items.push(func);
+	queue._next();
+};
+Queue.prototype._next = function() {
+	var queue = this;
+	if(queue._current >= queue.max) return;
+	++queue._current;
+	queue._items.shift()(function done() {
+		--queue._current;
+		if(queue._items.length) queue._next();
+	});
+};
+
 function ThumbnailCache(cachePath, thumbnailSize, extension) {
-	this.cachePath = cachePath;
-	this.thumbnailSize = {"width": Math.round(thumbnailSize.width), "height": Math.round(thumbnailSize.height)};
-	this.extension = extension;
+	var tc = this;
+	tc.cachePath = cachePath;
+	tc.thumbnailSize = {"width": Math.round(thumbnailSize.width), "height": Math.round(thumbnailSize.height)};
+	tc.extension = extension;
+	tc.queue = new Queue();
+	tc.queue.max = os.cpus().length * 1;
 }
 ThumbnailCache.prototype.cachePathForPath = function(path, callback/* (err, cachePath) */) {
 	var tc = this;
@@ -64,23 +89,27 @@ ThumbnailCache.prototype.isValid = function(cachePath, mainPath, callback/* (val
 };
 ThumbnailCache.prototype.writeThumbnail = function(cachePath, mainPath, callback/* (err) */) {
 	var tc = this;
-	fs.open(mainPath, "r", function(err, fd) {
-		if(err) return callback(err);
-		var size = [tc.thumbnailSize.width, tc.thumbnailSize.height].join("x");
-		var converter = proc.spawn("convert", [
-			"-size", size,
-			"-[0]", // Use stdin so that ImageMagick doesn't try to parse our file names.
-			//"-auto-orient",
-			"-coalesce",
-			"-thumbnail", size+">",
-			"-background", "white",
-			"-flatten",
-			"-quality", "70",
-			cachePath
-		], {"stdio": [fd, null, process.stderr]});
-		converter.addListener("exit", function(status) {
-			fs.close(fd);
-			callback(status ? new Error(status) : null);
+	tc.queue.push(function(done) {
+		fs.open(mainPath, "r", function(err, fd) {
+			if(err) return callback(err);
+			var size = [tc.thumbnailSize.width, tc.thumbnailSize.height].join("x");
+			var converter = proc.spawn("convert", [
+				"-size", size,
+				"-[0]", // Use stdin so that ImageMagick doesn't try to parse our file names.
+//				"-auto-orient",
+				"-coalesce",
+				"-filter", "point", // <http://www.imagemagick.org/Usage/filter/#filter>
+				"-thumbnail", size+">", // <http://www.imagemagick.org/Usage/thumbnails/>
+				"-background", "white",
+				"-flatten",
+				"-quality", "70",
+				cachePath
+			], {"stdio": [fd, null, process.stderr]});
+			converter.addListener("exit", function(status) {
+				fs.close(fd);
+				done();
+				callback(status ? new Error(status) : null);
+			});
 		});
 	});
 };
