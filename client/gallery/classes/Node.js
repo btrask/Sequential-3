@@ -42,6 +42,7 @@ function Node(index, parent, name) {
 	node.parent = parent;
 	node.name = name;
 	node.encrypted = false;
+	node.ordered = false;
 	node.imageURL = null;
 	node.thumbURL = null;
 	node.indexURL = null;
@@ -110,6 +111,7 @@ Node.prototype._update = function(obj) {
 	node.imageURL = obj["imageURL"];
 	node.thumbURL = obj["thumbURL"];
 	node.indexURL = obj["indexURL"];
+	node.ordered = Boolean(obj["ordered"]);
 	if(obj["items"]) node._updateItems(obj["items"]);
 };
 Node.prototype._updateItems = function(items) {
@@ -128,12 +130,12 @@ Node.prototype._updateItems = function(items) {
 		node.items.push(item);
 		node.itemByName[item["name"]] = item;
 	}
-	node.index.sort(node.items);
+	if(!node.ordered) node.index.sort(node.items);
 };
 Node.prototype.sort = function() {
 	var node = this;
 	var a = node.items, l = a.length;
-	node.index.sort(a);
+	if(!node.ordered) node.index.sort(a);
 	for(var i = 0; i < l; ++i) a[i].sort();
 };
 Node.prototype.descendant = function(components, callback/* (descendant) */) {
