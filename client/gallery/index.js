@@ -25,6 +25,7 @@ if(!config.windowState) config.windowState = function() {
 	var state = {};
 	state.path = window.location.pathname || "/";
 	state.components = decodeURI(state.path).slice(1).split("/");
+	// TODO: Shouldn't we decodeURIComponent() after splitting?
 	state.id = state.components.shift();
 	state.hash = state.components.shift();
 	if("id" !== state.id) return null;
@@ -32,6 +33,7 @@ if(!config.windowState) config.windowState = function() {
 };
 if(!config.rootIndexURLFromHash) config.rootIndexURLFromHash = function(hash) {
 	return "/id/"+hash+"?type=index&format=json";
+	// TODO: Use encodeURIComponent()?
 };
 if(!config.rootIndexURL) config.rootIndexURL = function() {
 	var state = config.windowState();
@@ -64,6 +66,7 @@ if(!config.path) config.path = function(node) {
 		return ancestor.name;
 	});
 	return encodeURI(["", state.id, state.hash].concat(components).join("/"));
+	// TODO: Use encodeURIComponent() on individual parts?
 };
 if(!config.thumbErrorURL) config.thumbErrorURL = "/gallery/error.png";
 
