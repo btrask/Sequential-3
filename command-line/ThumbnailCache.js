@@ -105,10 +105,14 @@ ThumbnailCache.prototype.writeThumbnail = function(cachePath, mainPath, callback
 				"-quality", "70",
 				cachePath
 			], {"stdio": [fd, null, process.stderr]});
-			converter.addListener("exit", function(status) {
+			converter.on("exit", function(status) {
 				fs.close(fd);
 				done();
-				callback(status ? new Error(status) : null);
+				if(status) return callback({
+					httpStatusCode: 500,
+					message: "Internal Server Error",
+				});
+				callback(null);
 			});
 		});
 	});
