@@ -74,7 +74,7 @@ function fileInfo(hash, root, subpath, depth, callback/* (info) */) {
 	if(fullpath.match(/\/\./)) return callback(null); // Skip .hidden files.
 	fs.stat(fullpath, function(err, stats) {
 		if(err) return callback(null);
-		var escaped = encodeURI(subpath);
+		var escaped = pathFromComponents(componentsFromPath(subpath).map(encodeURIComponent));
 		var info = {
 			"name": pathModule.basename(fullpath),
 			"created": stats.ctime,
@@ -114,9 +114,7 @@ function fileInfo(hash, root, subpath, depth, callback/* (info) */) {
 
 var serve = function(req, res) {
 	var path = urlModule.parse(req.url).pathname;
-	var components = componentsFromPath(path).map(function(x) {
-		return decodeURIComponent(x);
-	});
+	var components = componentsFromPath(path).map(decodeURIComponent);
 	if(-1 !== components.indexOf("..")) {
 		res.sendMessage(400, "Bad Request");
 		return;
