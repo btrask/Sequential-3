@@ -59,7 +59,7 @@ function pathFromComponents(components) {
 }
 function lookup(obj, prop) {
 	if(!obj || !prop) return null; // TODO: Be more robust.
-	if(Object.prototype.hasOwnProperty.call(obj, prop)) return obj[prop];
+	if(has(obj, prop)) return obj[prop];
 	return null;
 }
 function first(array) {
