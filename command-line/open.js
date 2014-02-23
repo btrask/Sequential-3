@@ -24,29 +24,33 @@ var pathModule = require("path");
 var fs = require("../node-shared/fsx");
 var sl = require("./sequential");
 
-if(process.argv.length < 3) {
-	console.log("Usage: add.js path");
+if(process.argv.length <= 2) {
+	console.log("Usage: open.js path");
 	process.exit();
 }
 
 var path = pathModule.resolve(process.cwd(), process.argv[2]);
 var stats = fs.statSync(path); // Intentionally throw exception on failure.
 
-function openURL(url) {
+function openURI(uri) {
 	// TODO: Make this work cross-platform and in a more robust way.
-	cp.exec("xdg-open \""+url+"\"", {
+	cp.spawn(sl.BROWSER, [uri], {
 		detatch: true,
-		stdio: ["ignore", "ignore", process.stderr]
+		stdio: ["ignore", "ignore", process.stderr],
 	});
 }
 
 sl.persistentHashForPath(path, function(err, hash) {
 	if(err) throw err;
-	var url = "http://localhost:"+sl.PORT+"/id/"+hash;
-	var req = http.get(url);
+	var uri = sl.URI+"/id/"+hash;
+	var req = http.get(uri);
 	req.on("response", function(res) {
-		if(200 !== res.statusCode) return console.log("Error: "+res.statusCode);
-		openURL(url);
+		if(200 !== res.statusCode) {
+			console.error("URI: "+uri);
+			console.error("Error: "+res.statusCode);
+			process.exit(1);
+		}
+		openURI(uri);
 		process.exit();
 	});
 	req.on("error", function(err) {
@@ -56,7 +60,7 @@ sl.persistentHashForPath(path, function(err, hash) {
 		});
 		server.stdout.setEncoding("utf8");
 		server.stdout.on("data", function(chunk) {
-			openURL(url);
+			openURI(uri);
 			process.exit();
 		});
 	});

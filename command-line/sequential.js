@@ -21,23 +21,28 @@ var fs = require("fs");
 var crypto = require("crypto");
 var pathModule = require("path");
 
-var config = require("./config.json");
-var APP_SUPPORT_MAC = expandPath("~/Library/Application Support");
-
 function expandPath(p) { return p.replace(/^~/, process.env.HOME || "/home"); }
+var APP_SUPPORT_MAC = expandPath("~/Library/Application Support");
+var CONFIG_DIR = expandPath("~/.config/Sequential-3");
+
+var config = {};
+try { config = require(expandPath(CONFIG_DIR+"/config.json")); }
+catch(e) {};
 
 var sl = exports;
 sl.DATA =
 	(config.data && expandPath(config.data)) ||
 	(fs.existsSync(APP_SUPPORT_MAC) && APP_SUPPORT_MAC+"/Sequential 3") ||
-	__dirname+"/data";
+	CONFIG_DIR;
 sl.FILES = sl.DATA+"/Files";
 sl.THUMBNAILS = sl.DATA+"/Thumbnails";
 sl.ICONS = sl.DATA+"/Icons";
 sl.PORT = config.port || 9002;
+sl.URI = (config.uri || "http://localhost:"+sl.PORT+"/").replace(/\/$/, "");
 sl.ADDRESS = config.address || "127.0.0.1";
+sl.BROWSER = config.browser || "xdg-open"; // TODO: Portability.
 
-var SALT = config.salt || "";
+var SALT = config.salt || "Vh.map,XoXzBG!:?bVIb#8U)TC@fLRq5#f{DCw&]"; // TODO: Is having a default salt a good idea? Well, it can't hurt.
 
 function fileDataPath(hash) {
 	return sl.FILES+"/"+hash.slice(0, 2).toLowerCase()+"/"+hash+".seq-path";

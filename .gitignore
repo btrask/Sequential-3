@@ -8,7 +8,6 @@ xcuserdata/
 .DS_Store
 .svn
 build/
-data/
 node_modules/
 secret.json
 resources/sort-data.json
