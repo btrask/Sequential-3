@@ -21,6 +21,8 @@ var cp = require("child_process");
 var http = require("http");
 var crypto = require("crypto");
 var pathModule = require("path");
+var uriModule = require("url");
+
 var fs = require("../node-shared/fsx");
 var sl = require("./sequential");
 
@@ -33,7 +35,6 @@ var path = pathModule.resolve(process.cwd(), process.argv[2]);
 var stats = fs.statSync(path); // Intentionally throw exception on failure.
 
 function openURI(uri) {
-	// TODO: Make this work cross-platform and in a more robust way.
 	cp.spawn(sl.BROWSER, [uri], {
 		detatch: true,
 		stdio: ["ignore", "ignore", process.stderr],
@@ -43,7 +44,12 @@ function openURI(uri) {
 sl.persistentHashForPath(path, function(err, hash) {
 	if(err) throw err;
 	var uri = sl.URI+"/id/"+hash;
-	var req = http.get(uri);
+	var obj = uriModule.parse(uri);
+	var req = http.request({
+		method: "HEAD",
+		host: obj.host,
+		path: obj.path,
+	});
 	req.on("response", function(res) {
 		if(200 !== res.statusCode) {
 			console.error("URI: "+uri);
@@ -64,4 +70,5 @@ sl.persistentHashForPath(path, function(err, hash) {
 			process.exit();
 		});
 	});
+	req.end();
 });
