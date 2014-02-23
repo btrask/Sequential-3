@@ -23,7 +23,7 @@ var pathModule = require("path");
 var urlModule = require("url");
 var crypto = require("crypto");
 
-var bt = require("../node-shared/bt");
+var has = require("../node-shared/has");
 var fs = require("../node-shared/fsx");
 var http = require("../node-shared/httpx");
 
@@ -44,7 +44,7 @@ var IMAGE_EXTS = {
 	".gif": true,
 };
 function isImagePath(path) {
-	return bt.hasOwnProperty(IMAGE_EXTS, pathModule.extname(path));
+	return has(IMAGE_EXTS, pathModule.extname(path));
 }
 function componentsFromPath(path) {
 	var l = path.length;

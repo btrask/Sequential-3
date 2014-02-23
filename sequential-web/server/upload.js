@@ -29,7 +29,7 @@ var http = require("http");
 var formidable = require("formidable");
 var AwsSign = require("aws-sign");
 
-var bt = require("../../node-shared/bt");
+var has = require("../../node-shared/has");
 var fs = require("../../node-shared/fsx");
 var http = require("../../node-shared/httpx");
 var mime = require("../../node-shared/mime.json");
@@ -63,10 +63,10 @@ var ARCHIVE_EXTS = {
 	".tar": true,
 };
 function isImageExt(ext) {
-	return bt.hasOwnProperty(IMAGE_EXTS, ext);
+	return has(IMAGE_EXTS, ext);
 }
 function isArchiveExt(ext) {
-	return bt.hasOwnProperty(ARCHIVE_EXTS, ext);
+	return has(ARCHIVE_EXTS, ext);
 }
 
 function randomString(length, charset) {
@@ -187,7 +187,7 @@ function archiveInfo(path, time, callback/* (info) */) {
 function filesInfo(files, time, callback/* (info) */) {
 	var info = {}, remaining = files.length;
 	info.items = [];
-	bt.map(files, function(file) {
+	files.forEach(function(file) {
 		treeInfo(file.path, time, function(subinfo) {
 			fs.unlink(file.path);
 			if(subinfo) {
@@ -269,7 +269,7 @@ function upload(req, res) {
 			res.write(" ", "utf8"); // Keep the connection alive.
 		}, 1000 * 10);
 		var files = [];
-		bt.map(fileByField, function(file) { files.push(file); });
+		fileByField.forEach(function(file) { files.push(file); });
 		res.writeHead(200, {
 			"Content-Type": "text/json; charset=utf-8",
 		});

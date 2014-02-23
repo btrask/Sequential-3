@@ -26,7 +26,6 @@ var https = require("https");
 
 var AwsSign = require("aws-sign");
 
-var bt = require("../node-shared/bt");
 var mime = require("../node-shared/mime.json");
 
 var config = require("./server/config.json");
@@ -39,7 +38,7 @@ function upload(root, subpath) {
 	if(/\/\./.test(fullpath)) return;
 	fs.readdir(fullpath, function(err, items) {
 		if(!err) {
-			bt.map(items, function(item, i) {
+			items.forEach(function(item) {
 				upload(root, subpath+"/"+item);
 			});
 		} else if("ENOTDIR" === err.code) {
