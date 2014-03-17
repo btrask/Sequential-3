@@ -77,8 +77,8 @@ function fileInfo(hash, root, subpath, depth, callback/* (info) */) {
 		var escaped = pathFromComponents(componentsFromPath(subpath).map(encodeURIComponent));
 		var info = {
 			"name": pathModule.basename(fullpath),
-			"created": stats.ctime,
-			"modified": stats.mtime,
+			"ctime": +stats.ctime,
+			"mtime": +stats.mtime,
 		};
 		if(stats.isDirectory()) {
 			info.thumbURL = "/gallery/folder.png";
