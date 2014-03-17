@@ -284,13 +284,13 @@ Node.compare["name"] = function(a, b) {
 	return sort.numericStringCompare(a.name.toLowerCase(), b.name.toLowerCase()); // TODO: Perhaps we should lowercase the strings AOT for better performance.
 };
 Node.compare["size"] = function(a, b) {
-	return a.size - b.size;
+	return a.size - b.size || Node.compare["name"](a, b);
 };
 Node.compare["ctime"] = function(a, b) {
-	return a.ctime - b.ctime;
+	return a.ctime - b.ctime || Node.compare["name"](a, b);
 };
 Node.compare["mtime"] = function(a, b) {
-	return a.mtime - b.mtime;
+	return a.mtime - b.mtime || Node.compare["name"](a, b);
 };
 Node.compare["random"] = function(a, b) {
 	return 0; // Use a real shuffle algorithm instead.
