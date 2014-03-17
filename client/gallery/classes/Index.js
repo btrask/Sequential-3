@@ -51,7 +51,7 @@ function Index(indexURL) {
 	// TODO: Shouldn't we use the regular index.setXXX() system for loading these?
 
 	index.setSortOrder(localStorage.getItem("sortOrder"));
-	index.setSortDescending(localStorage.getItem("sortDescending"));
+	index.setSortDescending(Boolean(Number(localStorage.getItem("sortDescending"))));
 	index.setClickAction(localStorage.getItem("clickAction"));
 
 	index.scrollView.element._onclick = function(event) {
@@ -224,7 +224,7 @@ Index.prototype.setSortDescending = function(descending) {
 	index.root.sort();
 	// TODO: Update thumbnailBrowser if shown.
 	// TODO: Update menu selection if shown.
-	localStorage.setItem("sortDescending", index.sortDescending);
+	localStorage.setItem("sortDescending", Number(index.sortDescending));
 };
 Index.prototype.setClickAction = function(action) {
 	var index = this;
