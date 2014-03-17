@@ -122,11 +122,11 @@ function Menu(index) {
 	addSortOrder("By Date Created", "Shift-4", "ctime");
 	addSortOrder("Shuffle", "Shift-`", "random");
 
-	function addSortDirection(title, shortcut, reversed) {
+	function addSortDirection(title, shortcut, sortDescending) {
 		var item = menu.sortDirection.addItem(title, shortcut, function(event) {
-			index.setSortOrder(undefined, reversed);
+			index.setSortDescending(sortDescending);
 		});
-		if(index.reversed === reversed) menu.sortDirection.selectItem(item);
+		if(index.sortDescending === sortDescending) menu.sortDirection.selectItem(item);
 	}
 	addSortDirection("Ascending", "", false);
 	addSortDirection("Descending", "", true);

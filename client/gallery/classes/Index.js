@@ -41,7 +41,7 @@ function Index(indexURL) {
 	index.menu = null;
 	index.cancel = function(){};
 	index.sortOrder = "name";
-	index.reversed = false;
+	index.sortDescending = false;
 	index.repeat = true;
 	index.clickAction = null;
 
@@ -51,6 +51,7 @@ function Index(indexURL) {
 	// TODO: Shouldn't we use the regular index.setXXX() system for loading these?
 
 	index.setSortOrder(localStorage.getItem("sortOrder"));
+	index.setSortDescending(localStorage.getItem("sortDescending"));
 	index.setClickAction(localStorage.getItem("clickAction"));
 
 	index.scrollView.element._onclick = function(event) {
@@ -202,22 +203,28 @@ Index.prototype.sort = function(items) {
 		// TODO: Implement.
 	} else {
 		var sort = Node.compare[order];
-		var factor = index.reversed ? -1 : 1;
+		var factor = index.sortDescending ? -1 : 1;
 		items.sort(function(a, b) {
 			return sort(a, b) * factor;
 		});
 	}
 };
-Index.prototype.setSortOrder = function(order, reversed) {
+Index.prototype.setSortOrder = function(order, obsoleteArg) {
 	var index = this;
-	var o = bt.hasOwnProperty(Node.compare, order) ? order : index.sortOrder;
-	var r = Boolean(reversed) === reversed ? reversed : index.reversed;
-	if(o === index.sortOrder && r === index.reversed) return;
-	index.sortOrder = o;
-	index.reversed = r;
+	if(obsoleteArg) throw new Error("setSortOrder obsolete argument "+obsoleteArg);
+	if(bt.hasOwnProperty(Node.compare, order)) index.sortOrder = order;
 	index.root.sort();
 	// TODO: Update thumbnailBrowser if shown.
 	// TODO: Update menu selection if shown.
+	localStorage.setItem("sortOrder", index.sortOrder);
+};
+Index.prototype.setSortDescending = function(descending) {
+	var index = this;
+	index.sortDescending = Boolean(descending);
+	index.root.sort();
+	// TODO: Update thumbnailBrowser if shown.
+	// TODO: Update menu selection if shown.
+	localStorage.setItem("sortDescending", index.sortDescending);
 };
 Index.prototype.setClickAction = function(action) {
 	var index = this;
