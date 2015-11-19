@@ -47,7 +47,8 @@ sl.persistentHashForPath(path, function(err, hash) {
 	var obj = uriModule.parse(uri);
 	var req = http.request({
 		method: "HEAD",
-		host: obj.host,
+		hostname: obj.hostname,
+		port: obj.port,
 		path: obj.path,
 	});
 	req.on("response", function(res) {
