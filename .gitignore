@@ -11,3 +11,6 @@ build/
 node_modules/
 secret.json
 resources/sort-data.json
+
+# Make sure dependencies in "build" dirs are tracked.
+!deps/**/build/
