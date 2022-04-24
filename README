@@ -8,4 +8,10 @@ command-line/: Portable Sequential 3 server designed for local hosting (Node.js)
 deps/: Various dependencies
 resources/: Design documents and other files
 
+Building
+Build the code in the directory you are interested in, command-line, mac, or sequential-web. You don't need to manually build the code in client or in directories you aren't interested in.
+
+Using the command-line interface
+First make sure to run make(1). Then run index.js to start the server. Then run open.js [path] to open a local path. Thumbnail generation TBD.
+
 License/copying information is included with the specific folder or file.
